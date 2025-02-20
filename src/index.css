@@ -1,5 +1,24 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "DankMono";
+  src: url("/fonts/DankMonoNerdFont-Regular.otf") format("opentype");
+}
+
+
+@font-face {
+  font-family: "DankMono";
+  src: url("/fonts/DankMonoNerdFont-Bold.otf") format("opentype");
+}
+
+
+@font-face {
+  font-family: "DankMono";
+  src: url("/fonts/DankMonoNerdFont-Italic.otf") format("opentype");
+}
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "DankMono", monospace;
   line-height: 1.5;
   font-weight: 400;
 
