@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import DecryptedText from '../../components/DecryptedText/DecryptedText';
+import { DecryptedText } from '../../components/DecryptedText';
 
 const meta: Meta<typeof DecryptedText> = {
   title: 'Components/DecryptedText',

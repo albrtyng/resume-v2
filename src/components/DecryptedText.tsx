@@ -13,7 +13,7 @@ interface DecryptedTextProps {
   [key: string]: any;
 }
 
-export default function DecryptedText({
+export const DecryptedText = ({
   text,
   speed = 50,
   maxIterations = 10,
@@ -23,7 +23,7 @@ export default function DecryptedText({
   parentClassName = "",
   encryptedClassName = "",
   ...props
-}: DecryptedTextProps) {
+}: DecryptedTextProps) => {
   const [displayText, setDisplayText] = useState<string>(text);
   const [isHovering, setIsHovering] = useState<boolean>(false);
   const [isScrambling, setIsScrambling] = useState<boolean>(false);
