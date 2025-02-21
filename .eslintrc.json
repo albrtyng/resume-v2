@@ -1,0 +1,23 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:prettier/recommended"
+    ],
+    "plugins": ["@typescript-eslint", "react"],
+    "env": {
+        "browser": true
+    },
+    "rules": {
+        "react/react-in-jsx-scope": "off",
+        "prefer-const": [
+            "error",
+            {
+                "ignoreReadBeforeAssign": true
+            }
+        ],
+        "no-unused-vars": "error",
+        "no-unused-imports": "error"
+    }
+}

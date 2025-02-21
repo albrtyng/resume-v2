@@ -1,23 +1,23 @@
-import { Renderer, Program, Mesh, Color, Triangle } from "ogl";
-import { useEffect, useRef } from "react";
+import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
+import { useEffect, useRef } from 'react';
 
 export interface CommonProps {
-  onReady?: () => void;
+    onReady?: () => void;
 }
 
 export interface TimeProps {
-  time?: number;
-  speed?: number;
+    time?: number;
+    speed?: number;
 }
 
 export interface ControlProps {
-  paused?: boolean;
+    paused?: boolean;
 }
 
 export interface AuroraProps extends CommonProps, TimeProps, ControlProps {
-  colorStops?: [string, string, string];
-  amplitude?: number;
-  className?: string;
+    colorStops?: [string, string, string];
+    amplitude?: number;
+    className?: string;
 }
 
 const VERT = `#version 300 es
@@ -125,85 +125,90 @@ void main() {
 }
 `;
 
-export const Aurora = ({ colorStops = ["#00d8ff", "#7cff67", "#00d8ff"], amplitude = 1.0, className = "w-screen h-screen" }: AuroraProps) => {
-  const propsRef = useRef<AuroraProps>({ colorStops, amplitude, className });
+export const Aurora = ({
+    colorStops = ['#00d8ff', '#7cff67', '#00d8ff'],
+    amplitude = 1.0,
+    className = 'w-screen h-screen',
+}: AuroraProps) => {
+    const propsRef = useRef<AuroraProps>({ colorStops, amplitude, className });
 
-  const ctnDom = useRef<HTMLDivElement>(null);
+    const ctnDom = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const ctn = ctnDom.current;
-    if (!ctn) return;
+    useEffect(() => {
+        const ctn = ctnDom.current;
+        if (!ctn) return;
 
-    const renderer = new Renderer();
-    const gl = renderer.gl;
-    gl.clearColor(1, 1, 1, 1);
+        const renderer = new Renderer();
+        const gl = renderer.gl;
+        gl.clearColor(1, 1, 1, 1);
 
-    // Declare program variable so it's available in the resize callback.
-    let program: Program;
+        // Declare program variable so it's available in the resize callback.
+        let program: Program;
 
-    function resize() {
-      if (!ctn) return;
-      const width = ctn.offsetWidth;
-      const height = ctn.offsetHeight;
-      renderer.setSize(width, height);
-      if (program) {
-        program.uniforms.uResolution.value = [width, height];
-      }
-    }
-    window.addEventListener("resize", resize);
+        function resize() {
+            if (!ctn) return;
+            const width = ctn.offsetWidth;
+            const height = ctn.offsetHeight;
+            renderer.setSize(width, height);
+            if (program) {
+                program.uniforms.uResolution.value = [width, height];
+            }
+        }
+        window.addEventListener('resize', resize);
 
-    // Create a full-screen triangle.
-    const geometry = new Triangle(gl);
-    // Remove the UV attribute since we now compute UVs in the fragment shader.
-    if (geometry.attributes.uv) {
-      delete geometry.attributes.uv;
-    }
+        // Create a full-screen triangle.
+        const geometry = new Triangle(gl);
+        // Remove the UV attribute since we now compute UVs in the fragment shader.
+        if (geometry.attributes.uv) {
+            delete geometry.attributes.uv;
+        }
 
-    const colorStopsArray = colorStops.map((hex) => {
-      const c = new Color(hex);
-      return [c.r, c.g, c.b] as [number, number, number];
-    });
+        const colorStopsArray = colorStops.map((hex) => {
+            const c = new Color(hex);
+            return [c.r, c.g, c.b] as [number, number, number];
+        });
 
-    // Initialize the shader program with the new uResolution uniform.
-    program = new Program(gl, {
-      vertex: VERT,
-      fragment: FRAG,
-      uniforms: {
-        uTime: { value: 0 },
-        uAmplitude: { value: amplitude },
-        uColorStops: { value: colorStopsArray },
-        uResolution: { value: [ctn.offsetWidth, ctn.offsetHeight] },
-      },
-    });
+        // Initialize the shader program with the new uResolution uniform.
+        program = new Program(gl, {
+            vertex: VERT,
+            fragment: FRAG,
+            uniforms: {
+                uTime: { value: 0 },
+                uAmplitude: { value: amplitude },
+                uColorStops: { value: colorStopsArray },
+                uResolution: { value: [ctn.offsetWidth, ctn.offsetHeight] },
+            },
+        });
 
-    const mesh = new Mesh(gl, { geometry, program });
-    ctn.appendChild(gl.canvas);
+        const mesh = new Mesh(gl, { geometry, program });
+        ctn.appendChild(gl.canvas);
 
-    let animateId = 0;
-    const update = (t: number) => {
-      animateId = requestAnimationFrame(update);
-      const { time = t * 0.01, speed = 1.0 } = propsRef.current;
-      program.uniforms.uTime.value = time * speed * 0.1;
-      program.uniforms.uAmplitude.value = propsRef.current.amplitude ?? 1.0;
-      const stops = propsRef.current.colorStops ?? colorStops;
-      program.uniforms.uColorStops.value = stops.map((hex) => {
-        const c = new Color(hex);
-        return [c.r, c.g, c.b] as [number, number, number];
-      });
-      renderer.render({ scene: mesh });
-    };
-    animateId = requestAnimationFrame(update);
-    resize();
+        let animateId = 0;
+        const update = (t: number) => {
+            animateId = requestAnimationFrame(update);
+            const { time = t * 0.01, speed = 1.0 } = propsRef.current;
+            program.uniforms.uTime.value = time * speed * 0.1;
+            program.uniforms.uAmplitude.value =
+                propsRef.current.amplitude ?? 1.0;
+            const stops = propsRef.current.colorStops ?? colorStops;
+            program.uniforms.uColorStops.value = stops.map((hex) => {
+                const c = new Color(hex);
+                return [c.r, c.g, c.b] as [number, number, number];
+            });
+            renderer.render({ scene: mesh });
+        };
+        animateId = requestAnimationFrame(update);
+        resize();
 
-    return () => {
-      cancelAnimationFrame(animateId);
-      window.removeEventListener("resize", resize);
-      if (ctn && gl.canvas.parentNode === ctn) {
-        ctn.removeChild(gl.canvas);
-      }
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
-    };
-  }, [amplitude, colorStops]);
+        return () => {
+            cancelAnimationFrame(animateId);
+            window.removeEventListener('resize', resize);
+            if (ctn && gl.canvas.parentNode === ctn) {
+                ctn.removeChild(gl.canvas);
+            }
+            gl.getExtension('WEBGL_lose_context')?.loseContext();
+        };
+    }, [amplitude, colorStops]);
 
-  return <div ref={ctnDom} className={className} />;
-}
+    return <div ref={ctnDom} className={className} />;
+};
