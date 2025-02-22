@@ -25,7 +25,8 @@
 }
 
 :root {
-    background-color: #242424;
+    /* background-color: #303446; */
+    background-color: black;
     color: rgba(255, 255, 255, 0.87);
 
     color-scheme: light dark;
@@ -52,8 +53,11 @@ body {
     display: flex;
     place-items: center;
     margin: 0;
+    width: 100vw;
     min-width: 320px;
     min-height: 100vh;
+
+    overflow-x: hidden;
 }
 
 h1 {
