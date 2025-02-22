@@ -31,14 +31,14 @@ const item: Variants = {
 
 export const Hero = () => {
     return (
-        <div className="flex h-screen w-screen flex-col items-start justify-center px-4 lg:px-40">
+        <div className="flex h-screen max-w-screen flex-col items-start justify-center gap-2 px-4 lg:px-40">
             <Aurora
                 colorStops={['#ca9ee6', '#303446', '#ca9ee6']}
                 className="absolute top-0 left-0 h-screen w-screen"
             />
             <div className="z-10 flex flex-wrap">
                 <DecryptedText
-                    parentClassName="font-bold text-center text-5xl lg:text-7xl lg:text-left"
+                    parentClassName="font-bold text-center text-3xl md:text-5xl lg:text-7xl lg:text-left"
                     text="Build better software with Albert."
                     className="[&:nth-child(n+27)]:text-[#ca9ee6] [&:nth-child(n+36)]:text-inherit"
                     encryptedClassName="[&:nth-child(n+27)]:text-[#ca9ee6] [&:nth-child(n+36)]:text-inherit"
@@ -47,13 +47,13 @@ export const Hero = () => {
             </div>
 
             <motion.div
-                className="z-10"
+                className="z-10 w-full"
                 initial="hidden"
                 animate="visible"
                 variants={container}
             >
                 <motion.div
-                    className="flex text-center text-lg font-normal lg:text-left lg:text-4xl"
+                    className="flex w-full text-xl font-normal md:text-2xl lg:text-4xl"
                     variants={item}
                 >
                     <p>
@@ -66,7 +66,7 @@ export const Hero = () => {
                 </motion.div>
 
                 <motion.div
-                    className="mt-4 text-lg lg:text-2xl"
+                    className="mt-4 w-full text-base md:text-lg lg:text-2xl"
                     variants={item}
                 >
                     <p>🚀Core competencies: Typescript, Python, PostgresSQL</p>
