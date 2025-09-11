@@ -1,4 +1,6 @@
-import { Aurora } from './Aurora';
+// import { Aurora } from './Aurora';
+import HeroBottomSvg from '../assets/hero-bottom.svg?react';
+import HeroTopSvg from '../assets/hero-top.svg?react';
 import { DecryptedText } from './DecryptedText';
 import { type Variants, motion } from 'framer-motion';
 
@@ -31,14 +33,22 @@ const item: Variants = {
 
 export const Hero = () => {
     return (
-        <div className="flex h-screen max-w-screen flex-col items-start justify-center gap-2 px-4 lg:px-40">
-            <Aurora
-                colorStops={['#ca9ee6', '#303446', '#ca9ee6']}
-                className="absolute top-0 left-0 h-screen w-screen"
+        <div className="flex flex-col items-center gap-2">
+            <HeroTopSvg
+                className="absolute inset-0 left-1/2 w-full -translate-x-1/2 lg:w-4xl"
+                style={{
+                    objectFit: 'contain',
+                }}
             />
-            <div className="z-10 flex flex-wrap">
+            <HeroBottomSvg
+                className="absolute inset-0 top-[135px] left-1/2 w-full -translate-x-1/2 lg:w-4xl"
+                style={{
+                    objectFit: 'contain',
+                }}
+            />
+            <div className="z-10 flex w-full flex-wrap lg:w-4xl">
                 <DecryptedText
-                    parentClassName="font-bold text-center text-3xl md:text-5xl lg:text-7xl lg:text-left"
+                    parentClassName="font-bold text-center text-2xl md:text-3xl lg:text-left"
                     text="Build better software with Albert."
                     className="[&:nth-child(n+27)]:text-[#ca9ee6] [&:nth-child(n+36)]:text-inherit"
                     encryptedClassName="[&:nth-child(n+27)]:text-[#ca9ee6] [&:nth-child(n+36)]:text-inherit"
@@ -47,13 +57,13 @@ export const Hero = () => {
             </div>
 
             <motion.div
-                className="z-10 w-full"
+                className="z-10 w-full lg:w-4xl"
                 initial="hidden"
                 animate="visible"
                 variants={container}
             >
                 <motion.div
-                    className="flex w-full text-xl font-normal md:text-2xl lg:text-4xl"
+                    className="flex w-full text-xl font-normal md:text-2xl lg:text-left"
                     variants={item}
                 >
                     <p>

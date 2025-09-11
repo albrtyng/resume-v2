@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_3" data-name="Layer 3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1073.71 481.83">
+  <defs>
+    <linearGradient id="heroGradientTop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:rgba(193, 223, 179, 1);stop-opacity:1" />
+      <stop offset="25%" style="stop-color:rgba(147, 205, 131, 1);stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <path fill="url(#heroGradientTop)" d="M240.73,468.58c138.86,42.73,319.25-31.55,319.25-31.55,0,0,148.35-40.45,178.02-146.47,32.62-116.57,328.05-86.28,335.71-85.47V0H0v438.85c8.01-.92,107.61-11.23,240.73,29.73Z"/>
+</svg>

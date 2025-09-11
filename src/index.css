@@ -26,10 +26,10 @@
 
 :root {
     /* background-color: #303446; */
-    background-color: black;
+    /* background-color: black; */
     color: rgba(255, 255, 255, 0.87);
 
-    color-scheme: light dark;
+    /* color-scheme: light dark; */
     font-weight: 400;
     line-height: 1.5;
     font-family: 'DankMono', monospace;
@@ -38,6 +38,13 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    /* Pastel Green Color Palette */
+    --pastel-green-1: #C1E0B4;
+    --pastel-green-2: #93CD83;
+    --pastel-green-3: #EFEDA3;
+    --pastel-green-4: #F7F1D7;
+    --pastel-green-5: #D9EBEB;
 }
 
 a {
@@ -50,14 +57,12 @@ a:hover {
 }
 
 body {
-    display: flex;
-    place-items: center;
     margin: 0;
     width: 100vw;
     min-width: 320px;
-    min-height: 100vh;
 
     overflow-x: hidden;
+    background-color: var(--pastel-green-4);
 }
 
 h1 {
@@ -82,17 +87,4 @@ button:hover {
 button:focus,
 button:focus-visible {
     outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-    :root {
-        background-color: #ffffff;
-        color: #213547;
-    }
-    a:hover {
-        color: #747bff;
-    }
-    button {
-        background-color: #f9f9f9;
-    }
 }
