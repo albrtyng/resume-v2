@@ -1,0 +1,45 @@
+---
+interface Props {
+    title?: string;
+    description?: string;
+}
+
+const {
+    title = 'Albert Yang — Full-Stack Software Engineer',
+    description = 'Portfolio of Albert Yang. 5+ years building products used by millions.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content={description} />
+        <title>{title}</title>
+
+        <!-- Preload critical fonts -->
+        <link
+            rel="preload"
+            href="/fonts/DankMonoNerdFontMono-Regular.otf"
+            as="font"
+            type="font/otf"
+            crossorigin
+        />
+        <link
+            rel="preload"
+            href="/fonts/DankMonoNerdFontMono-Bold.otf"
+            as="font"
+            type="font/otf"
+            crossorigin
+        />
+
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    </head>
+    <body>
+        <slot />
+        <script>
+            import '../scripts/animations';
+        </script>
+    </body>
+</html>

@@ -1,0 +1,69 @@
+---
+---
+
+<section
+    id="hero"
+    class="relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-6"
+>
+    <!-- Background gradient that shifts on scroll -->
+    <div
+        id="hero-bg"
+        class="pointer-events-none absolute inset-0 -z-10 opacity-40"
+        style="background: radial-gradient(ellipse at 50% 50%, var(--color-accent) 0%, transparent 70%);"
+    >
+    </div>
+
+    <div class="mx-auto w-full max-w-5xl">
+        <!-- Name -->
+        <h1
+            id="hero-name"
+            class="gsap-animated text-center font-bold leading-none"
+            style="font-size: clamp(3rem, 8vw, 8rem); opacity: 0;"
+        >
+            Albert Yang
+        </h1>
+
+        <!-- Subtitle -->
+        <p
+            id="hero-subtitle"
+            class="gsap-animated mt-4 text-center md:mt-6"
+            style="font-size: clamp(1rem, 2.5vw, 1.75rem); color: var(--color-muted); opacity: 0;"
+        >
+            <span class="hero-word">Full-Stack</span>
+            <span class="hero-word">Software</span>
+            <span class="hero-word">Engineer</span>
+        </p>
+
+        <!-- Tagline -->
+        <p
+            id="hero-tagline"
+            class="gsap-animated mx-auto mt-6 max-w-xl text-center md:mt-8"
+            style="font-size: clamp(0.875rem, 1.5vw, 1.125rem); color: var(--color-muted); opacity: 0;"
+        >
+            5+ years building products used by millions
+        </p>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div
+        id="scroll-indicator"
+        class="absolute bottom-10 flex flex-col items-center gap-2 opacity-0"
+    >
+        <span class="text-xs uppercase tracking-widest" style="color: var(--color-muted);">
+            Scroll
+        </span>
+        <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="color: var(--color-muted);"
+        >
+            <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+    </div>
+</section>
