@@ -1,0 +1,29 @@
+---
+import ExperienceCard from './ExperienceCard.astro';
+import { jobs } from '../data/experience';
+---
+
+<section id="experience" class="relative px-6 py-24 md:py-32">
+    <div class="mx-auto w-full max-w-3xl">
+        <!-- Section heading -->
+        <h2
+            id="experience-heading"
+            class="gsap-animated mb-16 font-bold md:mb-24"
+            style="font-size: clamp(2rem, 5vw, 5rem); opacity: 0; clip-path: inset(0 100% 0 0);"
+        >
+            Experience
+        </h2>
+
+        <!-- Job cards -->
+        <div class="flex flex-col">
+            {jobs.map((job, i) => (
+                <ExperienceCard
+                    company={job.company}
+                    role={job.role}
+                    duration={job.duration}
+                    bullets={job.bullets}
+                />
+            ))}
+        </div>
+    </div>
+</section>
