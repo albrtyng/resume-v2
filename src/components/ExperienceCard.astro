@@ -46,7 +46,7 @@ function renderBullet(bullet: Bullet): string {
         {bullets.map((bullet) => (
             <li
                 class="experience-bullet gsap-animated text-sm leading-relaxed md:text-base"
-                style={`color: var(--color-muted); opacity: 0; transform: translateY(20px);`}
+                style={`color: var(--color-text); opacity: 0; transform: translateY(20px);`}
                 set:html={renderBullet(bullet)}
             />
         ))}
