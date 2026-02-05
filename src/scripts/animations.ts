@@ -183,17 +183,22 @@ function initAnimations() {
         fadeInTl.to('.footer-word', {
             opacity: 1,
             x: 0,
-            duration: 0.5,
-            stagger: 0.15,
-            ease: 'power2.out',
+            duration: 0.2,
+            stagger: 0.1,
+            // ease: 'power2.out',
         });
 
         // Timeline 2: snap Create & Ship to y=0 after fade-in completes
-        fadeInTl.to('.footer-word-snap', {
-            y: 0,
-            duration: 0.3,
-            ease: 'power4.out',
-        }, '>');
+        fadeInTl.to(
+            '.footer-word-snap',
+            {
+                y: 0,
+                duration: 0.1,
+                stagger: 0.12,
+                // ease: 'power4.out',
+            },
+            '>',
+        );
 
         // Links stagger fade-up
         gsap.to('.footer-link', {
@@ -215,7 +220,10 @@ function initAnimations() {
             '(max-width: 639px)': () => {
                 // On mobile, simplify: disable parallax
                 ScrollTrigger.getAll()
-                    .filter((st) => st.trigger === document.getElementById('hero-bg'))
+                    .filter(
+                        (st) =>
+                            st.trigger === document.getElementById('hero-bg'),
+                    )
                     .forEach((st) => st.kill());
             },
         });
