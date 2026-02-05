@@ -3,34 +3,49 @@
 
 <footer
     id="footer"
-    class="gsap-animated flex flex-col items-center gap-6 px-6 py-16 md:py-24"
-    style="opacity: 0;"
+    class="gsap-animated flex flex-col items-start justify-center gap-10 px-6"
+    style="opacity: 0; background-color: var(--color-muted); min-height: 45vh; margin: 6rem calc(-1 * clamp(1rem, 5vw, 6rem)) 0; padding-left: clamp(1rem, 5vw, 6rem); padding-right: clamp(1rem, 5vw, 6rem);"
 >
-    <nav class="flex items-center gap-8">
-        <a
-            href="https://github.com/albrtyng"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-sm transition-colors duration-200 hover:text-[var(--color-accent)]"
-            style="color: var(--color-muted);"
+    <div class="mx-auto w-full max-w-5xl flex flex-col items-start gap-10">
+        <div
+            id="footer-tagline"
+            style="font-family: var(--font-heading); font-size: clamp(3rem, 8vw, 8rem); line-height: 1; letter-spacing: -0.02em; color: var(--color-bg);"
         >
-            GitHub
-        </a>
-        <a
-            href="https://linkedin.com/in/albrtyng"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-sm transition-colors duration-200 hover:text-[var(--color-accent)]"
-            style="color: var(--color-muted);"
-        >
-            LinkedIn
-        </a>
-        <a
-            href="mailto:hello@albertyang.dev"
-            class="text-sm transition-colors duration-200 hover:text-[var(--color-accent)]"
-            style="color: var(--color-muted);"
-        >
-            Email
-        </a>
-    </nav>
+            <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                <span class="footer-word gsap-animated" style="opacity: 0; transform: translateX(-100%);">Build.</span>
+                <span class="footer-word footer-word-snap gsap-animated" style="opacity: 0; transform: translateX(100%) translateY(-50px);">Create.</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 1rem;">
+                <span class="footer-word footer-word-snap gsap-animated" style="opacity: 0; transform: translateX(-100%) translateY(50px);">Ship.</span>
+                <span class="footer-word gsap-animated" style="opacity: 0; transform: translateX(100%);">Connect.</span>
+            </div>
+        </div>
+        <nav class="flex items-center gap-8">
+            <a
+                href="https://github.com/albrtyng"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-link gsap-animated text-sm"
+                style="color: var(--color-accent-light); opacity: 0; transform: translateY(20px);"
+            >
+                GitHub
+            </a>
+            <a
+                href="https://linkedin.com/in/albrtyng"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-link gsap-animated text-sm"
+                style="color: var(--color-accent-light); opacity: 0; transform: translateY(20px);"
+            >
+                LinkedIn
+            </a>
+            <a
+                href="mailto:albertesyang@gmail.com"
+                class="footer-link gsap-animated text-sm"
+                style="color: var(--color-accent-light); opacity: 0; transform: translateY(20px);"
+            >
+                Email
+            </a>
+        </nav>
+    </div>
 </footer>
