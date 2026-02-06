@@ -20,32 +20,29 @@
                 <span class="footer-word gsap-animated" style="opacity: 0; transform: translateX(100%);">cool!</span>
             </div>
         </div>
-        <nav class="flex items-center gap-8">
-            <a
-                href="https://github.com/albrtyng"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="footer-link gsap-animated text-sm"
-                style="color: var(--color-accent-light); opacity: 0; transform: translateY(20px);"
-            >
-                GitHub
-            </a>
-            <a
-                href="https://linkedin.com/in/albrtyng"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="footer-link gsap-animated text-sm"
-                style="color: var(--color-accent-light); opacity: 0; transform: translateY(20px);"
-            >
-                LinkedIn
-            </a>
-            <a
-                href="mailto:albertesyang@gmail.com"
-                class="footer-link gsap-animated text-sm"
-                style="color: var(--color-accent-light); opacity: 0; transform: translateY(20px);"
-            >
-                Email
-            </a>
-        </nav>
+        <a
+            href="https://linkedin.com/in/albrtyng"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="gsap-animated"
+            style="opacity: 0; margin-left: -40px; transform: translateY(20px);"
+        >
+            <div id="lottie-linkedin" style="width: 300px;"></div>
+        </a>
+        <script>
+            import lottie from 'lottie-web';
+
+            (window as any).__lottieLinkedin = lottie.loadAnimation({
+                container: document.getElementById('lottie-linkedin')!,
+                renderer: 'svg',
+                loop: false,
+                autoplay: false,
+                path: '/linkedin.json',
+                rendererSettings: {
+                    viewBoxOnly: true,
+                    viewBoxSize: '0 160 640 180',
+                },
+            });
+        </script>
     </div>
 </footer>

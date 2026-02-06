@@ -17,6 +17,9 @@ importers:
       gsap:
         specifier: ^3.12.7
         version: 3.14.2
+      lottie-web:
+        specifier: ^5.13.0
+        version: 5.13.0
       tailwindcss:
         specifier: ^4.0.7
         version: 4.1.18
@@ -1187,6 +1190,9 @@ packages:
 
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
+
+  lottie-web@5.13.0:
+    resolution: {integrity: sha512-+gfBXl6sxXMPe8tKQm7qzLnUy5DUPJPKIyRHwtpCpyUEYjHYRJC/5gjUvdkuO2c3JllrPtHXH5UJJK8LRYl5yQ==}
 
   lru-cache@11.2.5:
     resolution: {integrity: sha512-vFrFJkWtJvJnD5hg+hJvVE8Lh/TcMzKnTgCWmtBipwI5yLX/iX+5UB2tfuyODF5E7k9xEzMdYgGqaSb1c0c5Yw==}
@@ -2949,6 +2955,8 @@ snapshots:
   lodash@4.17.23: {}
 
   longest-streak@3.1.0: {}
+
+  lottie-web@5.13.0: {}
 
   lru-cache@11.2.5: {}
 

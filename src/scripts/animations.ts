@@ -200,19 +200,23 @@ function initAnimations() {
             '>',
         );
 
-        // Links stagger fade-up
-        gsap.to('.footer-link', {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            stagger: 0.12,
-            ease: 'power2.out',
-            scrollTrigger: {
-                trigger: '#footer',
-                start: 'top bottom',
-                toggleActions: 'play none none none',
-            },
-        });
+        // LinkedIn Lottie button reveal — chained after footer words
+        const lottieEl = document.querySelector('#lottie-linkedin')?.parentElement;
+        if (lottieEl) {
+            fadeInTl.to(
+                lottieEl,
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6,
+                    ease: 'power2.out',
+                    onStart: () => {
+                        (window as any).__lottieLinkedin?.play();
+                    },
+                },
+                '>',
+            );
+        }
 
         // ── Responsive variants ──
 
