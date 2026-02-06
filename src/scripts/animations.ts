@@ -10,7 +10,7 @@ const prefersReducedMotion = window.matchMedia(
 
 if (prefersReducedMotion) {
     // Show everything immediately
-    gsap.set('.gsap-animated', { opacity: 1, y: 0, clipPath: 'none' });
+    gsap.set('.gsap-animated', { opacity: 1, y: 0, x: 0, clipPath: 'none' });
 } else {
     initAnimations();
 }
@@ -159,16 +159,64 @@ function initAnimations() {
 
         // ── Footer ──
 
+        // Container fade-in
         gsap.to('#footer', {
             opacity: 1,
             duration: 0.6,
             ease: 'power2.out',
             scrollTrigger: {
                 trigger: '#footer',
-                start: 'top 90%',
+                start: 'top bottom',
                 toggleActions: 'play none none none',
             },
         });
+
+        // Timeline 1: staggered fade-in left to right
+        const fadeInTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#footer',
+                start: 'top 80%',
+                toggleActions: 'play none none none',
+            },
+        });
+
+        fadeInTl.to('.footer-word', {
+            opacity: 1,
+            x: 0,
+            duration: 0.2,
+            stagger: 0.1,
+            // ease: 'power2.out',
+        });
+
+        // Timeline 2: snap Create & Ship to y=0 after fade-in completes
+        fadeInTl.to(
+            '.footer-word-snap',
+            {
+                y: 0,
+                duration: 0.1,
+                stagger: 0.12,
+                // ease: 'power4.out',
+            },
+            '>',
+        );
+
+        // LinkedIn Lottie button reveal — chained after footer words
+        const lottieEl = document.querySelector('#lottie-linkedin')?.parentElement;
+        if (lottieEl) {
+            fadeInTl.to(
+                lottieEl,
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.6,
+                    ease: 'power2.out',
+                    onStart: () => {
+                        (window as any).__lottieLinkedin?.play();
+                    },
+                },
+                '>',
+            );
+        }
 
         // ── Responsive variants ──
 
@@ -176,7 +224,10 @@ function initAnimations() {
             '(max-width: 639px)': () => {
                 // On mobile, simplify: disable parallax
                 ScrollTrigger.getAll()
-                    .filter((st) => st.trigger === document.getElementById('hero-bg'))
+                    .filter(
+                        (st) =>
+                            st.trigger === document.getElementById('hero-bg'),
+                    )
                     .forEach((st) => st.kill());
             },
         });

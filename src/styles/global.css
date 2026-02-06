@@ -95,6 +95,31 @@ body::before {
     color: var(--color-bg);
 }
 
+/* Footer link hover styles */
+.footer-link {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: var(--color-bg);
+}
+
+.footer-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-bg);
+    transition: width 0.3s ease;
+}
+
+.footer-link:hover::after {
+    width: 100%;
+}
+
 /* Reduced motion: show everything immediately, skip animations */
 @media (prefers-reduced-motion: reduce) {
     *,
