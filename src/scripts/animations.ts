@@ -132,6 +132,30 @@ function initAnimations() {
             },
         });
 
+        gsap.to('#hero-with-albert-layer', {
+            yPercent: -15,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true,
+            },
+        });
+
+
+        // Grow overlay block upward to keep covering text as it parallaxes up
+        gsap.to('#hero-with-albert-overlay', {
+            paddingTop: '25vh',
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: '60% top',
+                scrub: true,
+            },
+        });
+
         gsap.to('#hero-photo-layer', {
             yPercent: -5,
             ease: 'none',
