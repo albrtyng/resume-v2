@@ -6,9 +6,12 @@ interface Props {
     role: string;
     duration: string;
     bullets: Bullet[];
+    index: number;
+    total: number;
 }
 
-const { company, role, duration, bullets } = Astro.props;
+const { company, role, duration, bullets, index, total } = Astro.props;
+const isLast = index === total - 1;
 
 function renderBullet(bullet: Bullet): string {
     let html = bullet.text;
@@ -22,7 +25,10 @@ function renderBullet(bullet: Bullet): string {
 }
 ---
 
-<article class="experience-card gsap-animated" style="opacity: 0; transform: translateY(40px);">
+<article
+    class="experience-card"
+    style={`top: ${(index + 1) * 25}px;`}
+>
     <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
         <h3
             class="text-lg font-bold sm:text-xl md:text-2xl"
@@ -45,17 +51,10 @@ function renderBullet(bullet: Bullet): string {
     <ul class="mt-4 flex flex-col gap-3">
         {bullets.map((bullet) => (
             <li
-                class="experience-bullet gsap-animated text-sm leading-relaxed md:text-base"
-                style={`color: var(--color-text); opacity: 0; transform: translateY(20px);`}
+                class="text-sm leading-relaxed md:text-base"
+                style="color: var(--color-text);"
                 set:html={renderBullet(bullet)}
             />
         ))}
     </ul>
 </article>
-
-<!-- Divider line -->
-<div
-    class="experience-divider mx-auto my-8 h-px md:my-12"
-    style="background-color: var(--color-muted); opacity: 0.2; width: 0%; max-width: 100%;"
->
-</div>

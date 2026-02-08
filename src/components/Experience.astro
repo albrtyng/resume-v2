@@ -3,27 +3,38 @@ import ExperienceCard from './ExperienceCard.astro';
 import { jobs } from '../data/experience';
 ---
 
-<section id="experience" class="relative px-6 py-24 md:py-32">
-    <div class="mx-auto w-full max-w-3xl">
-        <!-- Section heading -->
-        <h2
-            id="experience-heading"
-            class="gsap-animated mb-16 font-bold md:mb-24"
-            style="font-size: clamp(2rem, 5vw, 5rem); opacity: 0; clip-path: inset(0 100% 0 0);"
-        >
-            Experience
-        </h2>
+<section id="experience" class="relative z-10 w-full overflow-visible">
+    <div
+        class="absolute top-0 z-10 -translate-y-3/4"
+        style="left: calc(-1 * clamp(1rem, 5vw, 6rem)); right: calc(-1 * clamp(1rem, 5vw, 6rem));"
+    >
+        <img src="/images/torn-paper.png" class="w-full" />
+    </div>
+    <div class="relative z-20 px-6 pt-24 md:pt-32">
+        <div class="mx-auto w-full max-w-3xl">
+            <!-- Section heading -->
+            <h2
+                id="experience-heading"
+                class="gsap-animated mb-16 font-bold md:mb-24"
+                style="font-size: clamp(2rem, 5vw, 5rem); opacity: 0; clip-path: inset(0 100% 0 0);"
+            >
+                Experience
+            </h2>
 
-        <!-- Job cards -->
-        <div class="flex flex-col">
-            {jobs.map((job, i) => (
-                <ExperienceCard
-                    company={job.company}
-                    role={job.role}
-                    duration={job.duration}
-                    bullets={job.bullets}
-                />
-            ))}
+            <!-- Job cards -->
+            <div id="experience-cards">
+                {jobs.map((job, i) => (
+                    <ExperienceCard
+                        company={job.company}
+                        role={job.role}
+                        duration={job.duration}
+                        bullets={job.bullets}
+                        index={i}
+                        total={jobs.length}
+                    />
+                ))}
+            </div>
         </div>
     </div>
+
 </section>

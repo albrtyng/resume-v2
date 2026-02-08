@@ -72,7 +72,7 @@ body {
     background-color: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-body);
-    overflow-x: hidden;
+    overflow-x: clip;
     padding: 0 clamp(1rem, 5vw, 6rem);
 }
 
@@ -247,6 +247,22 @@ body::before {
     }
 }
 
+/* Experience cards — sticky stacking effect */
+#experience-cards {
+    padding-bottom: 60vh;
+}
+
+.experience-card {
+    position: sticky;
+    transform-origin: top;
+    will-change: transform;
+    background-color: var(--color-bg);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+    margin-bottom: 20px;
+}
+
 /* Reduced motion: show everything immediately, skip animations */
 @media (prefers-reduced-motion: reduce) {
     *,
@@ -263,5 +279,15 @@ body::before {
         clip-path: none !important;
         -webkit-mask: none !important;
         mask: none !important;
+    }
+
+    #experience-cards {
+        padding-bottom: 0 !important;
+    }
+
+    .experience-card {
+        position: relative !important;
+        top: 0 !important;
+        transform: none !important;
     }
 }

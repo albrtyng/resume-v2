@@ -26,13 +26,21 @@ lenis.stop();
 
 if (prefersReducedMotion) {
     // Show everything immediately
-    gsap.set('.gsap-animated', { opacity: 1, y: 0, x: 0, yPercent: 0, clipPath: 'none' });
+    gsap.set('.gsap-animated', {
+        opacity: 1,
+        y: 0,
+        x: 0,
+        yPercent: 0,
+        clipPath: 'none',
+    });
     gsap.set('#hero-with-albert-overlay', { display: 'none' });
     document.getElementById('hero-shutter')?.remove();
     document.getElementById('hero-loader')?.remove();
     lenis.start();
 } else {
-    window.addEventListener('models:all-ready', () => initAnimations(), { once: true });
+    window.addEventListener('models:all-ready', () => initAnimations(), {
+        once: true,
+    });
 }
 
 function initAnimations() {
@@ -113,33 +121,49 @@ function initAnimations() {
 
         // SHIP — editorial slide-up
         gsap.set('#hero-ship', { opacity: 1, yPercent: 150 });
-        gsap.to('#hero-ship',
-            { yPercent: 0, duration: 0.5, ease: 'power3.out', delay: 1.0 },
-        );
+        gsap.to('#hero-ship', {
+            yPercent: 0,
+            duration: 0.5,
+            ease: 'power3.out',
+            delay: 1.0,
+        });
 
         // FASTER — crisp left-to-right clip-path wipe
-        gsap.fromTo('#hero-faster',
+        gsap.fromTo(
+            '#hero-faster',
             { clipPath: 'inset(0 100% 0 0)' },
-            { clipPath: 'inset(0 0% 0 0)', duration: 0.4, ease: 'power2.inOut', delay: 1.4 },
+            {
+                clipPath: 'inset(0 0% 0 0)',
+                duration: 0.4,
+                ease: 'power2.inOut',
+                delay: 1.4,
+            },
         );
 
         // WITH ALBERT — solid block slides up over image, then wipes L→R to reveal text
         const withAlbertTl = gsap.timeline({ delay: 1.7 });
         // Slide text and overlay up together
-        withAlbertTl.fromTo('#hero-with-albert',
+        withAlbertTl.fromTo(
+            '#hero-with-albert',
             { yPercent: 100, opacity: 0 },
             { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out' },
             0,
         );
-        withAlbertTl.fromTo('#hero-with-albert-overlay',
+        withAlbertTl.fromTo(
+            '#hero-with-albert-overlay',
             { yPercent: 100 },
             { yPercent: 0, duration: 0.7, ease: 'power3.out' },
             0,
         );
         // Wipe overlay away L→R
-        withAlbertTl.fromTo('#hero-with-albert-overlay',
+        withAlbertTl.fromTo(
+            '#hero-with-albert-overlay',
             { clipPath: 'inset(0 0 0 0)' },
-            { clipPath: 'inset(0 0 0 100%)', duration: 0.3, ease: 'power2.inOut' },
+            {
+                clipPath: 'inset(0 0 0 100%)',
+                duration: 0.3,
+                ease: 'power2.inOut',
+            },
         );
 
         // Grid lines fade in
@@ -215,32 +239,20 @@ function initAnimations() {
             },
         });
 
-        // Cards fade up
-        gsap.utils.toArray<HTMLElement>('.experience-card').forEach((card) => {
+        // Cards parallax stacking — earlier cards scale down as next card scrolls over
+        const cards = gsap.utils.toArray<HTMLElement>('.experience-card');
+        cards.forEach((card, i) => {
+            if (i === cards.length - 1) return; // last card doesn't scale
+            const nextCard = cards[i + 1];
+            const targetScale = 1 - (cards.length - i) * 0.05;
             gsap.to(card, {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                ease: 'power3.out',
+                scale: targetScale,
+                ease: 'none',
                 scrollTrigger: {
-                    trigger: card,
-                    start: 'top 85%',
-                    toggleActions: 'play none none none',
-                },
-            });
-
-            // Bullets within each card
-            const bullets = card.querySelectorAll('.experience-bullet');
-            gsap.to(bullets, {
-                opacity: 1,
-                y: 0,
-                duration: 0.5,
-                stagger: 0.1,
-                ease: 'power2.out',
-                scrollTrigger: {
-                    trigger: card,
-                    start: 'top 75%',
-                    toggleActions: 'play none none none',
+                    trigger: nextCard,
+                    start: 'top bottom',
+                    end: 'top top',
+                    scrub: true,
                 },
             });
         });
@@ -262,13 +274,19 @@ function initAnimations() {
             });
 
         // ── Section Divider ──
-        const dividerChars = gsap.utils.toArray<HTMLElement>('.section-divider-char-inner');
+        const dividerChars = gsap.utils.toArray<HTMLElement>(
+            '.section-divider-char-inner',
+        );
         if (dividerChars.length) {
             // Shuffle indices and split into subgroups
-            const shuffled = [...Array(dividerChars.length).keys()]
-                .sort(() => Math.random() - 0.5);
+            const shuffled = [...Array(dividerChars.length).keys()].sort(
+                () => Math.random() - 0.5,
+            );
             const groupCount = 5;
-            const groups: HTMLElement[][] = Array.from({ length: groupCount }, () => []);
+            const groups: HTMLElement[][] = Array.from(
+                { length: groupCount },
+                () => [],
+            );
             shuffled.forEach((idx, i) => {
                 groups[i % groupCount].push(dividerChars[idx]);
             });
@@ -284,11 +302,15 @@ function initAnimations() {
 
             // Each subgroup flips at a staggered offset
             groups.forEach((group, i) => {
-                dividerTl.to(group, {
-                    yPercent: -45,
-                    duration: 1,
-                    ease: 'none',
-                }, i * 0.15);
+                dividerTl.to(
+                    group,
+                    {
+                        yPercent: -45,
+                        duration: 1,
+                        ease: 'none',
+                    },
+                    i * 0.15,
+                );
             });
         }
 
@@ -355,10 +377,11 @@ function initAnimations() {
             stagger: 0.03,
             ease: 'power1.inOut',
             onComplete: () => {
-                footerChars.forEach((el) => el.style.removeProperty('transform'));
+                footerChars.forEach((el) =>
+                    el.style.removeProperty('transform'),
+                );
             },
         });
-
     });
 
     // Cleanup on page navigation (Astro view transitions)
