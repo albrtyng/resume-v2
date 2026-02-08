@@ -95,29 +95,32 @@ body::before {
     color: var(--color-bg);
 }
 
-/* Footer link hover styles */
-.footer-link {
-    position: relative;
-    transition: color 0.3s ease;
+/* Flip link hover animation */
+.flip-link {
+    display: inline-flex;
+    align-self: center;
+    text-decoration: none;
+    color: inherit;
 }
 
-.footer-link:hover {
-    color: var(--color-bg);
+.flip-link-char {
+    display: inline-block;
+    overflow: hidden;
+    height: 1em;
+    line-height: 1;
 }
 
-.footer-link::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -2px;
-    width: 0;
-    height: 1px;
-    background-color: var(--color-bg);
-    transition: width 0.3s ease;
+.flip-link-char-inner {
+    display: block;
+    transition: transform 0.3s ease;
 }
 
-.footer-link:hover::after {
-    width: 100%;
+.flip-link-char-inner span {
+    display: block;
+}
+
+.flip-link:hover .flip-link-char-inner {
+    transform: translateY(-50%);
 }
 
 /* Reduced motion: show everything immediately, skip animations */
