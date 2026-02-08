@@ -9,14 +9,15 @@
     <!-- Layer 1: Split headline text (behind image) -->
     <div
         id="hero-text-layer"
-        class="absolute inset-0 z-10 flex flex-col justify-between px-[clamp(1.5rem,4vw,4rem)] py-[10vh]"
+        class="absolute z-10 flex flex-col justify-between px-[clamp(1.5rem,4vw,4rem)] py-[10vh]"
+        style="inset: clamp(0.5rem, 1.5vw, 1.5rem);"
     >
         <h1 class="flex w-full items-baseline justify-between">
             <div style="overflow: hidden;">
                 <span
                     id="hero-ship"
                     class="gsap-animated font-bold uppercase"
-                    style="font-size: clamp(4rem, 12vw, 12rem); line-height: 0.85; color: var(--color-hero); display: block; opacity: 0;"
+                    style="font-size: clamp(4.5rem, 13.5vw, 13.5rem); line-height: 0.85; color: var(--color-hero); display: block; opacity: 0;"
                 >
                     SHIP
                 </span>
@@ -24,36 +25,54 @@
             <span
                 id="hero-faster"
                 class="gsap-animated font-bold uppercase"
-                style="font-size: clamp(4rem, 12vw, 12rem); line-height: 0.85; color: var(--color-hero); clip-path: inset(0 100% 0 0); transform: skewX(-8deg);"
+                style="font-size: clamp(4.5rem, 13.5vw, 13.5rem); line-height: 0.85; color: var(--color-hero); clip-path: inset(0 100% 0 0); transform: skewX(-8deg);"
             >
                 FASTER
             </span>
         </h1>
 
+    </div>
+
+    <!-- Layer 1b: WITH ALBERT text (in front of image, respects padding) -->
+    <div
+        class="absolute z-[25] flex flex-col justify-end px-[clamp(1.5rem,4vw,4rem)] py-[10vh] pointer-events-none"
+        style="inset: clamp(0.5rem, 1.5vw, 1.5rem);"
+    >
         <div style="overflow: hidden;">
-        <div id="hero-with-albert" class="gsap-animated relative flex w-full items-baseline justify-between"
+        <div id="hero-with-albert" class="gsap-animated flex w-full items-baseline justify-between"
             style="opacity: 0;">
             <span
                 class="font-bold uppercase"
-                style="font-size: clamp(4rem, 12vw, 12rem); line-height: 0.85; color: #9EF5FB;"
+                style="font-size: clamp(4.5rem, 13.5vw, 13.5rem); line-height: 0.85; color: #9EF5FB;"
             >
                 WITH
             </span>
             <span
                 class="font-bold uppercase"
-                style="font-size: clamp(4rem, 12vw, 12rem); line-height: 0.85; color: #9EF5FB;"
+                style="font-size: clamp(4.5rem, 13.5vw, 13.5rem); line-height: 0.85; color: #9EF5FB;"
             >
                 ALBERT
             </span>
-            <div id="hero-with-albert-overlay" style="position: absolute; inset: 0; background: #9EF5FB;"></div>
         </div>
+        </div>
+    </div>
+
+    <!-- Layer 1c: WITH ALBERT solid overlay (full bleed, in front of text) -->
+    <div
+        class="absolute inset-0 z-[26] flex flex-col justify-end pointer-events-none"
+    >
+        <div style="overflow: hidden;">
+            <div id="hero-with-albert-overlay" style="background: #9EF5FB; padding: 2.5em 0;">
+                <div style="font-size: clamp(4.5rem, 13.5vw, 13.5rem); line-height: 0.85; visibility: hidden;">&#8203;</div>
+            </div>
         </div>
     </div>
 
     <!-- Layer 2: Portrait photo placeholder (in front of text) -->
     <div
         id="hero-photo-layer"
-        class="absolute inset-0 z-20 flex items-end justify-center"
+        class="absolute z-20 flex items-end justify-center"
+        style="inset: clamp(0.5rem, 1.5vw, 1.5rem);"
     >
         <div
             id="hero-photo"
@@ -66,7 +85,8 @@
     <!-- Layer 3: Subtitle + tagline overlay (in front of image) -->
     <div
         id="hero-overlay-layer"
-        class="absolute inset-x-0 bottom-0 z-30 flex flex-col items-center px-6 pb-12 md:pb-16"
+        class="absolute z-30 flex flex-col items-center px-6 pb-12 md:pb-16"
+        style="inset: clamp(0.5rem, 1.5vw, 1.5rem); top: auto;"
     >
         <p
             id="hero-subtitle"

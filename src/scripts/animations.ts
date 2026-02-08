@@ -45,12 +45,20 @@ function initAnimations() {
             { clipPath: 'inset(0 0% 0 0)', duration: 0.3, ease: 'power2.inOut', delay: 0.7 },
         );
 
-        // WITH ALBERT — solid block slides up, then overlay wipes L→R to reveal text
+        // WITH ALBERT — solid block slides up over image, then wipes L→R to reveal text
         const withAlbertTl = gsap.timeline({ delay: 1.1 });
+        // Slide text and overlay up together
         withAlbertTl.fromTo('#hero-with-albert',
             { yPercent: 100, opacity: 0 },
             { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out' },
+            0,
         );
+        withAlbertTl.fromTo('#hero-with-albert-overlay',
+            { yPercent: 100 },
+            { yPercent: 0, duration: 0.7, ease: 'power3.out' },
+            0,
+        );
+        // Wipe overlay away L→R
         withAlbertTl.fromTo('#hero-with-albert-overlay',
             { clipPath: 'inset(0 0 0 0)' },
             { clipPath: 'inset(0 0 0 100%)', duration: 0.3, ease: 'power2.inOut' },
