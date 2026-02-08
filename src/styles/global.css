@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 @font-face {
-    font-family: 'Telma';
-    src: url('/fonts/Telma-Bold.woff2') format('woff2');
+    font-family: 'Cabinet Grotesk';
+    src: url('/fonts/CabinetGrotesk-Bold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -40,7 +40,7 @@
     --color-accent-blue: #e5b9a8;
     --color-hero: #9cf6fb;
     --color-accent-light: #e1fcfd;
-    --font-display: 'Telma', Georgia, serif;
+    --font-display: 'Cabinet Grotesk', system-ui, sans-serif;
     --font-heading: 'Array', system-ui, sans-serif;
     --font-body: 'General Sans', system-ui, sans-serif;
 }
@@ -137,5 +137,7 @@ body::before {
         opacity: 1 !important;
         transform: none !important;
         clip-path: none !important;
+        -webkit-mask: none !important;
+        mask: none !important;
     }
 }

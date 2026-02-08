@@ -3,34 +3,84 @@
 
 <section
     id="hero"
-    class="relative flex min-h-svh flex-col items-start justify-center overflow-hidden px-6"
-    style="background-color: #4a5fc1; margin: 0 calc(-1 * clamp(1rem, 5vw, 6rem)); padding-left: clamp(1rem, 5vw, 6rem); padding-right: clamp(1rem, 5vw, 6rem);"
+    class="relative flex min-h-svh items-center justify-center overflow-hidden"
+    style="background-color: #4a5fc1; margin: 0 calc(-1 * clamp(1rem, 5vw, 6rem));"
 >
-<div class="mx-auto w-full max-w-5xl">
-        <!-- Name -->
-        <h1
-            id="hero-name"
-            class="gsap-animated text-left font-bold leading-none"
-            style="font-size: clamp(3rem, 8vw, 8rem); color: var(--color-hero);"
-        >
-            Ship faster with Albert
+    <!-- Layer 1: Split headline text (behind image) -->
+    <div
+        id="hero-text-layer"
+        class="absolute inset-0 z-10 flex flex-col justify-between px-[clamp(1.5rem,4vw,4rem)] py-[10vh]"
+    >
+        <h1 class="flex w-full items-baseline justify-between">
+            <div style="overflow: hidden;">
+                <span
+                    id="hero-ship"
+                    class="gsap-animated font-bold uppercase"
+                    style="font-size: clamp(4rem, 12vw, 12rem); line-height: 0.85; color: var(--color-hero); display: block; opacity: 0;"
+                >
+                    SHIP
+                </span>
+            </div>
+            <span
+                id="hero-faster"
+                class="gsap-animated font-bold uppercase"
+                style="font-size: clamp(4rem, 12vw, 12rem); line-height: 0.85; color: var(--color-hero); clip-path: inset(0 100% 0 0); transform: skewX(-8deg);"
+            >
+                FASTER
+            </span>
         </h1>
 
-        <!-- Subtitle -->
+        <div style="overflow: hidden;">
+        <div id="hero-with-albert" class="gsap-animated relative flex w-full items-baseline justify-between"
+            style="opacity: 0;">
+            <span
+                class="font-bold uppercase"
+                style="font-size: clamp(4rem, 12vw, 12rem); line-height: 0.85; color: #9EF5FB;"
+            >
+                WITH
+            </span>
+            <span
+                class="font-bold uppercase"
+                style="font-size: clamp(4rem, 12vw, 12rem); line-height: 0.85; color: #9EF5FB;"
+            >
+                ALBERT
+            </span>
+            <div id="hero-with-albert-overlay" style="position: absolute; inset: 0; background: #9EF5FB;"></div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Layer 2: Portrait photo placeholder (in front of text) -->
+    <div
+        id="hero-photo-layer"
+        class="absolute inset-0 z-20 flex items-end justify-center"
+    >
+        <div
+            id="hero-photo"
+            class="gsap-animated w-[65vw] sm:w-[45vw] md:w-[40vw] max-w-[500px]"
+            style="background-color: #394f8a; aspect-ratio: 3/4; opacity: 0;"
+        >
+        </div>
+    </div>
+
+    <!-- Layer 3: Subtitle + tagline overlay (in front of image) -->
+    <div
+        id="hero-overlay-layer"
+        class="absolute inset-x-0 bottom-0 z-30 flex flex-col items-center px-6 pb-12 md:pb-16"
+    >
         <p
             id="hero-subtitle"
-            class="gsap-animated mt-4 text-left md:mt-6"
-            style="font-size: clamp(1rem, 2.5vw, 1.75rem); color: var(--color-muted); opacity: 0;"
+            class="gsap-animated text-center uppercase"
+            style="font-size: clamp(1rem, 2.5vw, 1.75rem); color: var(--color-muted); letter-spacing: 0.15em; opacity: 0;"
         >
             <span class="hero-word">Full-Stack</span>
             <span class="hero-word">Software</span>
             <span class="hero-word">Engineer</span>
         </p>
 
-        <!-- Tagline -->
         <p
             id="hero-tagline"
-            class="gsap-animated mt-6 max-w-xl text-left md:mt-8"
+            class="gsap-animated mt-3 text-center md:mt-4"
             style="font-size: clamp(1.125rem, 2.5vw, 1.75rem); color: var(--color-accent-light); opacity: 0;"
         >
             5+ years building products used by millions

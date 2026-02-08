@@ -23,7 +23,8 @@ const prefersReducedMotion = window.matchMedia(
 
 if (prefersReducedMotion) {
     // Show everything immediately
-    gsap.set('.gsap-animated', { opacity: 1, y: 0, x: 0, clipPath: 'none' });
+    gsap.set('.gsap-animated', { opacity: 1, y: 0, x: 0, yPercent: 0, clipPath: 'none' });
+    gsap.set('#hero-with-albert-overlay', { display: 'none' });
 } else {
     initAnimations();
 }
@@ -32,27 +33,42 @@ function initAnimations() {
     const ctx = gsap.context(() => {
         // ── Hero Animations ──
 
-        // Split name into characters
-        const nameEl = document.getElementById('hero-name');
-        if (nameEl) {
-            const text = nameEl.textContent || '';
-            nameEl.innerHTML = text
-                .split('')
-                .map(
-                    (char) =>
-                        `<span class="hero-char" style="display:inline-block; opacity:0; transform:translateY(30px);">${char === ' ' ? '&nbsp;' : char}</span>`,
-                )
-                .join('');
+        // SHIP — editorial slide-up
+        gsap.fromTo('#hero-ship',
+            { yPercent: 100, opacity: 0 },
+            { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.3 },
+        );
 
-            gsap.to('.hero-char', {
+        // FASTER — crisp left-to-right clip-path wipe
+        gsap.fromTo('#hero-faster',
+            { clipPath: 'inset(0 100% 0 0)' },
+            { clipPath: 'inset(0 0% 0 0)', duration: 0.3, ease: 'power2.inOut', delay: 0.7 },
+        );
+
+        // WITH ALBERT — solid block slides up, then overlay wipes L→R to reveal text
+        const withAlbertTl = gsap.timeline({ delay: 1.1 });
+        withAlbertTl.fromTo('#hero-with-albert',
+            { yPercent: 100, opacity: 0 },
+            { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out' },
+        );
+        withAlbertTl.fromTo('#hero-with-albert-overlay',
+            { clipPath: 'inset(0 0 0 0)' },
+            { clipPath: 'inset(0 0 0 100%)', duration: 0.3, ease: 'power2.inOut' },
+        );
+
+        // Image reveal
+        gsap.fromTo(
+            '#hero-photo',
+            { opacity: 0, y: 40, scale: 0.95 },
+            {
                 opacity: 1,
                 y: 0,
-                duration: 0.6,
-                stagger: 0.03,
+                scale: 1,
+                duration: 1.2,
                 ease: 'power3.out',
-                delay: 0.2,
-            });
-        }
+                delay: 0.6,
+            },
+        );
 
         // Subtitle word reveal
         gsap.to('.hero-word', {
@@ -61,7 +77,7 @@ function initAnimations() {
             duration: 0.5,
             stagger: 0.15,
             ease: 'power2.out',
-            delay: 0.8,
+            delay: 1.5,
             onStart: function () {
                 gsap.set('.hero-word', {
                     display: 'inline-block',
@@ -77,14 +93,14 @@ function initAnimations() {
             opacity: 1,
             duration: 0.8,
             ease: 'power2.out',
-            delay: 1.4,
+            delay: 2.2,
         });
 
         // Scroll indicator
         gsap.to('#scroll-indicator', {
             opacity: 1,
             duration: 0.6,
-            delay: 2,
+            delay: 2.5,
             ease: 'power2.out',
         });
 
@@ -96,10 +112,20 @@ function initAnimations() {
             ease: 'power1.inOut',
         });
 
-        // Hero background parallax on scroll
-        gsap.to('#hero-bg', {
-            yPercent: 30,
-            opacity: 0.1,
+        // Hero parallax on scroll — text moves faster than image for depth
+        gsap.to('#hero-text-layer', {
+            yPercent: -15,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true,
+            },
+        });
+
+        gsap.to('#hero-photo-layer', {
+            yPercent: -5,
             ease: 'none',
             scrollTrigger: {
                 trigger: '#hero',
@@ -243,12 +269,10 @@ function initAnimations() {
 
         gsap.matchMedia({
             '(max-width: 639px)': () => {
-                // On mobile, simplify: disable parallax
+                // On mobile, simplify: disable hero parallax
+                const heroEl = document.getElementById('hero');
                 ScrollTrigger.getAll()
-                    .filter(
-                        (st) =>
-                            st.trigger === document.getElementById('hero-bg'),
-                    )
+                    .filter((st) => st.trigger === heroEl)
                     .forEach((st) => st.kill());
             },
         });
