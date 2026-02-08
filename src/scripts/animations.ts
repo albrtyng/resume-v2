@@ -213,23 +213,31 @@ function initAnimations() {
             '>',
         );
 
-        // LinkedIn Lottie button reveal — chained after footer words
-        const lottieEl = document.querySelector('#lottie-linkedin')?.parentElement;
-        if (lottieEl) {
-            fadeInTl.to(
-                lottieEl,
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.6,
-                    ease: 'power2.out',
-                    onStart: () => {
-                        (window as any).__lottieLinkedin?.play();
-                    },
-                },
-                '>',
-            );
-        }
+        // Footer links — staggered flip-up entry, chained after footer words
+        const footerChars = gsap.utils.toArray<HTMLElement>(
+            '#footer-links .flip-link-char-inner',
+        );
+        gsap.set(footerChars, { yPercent: 100 });
+
+        fadeInTl.to(
+            '#footer-links',
+            {
+                opacity: 1,
+                y: 0,
+                duration: 0.01,
+            },
+            '>',
+        );
+
+        fadeInTl.to(footerChars, {
+            yPercent: 0,
+            duration: 0.3,
+            stagger: 0.03,
+            ease: 'power1.inOut',
+            onComplete: () => {
+                footerChars.forEach((el) => el.style.removeProperty('transform'));
+            },
+        });
 
         // ── Responsive variants ──
 
