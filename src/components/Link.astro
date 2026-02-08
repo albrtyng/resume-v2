@@ -1,0 +1,23 @@
+---
+interface Props {
+    text: string;
+    href: string;
+}
+
+const { text, href } = Astro.props;
+const chars = text.split('');
+---
+
+<a href={href} target="_blank" rel="noopener noreferrer" class="flip-link">
+    {chars.map((char, i) => (
+        <span class="flip-link-char">
+            <span
+                class="flip-link-char-inner"
+                style={`transition-delay: ${i * 0.03}s;`}
+            >
+                <span>{char === ' ' ? '\u00A0' : char}</span>
+                <span>{char === ' ' ? '\u00A0' : char}</span>
+            </span>
+        </span>
+    ))}
+</a>
