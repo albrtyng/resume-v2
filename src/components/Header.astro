@@ -1,0 +1,64 @@
+---
+const superChars = 'Super.com'.split('');
+const ctaChars = 'Get in Touch'.split('');
+---
+
+<header id="site-header" class="gsap-animated" style="position:fixed;top:0;left:0;right:0;z-index:50;opacity:0;pointer-events:none;overflow:hidden;">
+    <div id="header-backdrop" style="position:absolute;inset:0;opacity:0;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);background:rgba(255,255,255,0.15);"></div>
+    <nav style="position:relative;display:flex;align-items:center;gap:10rem;padding:1.4rem clamp(1rem, 5vw, 6rem);pointer-events:auto;">
+        <!-- Block 1: Location -->
+        <div class="header-block" data-header-block="1">
+            <span class="header-word-wrap header-bold-wrap"><span class="header-word header-block-bold">Canada-based</span></span>
+            <span class="header-word-wrap header-normal-wrap"><span class="header-word header-block-normal">Working globally</span></span>
+        </div>
+
+        <!-- Block 2: Company -->
+        <div class="header-block" data-header-block="2">
+            <span class="header-word-wrap header-bold-wrap"><span class="header-word header-block-bold">Building at</span></span>
+            <span class="header-word-wrap header-normal-wrap">
+                <span class="header-word">
+                    <a href="https://www.linkedin.com/in/albrtyng/" target="_blank" rel="noopener noreferrer" class="flip-link">
+                        {superChars.map((char, i) => (
+                            <span class="flip-link-char">
+                                <span
+                                    class="flip-link-char-inner"
+                                    style={`transition-delay: ${i * 0.015}s;`}
+                                >
+                                    <span>{char === ' ' ? '\u00A0' : char}</span>
+                                    <span>{char === ' ' ? '\u00A0' : char}</span>
+                                </span>
+                            </span>
+                        ))}
+                    </a>
+                </span>
+            </span>
+        </div>
+
+        <!-- Block 3: Experience -->
+        <div class="header-block" data-header-block="3">
+            <span class="header-word-wrap header-bold-wrap"><span class="header-word header-block-bold">Years of experience</span></span>
+            <span class="header-word-wrap header-normal-wrap"><span class="header-word header-block-normal">6 years and counting</span></span>
+        </div>
+
+        <!-- Block 4: CTA -->
+        <div class="header-block" data-header-block="4">
+            <span class="header-word-wrap header-bold-wrap">
+                <span class="header-word">
+                    <a href="mailto:albertesyang@gmail.com" class="flip-link header-pill">
+                        {ctaChars.map((char, i) => (
+                            <span class="flip-link-char">
+                                <span
+                                    class="flip-link-char-inner"
+                                    style={`transition-delay: ${i * 0.015}s;`}
+                                >
+                                    <span>{char === ' ' ? '\u00A0' : char}</span>
+                                    <span>{char === ' ' ? '\u00A0' : char}</span>
+                                </span>
+                            </span>
+                        ))}
+                    </a>
+                </span>
+            </span>
+        </div>
+    </nav>
+</header>
