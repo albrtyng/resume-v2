@@ -64,20 +64,6 @@ function initAnimations() {
             { clipPath: 'inset(0 0 0 100%)', duration: 0.3, ease: 'power2.inOut' },
         );
 
-        // Image reveal
-        gsap.fromTo(
-            '#hero-photo',
-            { opacity: 0, y: 40, scale: 0.95 },
-            {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 1.2,
-                ease: 'power3.out',
-                delay: 0.6,
-            },
-        );
-
         // Subtitle word reveal
         gsap.to('.hero-word', {
             opacity: 1,
@@ -156,16 +142,6 @@ function initAnimations() {
             },
         });
 
-        gsap.to('#hero-photo-layer', {
-            yPercent: -5,
-            ease: 'none',
-            scrollTrigger: {
-                trigger: '#hero',
-                start: 'top top',
-                end: 'bottom top',
-                scrub: true,
-            },
-        });
 
         // ── Experience Animations ──
 

@@ -25,9 +25,9 @@
             <span
                 id="hero-faster"
                 class="gsap-animated font-bold uppercase"
-                style="font-size: clamp(4.5rem, 13.5vw, 13.5rem); line-height: 0.85; color: var(--color-hero); clip-path: inset(0 100% 0 0); transform: skewX(-8deg);"
+                style="font-family: 'Racing Sans One', system-ui, sans-serif; font-size: clamp(4.5rem, 13.5vw, 13.5rem); line-height: 0.85; color: var(--color-hero); clip-path: inset(0 100% 0 0); transform: skewX(-8deg); padding-right: 0.01em;"
             >
-                FASTER
+                <span style="font-family: 'Faster One', system-ui, sans-serif;">F</span>ASTER
             </span>
         </h1>
 
@@ -70,21 +70,7 @@
         </div>
     </div>
 
-    <!-- Layer 2: Portrait photo placeholder (in front of text) -->
-    <div
-        id="hero-photo-layer"
-        class="absolute z-20 flex items-end justify-center"
-        style="inset: clamp(0.5rem, 1.5vw, 1.5rem);"
-    >
-        <div
-            id="hero-photo"
-            class="gsap-animated w-[65vw] sm:w-[45vw] md:w-[40vw] max-w-[500px]"
-            style="background-color: #394f8a; aspect-ratio: 3/4; opacity: 0;"
-        >
-        </div>
-    </div>
-
-    <!-- Layer 3: Subtitle + tagline overlay (in front of image) -->
+    <!-- Layer 2: Subtitle + tagline overlay -->
     <div
         id="hero-overlay-layer"
         class="absolute z-30 flex flex-col items-center px-6 pb-12 md:pb-16"
