@@ -21,16 +21,30 @@ const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
 ).matches;
 
+// Block scrolling until loading is finished
+lenis.stop();
+
 if (prefersReducedMotion) {
     // Show everything immediately
     gsap.set('.gsap-animated', { opacity: 1, y: 0, x: 0, yPercent: 0, clipPath: 'none' });
     gsap.set('#hero-with-albert-overlay', { display: 'none' });
     document.getElementById('hero-shutter')?.remove();
+    document.getElementById('hero-loader')?.remove();
+    lenis.start();
 } else {
-    initAnimations();
+    window.addEventListener('ship-scene:ready', () => initAnimations(), { once: true });
 }
 
 function initAnimations() {
+    // Fade out loading counter alongside shutter reveal
+    gsap.to('#hero-loader', {
+        yPercent: -50,
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power2.in',
+        onComplete: () => document.getElementById('hero-loader')?.remove(),
+    });
+
     const ctx = gsap.context(() => {
         // ── Hero Animations ──
 
@@ -42,19 +56,20 @@ function initAnimations() {
             ease: 'power3.inOut',
             onComplete: () => {
                 document.getElementById('hero-shutter')?.remove();
+                lenis.start();
             },
         });
 
         // SHIP — editorial slide-up
-        gsap.fromTo('#hero-ship',
-            { yPercent: 100, opacity: 0 },
-            { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 1.0 },
+        gsap.set('#hero-ship', { opacity: 1, yPercent: 150 });
+        gsap.to('#hero-ship',
+            { yPercent: 0, duration: 0.5, ease: 'power3.out', delay: 1.0 },
         );
 
         // FASTER — crisp left-to-right clip-path wipe
         gsap.fromTo('#hero-faster',
             { clipPath: 'inset(0 100% 0 0)' },
-            { clipPath: 'inset(0 0% 0 0)', duration: 0.3, ease: 'power2.inOut', delay: 1.3 },
+            { clipPath: 'inset(0 0% 0 0)', duration: 0.4, ease: 'power2.inOut', delay: 1.4 },
         );
 
         // WITH ALBERT — solid block slides up over image, then wipes L→R to reveal text
@@ -262,17 +277,6 @@ function initAnimations() {
             },
         });
 
-        // ── Responsive variants ──
-
-        gsap.matchMedia({
-            '(max-width: 639px)': () => {
-                // On mobile, simplify: disable hero parallax
-                const heroEl = document.getElementById('hero');
-                ScrollTrigger.getAll()
-                    .filter((st) => st.trigger === heroEl)
-                    .forEach((st) => st.kill());
-            },
-        });
     });
 
     // Cleanup on page navigation (Astro view transitions)

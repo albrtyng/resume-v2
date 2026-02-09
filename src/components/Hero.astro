@@ -14,16 +14,28 @@
         aria-hidden="true"
     ></div>
 
+    <!-- 3D ship canvas — renders behind text, above grid -->
+    <canvas
+        id="hero-ship-canvas"
+        class="pointer-events-none absolute inset-0 z-[5]"
+        aria-hidden="true"
+    ></canvas>
+
+    <!-- Loading counter — visible over shutter while models load -->
+    <div id="hero-loader" class="pointer-events-none absolute inset-0 z-[61] flex items-center justify-center sm:items-end sm:justify-end sm:p-8" aria-hidden="true">
+        <span id="hero-loader-text" style="font-family: var(--font-display); font-size: clamp(3rem, 8vw, 5rem); color: #000; padding-right: 0.4em;">0%</span>
+    </div>
+
     <!-- Shutter reveal overlay — bars slide up to reveal hero -->
-    <div id="hero-shutter" class="pointer-events-none absolute inset-0 z-50 flex" aria-hidden="true">
-        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
-        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
-        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
-        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
-        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
-        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
-        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
-        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+    <div id="hero-shutter" class="pointer-events-none absolute inset-0 z-[60] grid grid-cols-4 sm:grid-cols-8" aria-hidden="true">
+        <div class="hero-shutter-bar" style="background: var(--color-bg); margin: 0 -1px;"></div>
+        <div class="hero-shutter-bar" style="background: var(--color-bg); margin: 0 -1px;"></div>
+        <div class="hero-shutter-bar" style="background: var(--color-bg); margin: 0 -1px;"></div>
+        <div class="hero-shutter-bar" style="background: var(--color-bg); margin: 0 -1px;"></div>
+        <div class="hero-shutter-bar hidden sm:block" style="background: var(--color-bg); margin: 0 -1px;"></div>
+        <div class="hero-shutter-bar hidden sm:block" style="background: var(--color-bg); margin: 0 -1px;"></div>
+        <div class="hero-shutter-bar hidden sm:block" style="background: var(--color-bg); margin: 0 -1px;"></div>
+        <div class="hero-shutter-bar hidden sm:block" style="background: var(--color-bg); margin: 0 -1px;"></div>
     </div>
 
     <!-- Headline wrapper — contains all text layers as a single centered block -->
@@ -101,3 +113,7 @@
         </div>
     </div>
 </section>
+
+<script>
+    import '../scripts/ship-scene';
+</script>
