@@ -3,37 +3,101 @@
 
 <section
     id="hero"
-    class="relative flex min-h-svh flex-col items-start justify-center overflow-hidden px-6"
-    style="background-color: #4a5fc1; margin: 0 calc(-1 * clamp(1rem, 5vw, 6rem)); padding-left: clamp(1rem, 5vw, 6rem); padding-right: clamp(1rem, 5vw, 6rem);"
+    class="relative flex min-h-svh flex-col justify-center overflow-hidden"
+    style="background-color: #4a5fc1; margin: 0 calc(-1 * clamp(1rem, 5vw, 6rem));"
 >
-<div class="mx-auto w-full max-w-5xl">
-        <!-- Name -->
-        <h1
-            id="hero-name"
-            class="gsap-animated text-left font-bold leading-none"
-            style="font-size: clamp(3rem, 8vw, 8rem); color: var(--color-hero);"
-        >
-            Ship faster with Albert
-        </h1>
+    <!-- Decorative vertical grid lines -->
+    <div
+        id="hero-grid"
+        class="gsap-animated pointer-events-none absolute inset-0 z-0"
+        style="opacity: 0;"
+        aria-hidden="true"
+    ></div>
 
-        <!-- Subtitle -->
-        <p
-            id="hero-subtitle"
-            class="gsap-animated mt-4 text-left md:mt-6"
-            style="font-size: clamp(1rem, 2.5vw, 1.75rem); color: var(--color-muted); opacity: 0;"
-        >
-            <span class="hero-word">Full-Stack</span>
-            <span class="hero-word">Software</span>
-            <span class="hero-word">Engineer</span>
-        </p>
+    <!-- Shutter reveal overlay — bars slide up to reveal hero -->
+    <div id="hero-shutter" class="pointer-events-none absolute inset-0 z-50 flex" aria-hidden="true">
+        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+        <div class="hero-shutter-bar flex-1" style="background: var(--color-bg);"></div>
+    </div>
 
-        <!-- Tagline -->
-        <p
-            id="hero-tagline"
-            class="gsap-animated mt-6 max-w-xl text-left md:mt-8"
-            style="font-size: clamp(1.125rem, 2.5vw, 1.75rem); color: var(--color-accent-light); opacity: 0;"
+    <!-- Headline wrapper — contains all text layers as a single centered block -->
+    <div class="relative w-full">
+        <!-- Headline area: SHIP + faster on line 1, spacer for WITH ALBERT on line 2 -->
+        <div
+            id="hero-headline-area"
+            class="relative z-10"
         >
-            5+ years building products used by millions
-        </p>
+            <!-- Line 1: SHIP + faster (adjacent, left-aligned) -->
+            <h1 class="flex items-baseline gap-[clamp(0.75rem,2vw,2rem)]" style="padding-left: calc(100% / 8);">
+                <div style="overflow: hidden; padding-top: 0.3em;">
+                    <span
+                        id="hero-ship"
+                        class="gsap-animated block font-bold uppercase"
+                        style="font-size: clamp(5rem, 14vw, 15rem); line-height: 0.85; color: var(--color-hero); opacity: 0;"
+                    >
+                        SHIP
+                    </span>
+                </div>
+                <span
+                    id="hero-faster"
+                    class="gsap-animated font-bold"
+                    style="font-family: 'Racing Sans One', system-ui, sans-serif; font-size: clamp(3rem, 8vw, 9rem); line-height: 0.85; color: var(--color-hero); clip-path: inset(0 100% 0 0); transform: skewX(-8deg); padding-right: 0.3em;"
+                >
+                    faster
+                </span>
+            </h1>
+
+            <!-- Line 2: invisible spacer matching WITH ALBERT height -->
+            <div
+                aria-hidden="true"
+                class="font-bold uppercase"
+                style="font-family: var(--font-display); font-size: clamp(4rem, 17.5vw, 20rem); line-height: 0.85; visibility: hidden; white-space: nowrap; padding-left: calc(100% / 4);"
+            >
+                WITH ALBERT
+            </div>
+        </div>
+
+        <!-- WITH ALBERT text layer (absolute, bottom-aligned within wrapper) -->
+        <div
+            id="hero-with-albert-layer"
+            class="pointer-events-none absolute inset-x-0 bottom-0 z-[25]"
+        >
+            <div style="overflow: hidden;">
+                <div
+                    id="hero-with-albert"
+                    class="gsap-animated font-bold uppercase"
+                    style="font-family: var(--font-display); font-size: clamp(4rem, 17.5vw, 20rem); line-height: 0.85; color: #9EF5FB; opacity: 0; white-space: nowrap; padding-left: calc(100% / 4);"
+                >
+                    WITH ALBERT
+                </div>
+            </div>
+        </div>
+
+        <!-- WITH ALBERT solid overlay (wipes L→R to reveal text) -->
+        <div
+            id="hero-with-albert-overlay-layer"
+            class="pointer-events-none absolute inset-x-0 bottom-0 z-[26] flex flex-col justify-end"
+        >
+            <div style="overflow: hidden;">
+                <div
+                    id="hero-with-albert-overlay"
+                    class=""
+                    style="background: #9EF5FB; padding-top: 0.15em; padding-bottom: 0.15em;"
+                >
+                    <div
+                        class="font-bold uppercase"
+                        style="font-family: var(--font-display); font-size: clamp(4rem, 17.5vw, 20rem); line-height: 0.85; visibility: hidden; white-space: nowrap; padding-left: calc(100% / 4);"
+                    >
+                        WITH ALBERT
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>

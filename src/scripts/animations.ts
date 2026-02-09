@@ -23,7 +23,9 @@ const prefersReducedMotion = window.matchMedia(
 
 if (prefersReducedMotion) {
     // Show everything immediately
-    gsap.set('.gsap-animated', { opacity: 1, y: 0, x: 0, clipPath: 'none' });
+    gsap.set('.gsap-animated', { opacity: 1, y: 0, x: 0, yPercent: 0, clipPath: 'none' });
+    gsap.set('#hero-with-albert-overlay', { display: 'none' });
+    document.getElementById('hero-shutter')?.remove();
 } else {
     initAnimations();
 }
@@ -32,59 +34,61 @@ function initAnimations() {
     const ctx = gsap.context(() => {
         // ── Hero Animations ──
 
-        // Split name into characters
-        const nameEl = document.getElementById('hero-name');
-        if (nameEl) {
-            const text = nameEl.textContent || '';
-            nameEl.innerHTML = text
-                .split('')
-                .map(
-                    (char) =>
-                        `<span class="hero-char" style="display:inline-block; opacity:0; transform:translateY(30px);">${char === ' ' ? '&nbsp;' : char}</span>`,
-                )
-                .join('');
-
-            gsap.to('.hero-char', {
-                opacity: 1,
-                y: 0,
-                duration: 0.6,
-                stagger: 0.03,
-                ease: 'power3.out',
-                delay: 0.2,
-            });
-        }
-
-        // Subtitle word reveal
-        gsap.to('.hero-word', {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            stagger: 0.15,
-            ease: 'power2.out',
-            delay: 0.8,
-            onStart: function () {
-                gsap.set('.hero-word', {
-                    display: 'inline-block',
-                    opacity: 0,
-                    y: 20,
-                    marginRight: '0.3em',
-                });
+        // Shutter reveal — vertical bars slide up in staggered sequence
+        gsap.to('.hero-shutter-bar', {
+            yPercent: -100,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: 'power3.inOut',
+            onComplete: () => {
+                document.getElementById('hero-shutter')?.remove();
             },
         });
 
-        // Tagline fade in
-        gsap.to('#hero-tagline', {
+        // SHIP — editorial slide-up
+        gsap.fromTo('#hero-ship',
+            { yPercent: 100, opacity: 0 },
+            { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 1.0 },
+        );
+
+        // FASTER — crisp left-to-right clip-path wipe
+        gsap.fromTo('#hero-faster',
+            { clipPath: 'inset(0 100% 0 0)' },
+            { clipPath: 'inset(0 0% 0 0)', duration: 0.3, ease: 'power2.inOut', delay: 1.3 },
+        );
+
+        // WITH ALBERT — solid block slides up over image, then wipes L→R to reveal text
+        const withAlbertTl = gsap.timeline({ delay: 1.7 });
+        // Slide text and overlay up together
+        withAlbertTl.fromTo('#hero-with-albert',
+            { yPercent: 100, opacity: 0 },
+            { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out' },
+            0,
+        );
+        withAlbertTl.fromTo('#hero-with-albert-overlay',
+            { yPercent: 100 },
+            { yPercent: 0, duration: 0.7, ease: 'power3.out' },
+            0,
+        );
+        // Wipe overlay away L→R
+        withAlbertTl.fromTo('#hero-with-albert-overlay',
+            { clipPath: 'inset(0 0 0 0)' },
+            { clipPath: 'inset(0 0 0 100%)', duration: 0.3, ease: 'power2.inOut' },
+        );
+
+        // Grid lines fade in
+        gsap.to('#hero-grid', {
             opacity: 1,
-            duration: 0.8,
+            duration: 1,
             ease: 'power2.out',
-            delay: 1.4,
+            delay: 2.5,
         });
 
         // Scroll indicator
         gsap.to('#scroll-indicator', {
             opacity: 1,
             duration: 0.6,
-            delay: 2,
+            delay: 2.5,
             ease: 'power2.out',
         });
 
@@ -96,10 +100,31 @@ function initAnimations() {
             ease: 'power1.inOut',
         });
 
-        // Hero background parallax on scroll
-        gsap.to('#hero-bg', {
-            yPercent: 30,
-            opacity: 0.1,
+        // Hero parallax on scroll
+        gsap.to('#hero-headline-area', {
+            yPercent: -12,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true,
+            },
+        });
+
+        gsap.to('#hero-with-albert-layer', {
+            yPercent: -12,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true,
+            },
+        });
+
+        gsap.to('#hero-with-albert-overlay-layer', {
+            yPercent: -12,
             ease: 'none',
             scrollTrigger: {
                 trigger: '#hero',
@@ -198,7 +223,6 @@ function initAnimations() {
             x: 0,
             duration: 0.2,
             stagger: 0.1,
-            // ease: 'power2.out',
         });
 
         // Timeline 2: snap Create & Ship to y=0 after fade-in completes
@@ -208,7 +232,6 @@ function initAnimations() {
                 y: 0,
                 duration: 0.1,
                 stagger: 0.12,
-                // ease: 'power4.out',
             },
             '>',
         );
@@ -243,12 +266,10 @@ function initAnimations() {
 
         gsap.matchMedia({
             '(max-width: 639px)': () => {
-                // On mobile, simplify: disable parallax
+                // On mobile, simplify: disable hero parallax
+                const heroEl = document.getElementById('hero');
                 ScrollTrigger.getAll()
-                    .filter(
-                        (st) =>
-                            st.trigger === document.getElementById('hero-bg'),
-                    )
+                    .filter((st) => st.trigger === heroEl)
                     .forEach((st) => st.kill());
             },
         });

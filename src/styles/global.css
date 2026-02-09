@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 @font-face {
-    font-family: 'Telma';
-    src: url('/fonts/Telma-Bold.woff2') format('woff2');
+    font-family: 'Mango Grotesque';
+    src: url('/fonts/MangoGrotesque-Bold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
     font-display: swap;
@@ -32,6 +32,14 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Racing Sans One';
+    src: url('/fonts/RacingSansOne-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     --color-bg: #ead6cd;
     --color-text: #000000;
@@ -40,7 +48,7 @@
     --color-accent-blue: #e5b9a8;
     --color-hero: #9cf6fb;
     --color-accent-light: #e1fcfd;
-    --font-display: 'Telma', Georgia, serif;
+    --font-display: 'Mango Grotesque', system-ui, sans-serif;
     --font-heading: 'Array', system-ui, sans-serif;
     --font-body: 'General Sans', system-ui, sans-serif;
 }
@@ -75,6 +83,14 @@ h1 {
 h2, h3 {
     font-family: var(--font-heading);
     letter-spacing: -0.02em;
+}
+
+#hero-grid {
+    background-image: repeating-linear-gradient(
+        90deg, rgba(158,245,251,0.06) 0px, rgba(158,245,251,0.06) 1px,
+        transparent 1px, transparent
+    );
+    background-size: calc(100% / 8) 100%;
 }
 
 /* Noise texture overlay */
@@ -137,5 +153,7 @@ body::before {
         opacity: 1 !important;
         transform: none !important;
         clip-path: none !important;
+        -webkit-mask: none !important;
+        mask: none !important;
     }
 }
