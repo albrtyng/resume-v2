@@ -25,6 +25,7 @@ if (prefersReducedMotion) {
     // Show everything immediately
     gsap.set('.gsap-animated', { opacity: 1, y: 0, x: 0, yPercent: 0, clipPath: 'none' });
     gsap.set('#hero-with-albert-overlay', { display: 'none' });
+    document.getElementById('hero-shutter')?.remove();
 } else {
     initAnimations();
 }
@@ -33,20 +34,42 @@ function initAnimations() {
     const ctx = gsap.context(() => {
         // ── Hero Animations ──
 
+        // Shutter reveal — vertical bars slide up in staggered sequence
+        gsap.to('.hero-shutter-bar', {
+            yPercent: -100,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: 'power3.inOut',
+            onComplete: () => {
+                document.getElementById('hero-shutter')?.remove();
+            },
+        });
+
+        // Label + descriptor fade in
+        gsap.fromTo('#hero-label',
+            { opacity: 0, y: -10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.9 },
+        );
+
+        gsap.fromTo('#hero-descriptor',
+            { opacity: 0, y: -10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.9 },
+        );
+
         // SHIP — editorial slide-up
         gsap.fromTo('#hero-ship',
             { yPercent: 100, opacity: 0 },
-            { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 0.3 },
+            { yPercent: 0, opacity: 1, duration: 0.7, ease: 'power3.out', delay: 1.0 },
         );
 
         // FASTER — crisp left-to-right clip-path wipe
         gsap.fromTo('#hero-faster',
             { clipPath: 'inset(0 100% 0 0)' },
-            { clipPath: 'inset(0 0% 0 0)', duration: 0.3, ease: 'power2.inOut', delay: 0.7 },
+            { clipPath: 'inset(0 0% 0 0)', duration: 0.3, ease: 'power2.inOut', delay: 1.4 },
         );
 
         // WITH ALBERT — solid block slides up over image, then wipes L→R to reveal text
-        const withAlbertTl = gsap.timeline({ delay: 1.1 });
+        const withAlbertTl = gsap.timeline({ delay: 1.8 });
         // Slide text and overlay up together
         withAlbertTl.fromTo('#hero-with-albert',
             { yPercent: 100, opacity: 0 },
@@ -64,30 +87,12 @@ function initAnimations() {
             { clipPath: 'inset(0 0 0 100%)', duration: 0.3, ease: 'power2.inOut' },
         );
 
-        // Subtitle word reveal
-        gsap.to('.hero-word', {
+        // Grid lines fade in
+        gsap.to('#hero-grid', {
             opacity: 1,
-            y: 0,
-            duration: 0.5,
-            stagger: 0.15,
+            duration: 1,
             ease: 'power2.out',
-            delay: 1.5,
-            onStart: function () {
-                gsap.set('.hero-word', {
-                    display: 'inline-block',
-                    opacity: 0,
-                    y: 20,
-                    marginRight: '0.3em',
-                });
-            },
-        });
-
-        // Tagline fade in
-        gsap.to('#hero-tagline', {
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power2.out',
-            delay: 2.2,
+            delay: 2.5,
         });
 
         // Scroll indicator
@@ -106,9 +111,9 @@ function initAnimations() {
             ease: 'power1.inOut',
         });
 
-        // Hero parallax on scroll — text moves faster than image for depth
-        gsap.to('#hero-text-layer', {
-            yPercent: -15,
+        // Hero parallax on scroll
+        gsap.to('#hero-headline-area', {
+            yPercent: -12,
             ease: 'none',
             scrollTrigger: {
                 trigger: '#hero',
@@ -119,7 +124,7 @@ function initAnimations() {
         });
 
         gsap.to('#hero-with-albert-layer', {
-            yPercent: -15,
+            yPercent: -12,
             ease: 'none',
             scrollTrigger: {
                 trigger: '#hero',
@@ -129,6 +134,16 @@ function initAnimations() {
             },
         });
 
+        gsap.to('#hero-top-bar', {
+            yPercent: -8,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: '#hero',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: true,
+            },
+        });
 
         // Grow overlay block upward to keep covering text as it parallaxes up
         gsap.to('#hero-with-albert-overlay', {
@@ -141,7 +156,6 @@ function initAnimations() {
                 scrub: true,
             },
         });
-
 
         // ── Experience Animations ──
 
@@ -232,7 +246,6 @@ function initAnimations() {
             x: 0,
             duration: 0.2,
             stagger: 0.1,
-            // ease: 'power2.out',
         });
 
         // Timeline 2: snap Create & Ship to y=0 after fade-in completes
@@ -242,7 +255,6 @@ function initAnimations() {
                 y: 0,
                 duration: 0.1,
                 stagger: 0.12,
-                // ease: 'power4.out',
             },
             '>',
         );
