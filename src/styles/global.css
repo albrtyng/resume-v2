@@ -98,7 +98,7 @@ h2, h3 {
         90deg, rgba(158,245,251,0.06) 0px, rgba(158,245,251,0.06) 1px,
         transparent 1px, transparent
     );
-    background-size: calc(100% / 6) 100%;
+    background-size: calc(100% / 8) 100%;
 }
 
 /* Noise texture overlay */

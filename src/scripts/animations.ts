@@ -65,11 +65,11 @@ function initAnimations() {
         // FASTER — crisp left-to-right clip-path wipe
         gsap.fromTo('#hero-faster',
             { clipPath: 'inset(0 100% 0 0)' },
-            { clipPath: 'inset(0 0% 0 0)', duration: 0.3, ease: 'power2.inOut', delay: 1.4 },
+            { clipPath: 'inset(0 0% 0 0)', duration: 0.3, ease: 'power2.inOut', delay: 1.3 },
         );
 
         // WITH ALBERT — solid block slides up over image, then wipes L→R to reveal text
-        const withAlbertTl = gsap.timeline({ delay: 1.8 });
+        const withAlbertTl = gsap.timeline({ delay: 1.7 });
         // Slide text and overlay up together
         withAlbertTl.fromTo('#hero-with-albert',
             { yPercent: 100, opacity: 0 },
@@ -134,8 +134,8 @@ function initAnimations() {
             },
         });
 
-        gsap.to('#hero-top-bar', {
-            yPercent: -8,
+        gsap.to('#hero-with-albert-overlay-layer', {
+            yPercent: -12,
             ease: 'none',
             scrollTrigger: {
                 trigger: '#hero',
@@ -145,14 +145,13 @@ function initAnimations() {
             },
         });
 
-        // Grow overlay block upward to keep covering text as it parallaxes up
-        gsap.to('#hero-with-albert-overlay', {
-            paddingTop: '25vh',
+        gsap.to('#hero-top-bar', {
+            yPercent: -8,
             ease: 'none',
             scrollTrigger: {
                 trigger: '#hero',
                 start: 'top top',
-                end: '60% top',
+                end: 'bottom top',
                 scrub: true,
             },
         });
