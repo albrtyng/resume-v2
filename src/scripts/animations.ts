@@ -46,6 +46,57 @@ function initAnimations() {
     });
 
     const ctx = gsap.context(() => {
+        // ── Header ──
+        const header = document.getElementById('site-header');
+        const headerBackdrop = document.getElementById('header-backdrop');
+        const hero = document.getElementById('hero');
+
+        if (header && headerBackdrop && hero) {
+            // Edge case: page loaded already scrolled past hero
+            if (window.scrollY > hero.offsetHeight - 80) {
+                gsap.set(header, { opacity: 1 });
+                header.classList.add('header-scrolled');
+                gsap.set(headerBackdrop, { opacity: 1 });
+                gsap.set('.header-word', { yPercent: 0 });
+            } else {
+                // Set all header words to hidden below their overflow containers
+                gsap.set('.header-word', { yPercent: 100 });
+
+                // Show header container at 1.7s (synced with WITH ALBERT)
+                gsap.set(header, { opacity: 1, delay: 1.7 });
+
+                // Phase 1: Bold labels + CTA flip up together
+                gsap.to('.header-bold-wrap .header-word', {
+                    yPercent: 0,
+                    duration: 0.4,
+                    ease: 'power3.out',
+                    delay: 1.7,
+                });
+
+                // Phase 2: Normal/subtext flips up together
+                gsap.to('.header-normal-wrap .header-word', {
+                    yPercent: 0,
+                    duration: 0.4,
+                    ease: 'power3.out',
+                    delay: 1.85,
+                });
+            }
+
+            // Frosted glass toggle via ScrollTrigger
+            ScrollTrigger.create({
+                trigger: '#hero-ship',
+                start: 'top top+=80',
+                onEnter: () => {
+                    header.classList.add('header-scrolled');
+                    gsap.to(headerBackdrop, { opacity: 1, duration: 0.3 });
+                },
+                onLeaveBack: () => {
+                    header.classList.remove('header-scrolled');
+                    gsap.to(headerBackdrop, { opacity: 0, duration: 0.3 });
+                },
+            });
+        }
+
         // ── Hero Animations ──
 
         // Shutter reveal — vertical bars slide up in staggered sequence
