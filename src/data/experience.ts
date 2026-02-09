@@ -13,7 +13,7 @@ export interface Job {
 export const jobs: Job[] = [
     {
         company: 'Super.com',
-        role: 'Software Engineer',
+        role: 'Software Engineer II',
         duration: 'May 2024 — Present',
         bullets: [
             {

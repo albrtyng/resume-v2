@@ -52,6 +52,7 @@ function initAnimations() {
         ease: 'power2.in',
         onComplete: () => document.getElementById('hero-loader')?.remove(),
     });
+    setupExperienceCards();
 
     const ctx = gsap.context(() => {
         // ── Header ──

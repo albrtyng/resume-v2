@@ -27,34 +27,37 @@ function renderBullet(bullet: Bullet): string {
 
 <article
     class="experience-card"
-    style={`top: ${(index + 1) * 25}px;`}
 >
-    <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-        <h3
-            class="text-lg font-bold sm:text-xl md:text-2xl"
-            style="color: var(--color-text);"
-        >
-            {company}
-        </h3>
-        <span
-            class="text-xs tracking-wide sm:text-sm"
-            style="color: var(--color-muted);"
-        >
-            {duration}
-        </span>
+    <div class="experience-card-header">
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+            <h3
+                class="font-bold"
+                style={`color: var(--color-text); font-size: clamp(1.5rem, 3vw, 2.5rem);`}
+            >
+                {company}
+            </h3>
+            <span
+                class="text-xs uppercase tracking-widest sm:text-sm"
+                style="color: var(--color-muted);"
+            >
+                {duration}
+            </span>
+        </div>
+
+        <p class="mt-1" style="color: var(--color-accent);">
+            {role}
+        </p>
     </div>
 
-    <p class="mt-1 text-sm" style="color: var(--color-accent);">
-        {role}
-    </p>
-
-    <ul class="mt-4 flex flex-col gap-3">
-        {bullets.map((bullet) => (
-            <li
-                class="text-sm leading-relaxed md:text-base"
-                style="color: var(--color-text);"
-                set:html={renderBullet(bullet)}
-            />
-        ))}
-    </ul>
+    <div class="experience-card-body">
+        <ul class="flex flex-col gap-4">
+            {bullets.map((bullet) => (
+                <li
+                    class="leading-relaxed md:text-base"
+                    style="color: var(--color-text);"
+                    set:html={renderBullet(bullet)}
+                />
+            ))}
+        </ul>
+    </div>
 </article>

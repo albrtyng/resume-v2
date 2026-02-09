@@ -11,8 +11,8 @@ import { jobs } from '../data/experience';
         <img src="/images/torn-paper.png" class="w-full" />
     </div>
     <div class="relative z-20 px-6 pt-24 md:pt-32">
+        <!-- Heading stays narrow -->
         <div class="mx-auto w-full max-w-3xl">
-            <!-- Section heading -->
             <h2
                 id="experience-heading"
                 class="gsap-animated mb-16 font-bold md:mb-24"
@@ -20,20 +20,20 @@ import { jobs } from '../data/experience';
             >
                 Experience
             </h2>
+        </div>
 
-            <!-- Job cards -->
-            <div id="experience-cards">
-                {jobs.map((job, i) => (
-                    <ExperienceCard
-                        company={job.company}
-                        role={job.role}
-                        duration={job.duration}
-                        bullets={job.bullets}
-                        index={i}
-                        total={jobs.length}
-                    />
-                ))}
-            </div>
+        <!-- Cards get wider -->
+        <div id="experience-cards" class="mx-auto w-full max-w-5xl">
+            {jobs.map((job, i) => (
+                <ExperienceCard
+                    company={job.company}
+                    role={job.role}
+                    duration={job.duration}
+                    bullets={job.bullets}
+                    index={i}
+                    total={jobs.length}
+                />
+            ))}
         </div>
     </div>
 
