@@ -45,17 +45,6 @@ function initAnimations() {
             },
         });
 
-        // Label + descriptor fade in
-        gsap.fromTo('#hero-label',
-            { opacity: 0, y: -10 },
-            { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.9 },
-        );
-
-        gsap.fromTo('#hero-descriptor',
-            { opacity: 0, y: -10 },
-            { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.9 },
-        );
-
         // SHIP — editorial slide-up
         gsap.fromTo('#hero-ship',
             { yPercent: 100, opacity: 0 },
@@ -136,17 +125,6 @@ function initAnimations() {
 
         gsap.to('#hero-with-albert-overlay-layer', {
             yPercent: -12,
-            ease: 'none',
-            scrollTrigger: {
-                trigger: '#hero',
-                start: 'top top',
-                end: 'bottom top',
-                scrub: true,
-            },
-        });
-
-        gsap.to('#hero-top-bar', {
-            yPercent: -8,
             ease: 'none',
             scrollTrigger: {
                 trigger: '#hero',
