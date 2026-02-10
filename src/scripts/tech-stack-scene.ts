@@ -43,8 +43,8 @@ function initTechStackScene() {
     const scene = new THREE.Scene();
 
     // ── Camera ──
-    const camera = new THREE.PerspectiveCamera(20, 1, 0.1, 100);
-    camera.position.set(-0.70, 1.60, 4.00);
+    const camera = new THREE.PerspectiveCamera(isMobile ? 100 : 20, 1, 0.1, 100);
+    camera.position.set(-0.70, 1.60, isMobile ? 6.60 : 4.00);
     camera.lookAt(0, 0, 0);
 
     // ── Lighting (matches hero) ──
@@ -60,9 +60,13 @@ function initTechStackScene() {
 
     // ── Model container ──
     const modelGroup = new THREE.Group();
-    let modelScale = isMobile ? 0.15 : 0.09;
+    let modelScale = isMobile ? 0.40 : 0.09;
     modelGroup.scale.setScalar(modelScale);
-    modelGroup.rotation.y = 0.4084;
+    if (isMobile) {
+        modelGroup.rotation.set(-0.18, 0.77, 0.21);
+    } else {
+        modelGroup.rotation.set(0, 0.41, 0);
+    }
     scene.add(modelGroup);
 
     // ── Sizing ──
@@ -71,7 +75,7 @@ function initTechStackScene() {
     function updateSize() {
         const wasMobile = isMobile;
         isMobile = window.innerWidth < 640;
-        modelScale = isMobile ? 0.15 : 0.09;
+        modelScale = isMobile ? 0.40 : 0.09;
 
         const wrapperRect = wrapperEl.getBoundingClientRect();
         renderer.setSize(wrapperRect.width, wrapperRect.height, false);
@@ -145,7 +149,11 @@ function initTechStackScene() {
         (gltf) => {
             modelGroup.add(gltf.scene);
             loadedModel = modelGroup;
-            modelGroup.position.set(-1.40, -0.30, 0.00);
+            if (isMobile) {
+                modelGroup.position.set(-6.10, -0.40, 0.00);
+            } else {
+                modelGroup.position.set(-1.40, -0.30, 0.00);
+            }
             modelLoaded = true;
 
             reportProgress(techSlotStart, 1);
@@ -178,7 +186,9 @@ function initTechStackScene() {
         modelFolder.add(modelGroup.position, 'x', -10, 10, 0.1).name('Pos X');
         modelFolder.add(modelGroup.position, 'y', -10, 10, 0.1).name('Pos Y');
         modelFolder.add(modelGroup.position, 'z', -10, 10, 0.1).name('Pos Z');
+        modelFolder.add(modelGroup.rotation, 'x', -Math.PI, Math.PI, 0.01).name('Rotation X');
         modelFolder.add(modelGroup.rotation, 'y', -Math.PI, Math.PI, 0.01).name('Rotation Y');
+        modelFolder.add(modelGroup.rotation, 'z', -Math.PI, Math.PI, 0.01).name('Rotation Z');
 
         // Log values button
         gui.add({ log: () => {
@@ -186,7 +196,7 @@ function initTechStackScene() {
             console.log(`camera.fov = ${camera.fov};`);
             console.log(`modelScale = ${modelScale};`);
             console.log(`modelGroup.position.set(${modelGroup.position.x.toFixed(2)}, ${modelGroup.position.y.toFixed(2)}, ${modelGroup.position.z.toFixed(2)});`);
-            console.log(`modelGroup.rotation.y = ${modelGroup.rotation.y.toFixed(4)};`);
+            console.log(`modelGroup.rotation.set(${modelGroup.rotation.x.toFixed(4)}, ${modelGroup.rotation.y.toFixed(4)}, ${modelGroup.rotation.z.toFixed(4)});`);
         }}, 'log').name('Log Values to Console');
     }
 
