@@ -3,6 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { registerSlots, reportProgress } from './loading-coordinator';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,6 +13,8 @@ let modelScale = isMobile ? 0.85 : 1.2;
 const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
 ).matches;
+
+const shipSlotStart = registerSlots(2);
 
 initShipScene();
 
@@ -165,26 +168,11 @@ function initShipScene() {
         });
     }
 
-    // ── Loading progress ──
-    const loaderText = document.getElementById('hero-loader-text');
-    const progress = { value: 0 };
-    const modelProgress = [0, 0]; // [ship, water]
-
-    function updateCounter(targetPct: number) {
-        gsap.to(progress, {
-            value: targetPct,
-            duration: 0.3,
-            ease: 'power1.out',
-            onUpdate: () => {
-                if (loaderText) loaderText.textContent = `${Math.round(progress.value)}%`;
-            },
-        });
-    }
-
+    // ── Loading (delegated to shared coordinator) ──
     function loadWithProgress(
         gltfLoader: GLTFLoader,
         url: string,
-        index: number,
+        slotIndex: number,
     ): Promise<import('three/addons/loaders/GLTFLoader.js').GLTF> {
         return new Promise((resolve, reject) => {
             gltfLoader.load(
@@ -192,9 +180,7 @@ function initShipScene() {
                 resolve,
                 (xhr) => {
                     if (xhr.total) {
-                        modelProgress[index] = xhr.loaded / xhr.total;
-                        const combined = (modelProgress[0] + modelProgress[1]) * 50;
-                        updateCounter(combined);
+                        reportProgress(slotIndex, xhr.loaded / xhr.total);
                     }
                 },
                 reject,
@@ -204,8 +190,8 @@ function initShipScene() {
 
     // ── Parallel loading: ship + water ──
     Promise.all([
-        loadWithProgress(loader, '/models/ship.glb', 0),
-        loadWithProgress(loader, '/models/ship-water.glb', 1),
+        loadWithProgress(loader, '/models/ship.glb', shipSlotStart),
+        loadWithProgress(loader, '/models/ship-water.glb', shipSlotStart + 1),
     ]).then(([shipGltf, waterGltf]) => {
         // Add ship to combo group
         comboGroup.add(shipGltf.scene);
@@ -238,10 +224,7 @@ function initShipScene() {
         alignModelToGridLine(comboGroup);
         modelLoaded = true;
 
-        // Ensure counter shows 100% then signal ready
-        updateCounter(100);
         startAnimations();
-        window.dispatchEvent(new Event('ship-scene:ready'));
     });
 
     // ── Render loop ──

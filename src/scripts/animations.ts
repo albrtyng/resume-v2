@@ -32,7 +32,7 @@ if (prefersReducedMotion) {
     document.getElementById('hero-loader')?.remove();
     lenis.start();
 } else {
-    window.addEventListener('ship-scene:ready', () => initAnimations(), { once: true });
+    window.addEventListener('models:all-ready', () => initAnimations(), { once: true });
 }
 
 function initAnimations() {
@@ -260,6 +260,37 @@ function initAnimations() {
                     },
                 });
             });
+
+        // ── Section Divider ──
+        const dividerChars = gsap.utils.toArray<HTMLElement>('.section-divider-char-inner');
+        if (dividerChars.length) {
+            // Shuffle indices and split into subgroups
+            const shuffled = [...Array(dividerChars.length).keys()]
+                .sort(() => Math.random() - 0.5);
+            const groupCount = 5;
+            const groups: HTMLElement[][] = Array.from({ length: groupCount }, () => []);
+            shuffled.forEach((idx, i) => {
+                groups[i % groupCount].push(dividerChars[idx]);
+            });
+
+            const dividerTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '.section-divider',
+                    start: 'top bottom',
+                    end: 'top top+=80',
+                    scrub: true,
+                },
+            });
+
+            // Each subgroup flips at a staggered offset
+            groups.forEach((group, i) => {
+                dividerTl.to(group, {
+                    yPercent: -45,
+                    duration: 1,
+                    ease: 'none',
+                }, i * 0.15);
+            });
+        }
 
         // ── Footer ──
 
