@@ -277,7 +277,7 @@ function initAnimations() {
                 scrollTrigger: {
                     trigger: '.section-divider',
                     start: 'top bottom',
-                    end: 'top top+=80',
+                    end: 'top top+=160',
                     scrub: true,
                 },
             });
