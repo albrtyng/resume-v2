@@ -1,7 +1,7 @@
 import { registerSlots, reportProgress } from './loading-coordinator';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import GUI from 'lil-gui';
+
 import * as THREE from 'three';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -72,10 +72,25 @@ function initTechStackScene() {
     // ── Sizing ──
     let loadedModel: THREE.Group | null = null;
 
+    function applyBreakpoint() {
+        modelScale = isMobile ? 0.40 : 0.09;
+        camera.fov = isMobile ? 100 : 20;
+        camera.position.set(-0.70, 1.60, isMobile ? 6.60 : 4.00);
+        camera.lookAt(0, 0, 0);
+
+        modelGroup.scale.setScalar(modelScale);
+        if (isMobile) {
+            modelGroup.rotation.set(-0.18, 0.77, 0.21);
+            modelGroup.position.set(-6.10, -0.40, 0.00);
+        } else {
+            modelGroup.rotation.set(0, 0.41, 0);
+            modelGroup.position.set(-1.40, -0.30, 0.00);
+        }
+    }
+
     function updateSize() {
         const wasMobile = isMobile;
         isMobile = window.innerWidth < 640;
-        modelScale = isMobile ? 0.40 : 0.09;
 
         const wrapperRect = wrapperEl.getBoundingClientRect();
         renderer.setSize(wrapperRect.width, wrapperRect.height, false);
@@ -98,44 +113,11 @@ function initTechStackScene() {
             wrapperRect.height * dpr,
         );
 
-        if (loadedModel) {
-            if (wasMobile !== isMobile) {
-                modelGroup.scale.setScalar(modelScale);
-            }
-            alignModel(loadedModel);
+        if (loadedModel && wasMobile !== isMobile) {
+            applyBreakpoint();
         }
     }
     updateSize();
-
-    function alignModel(model: THREE.Group) {
-        model.scale.setScalar(modelScale);
-        // Reset position before computing alignment
-        model.position.set(0, 0, 0);
-
-        // Compute bounding box to center the model vertically
-        const box = new THREE.Box3().setFromObject(model);
-        const boxCenter = box.getCenter(new THREE.Vector3());
-
-        // Vertically center at camera's lookAt Y (0)
-        model.position.y = -boxCenter.y;
-
-        // Horizontal alignment: left-aligned on desktop, centered on mobile
-        const ndcX = isMobile ? -0.2 : -0.9;
-        const targetWorld = new THREE.Vector3(ndcX, 0, 0).unproject(camera);
-        const dir = targetWorld.sub(camera.position).normalize();
-        const t = -camera.position.z / dir.z;
-        const worldX = camera.position.x + dir.x * t;
-
-        // Recompute box after vertical adjustment
-        const box2 = new THREE.Box3().setFromObject(model);
-        if (isMobile) {
-            const center = (box2.min.x + box2.max.x) / 2;
-            model.position.x = worldX - center;
-        } else {
-            const leftEdgeOffset = box2.min.x;
-            model.position.x = worldX - leftEdgeOffset;
-        }
-    }
 
     // ── Load model ──
     const dracoLoader = new DRACOLoader();
@@ -149,11 +131,7 @@ function initTechStackScene() {
         (gltf) => {
             modelGroup.add(gltf.scene);
             loadedModel = modelGroup;
-            if (isMobile) {
-                modelGroup.position.set(-6.10, -0.40, 0.00);
-            } else {
-                modelGroup.position.set(-1.40, -0.30, 0.00);
-            }
+            applyBreakpoint();
             modelLoaded = true;
 
             reportProgress(techSlotStart, 1);
@@ -167,37 +145,39 @@ function initTechStackScene() {
         },
     );
 
-    // ── Debug GUI ──
+    // ── Debug GUI (dev only) ──
     function setupDebugGUI() {
-        const gui = new GUI({ title: 'Tech Stack Scene' });
+        if (!import.meta.env.DEV) return;
+        import('lil-gui').then(({ default: GUI }) => {
+            const gui = new GUI({ title: 'Tech Stack Scene' });
 
-        const camFolder = gui.addFolder('Camera');
-        camFolder.add(camera.position, 'x', -20, 20, 0.1).name('X').onChange(() => camera.lookAt(0, 0, 0));
-        camFolder.add(camera.position, 'y', -20, 20, 0.1).name('Y').onChange(() => camera.lookAt(0, 0, 0));
-        camFolder.add(camera.position, 'z', 1, 30, 0.1).name('Z').onChange(() => camera.lookAt(0, 0, 0));
-        camFolder.add(camera, 'fov', 10, 120, 1).name('FOV').onChange(() => camera.updateProjectionMatrix());
+            const camFolder = gui.addFolder('Camera');
+            camFolder.add(camera.position, 'x', -20, 20, 0.1).name('X').onChange(() => camera.lookAt(0, 0, 0));
+            camFolder.add(camera.position, 'y', -20, 20, 0.1).name('Y').onChange(() => camera.lookAt(0, 0, 0));
+            camFolder.add(camera.position, 'z', 1, 30, 0.1).name('Z').onChange(() => camera.lookAt(0, 0, 0));
+            camFolder.add(camera, 'fov', 10, 120, 1).name('FOV').onChange(() => camera.updateProjectionMatrix());
 
-        const modelFolder = gui.addFolder('Model');
-        const scaleCtrl = { scale: modelScale };
-        modelFolder.add(scaleCtrl, 'scale', 0.05, 1, 0.01).name('Scale').onChange((v: number) => {
-            modelScale = v;
-            modelGroup.scale.setScalar(v);
+            const modelFolder = gui.addFolder('Model');
+            const scaleCtrl = { scale: modelScale };
+            modelFolder.add(scaleCtrl, 'scale', 0.05, 1, 0.01).name('Scale').onChange((v: number) => {
+                modelScale = v;
+                modelGroup.scale.setScalar(v);
+            });
+            modelFolder.add(modelGroup.position, 'x', -10, 10, 0.1).name('Pos X');
+            modelFolder.add(modelGroup.position, 'y', -10, 10, 0.1).name('Pos Y');
+            modelFolder.add(modelGroup.position, 'z', -10, 10, 0.1).name('Pos Z');
+            modelFolder.add(modelGroup.rotation, 'x', -Math.PI, Math.PI, 0.01).name('Rotation X');
+            modelFolder.add(modelGroup.rotation, 'y', -Math.PI, Math.PI, 0.01).name('Rotation Y');
+            modelFolder.add(modelGroup.rotation, 'z', -Math.PI, Math.PI, 0.01).name('Rotation Z');
+
+            gui.add({ log: () => {
+                console.log(`camera.position.set(${camera.position.x.toFixed(2)}, ${camera.position.y.toFixed(2)}, ${camera.position.z.toFixed(2)});`);
+                console.log(`camera.fov = ${camera.fov};`);
+                console.log(`modelScale = ${modelScale};`);
+                console.log(`modelGroup.position.set(${modelGroup.position.x.toFixed(2)}, ${modelGroup.position.y.toFixed(2)}, ${modelGroup.position.z.toFixed(2)});`);
+                console.log(`modelGroup.rotation.set(${modelGroup.rotation.x.toFixed(4)}, ${modelGroup.rotation.y.toFixed(4)}, ${modelGroup.rotation.z.toFixed(4)});`);
+            }}, 'log').name('Log Values to Console');
         });
-        modelFolder.add(modelGroup.position, 'x', -10, 10, 0.1).name('Pos X');
-        modelFolder.add(modelGroup.position, 'y', -10, 10, 0.1).name('Pos Y');
-        modelFolder.add(modelGroup.position, 'z', -10, 10, 0.1).name('Pos Z');
-        modelFolder.add(modelGroup.rotation, 'x', -Math.PI, Math.PI, 0.01).name('Rotation X');
-        modelFolder.add(modelGroup.rotation, 'y', -Math.PI, Math.PI, 0.01).name('Rotation Y');
-        modelFolder.add(modelGroup.rotation, 'z', -Math.PI, Math.PI, 0.01).name('Rotation Z');
-
-        // Log values button
-        gui.add({ log: () => {
-            console.log(`camera.position.set(${camera.position.x.toFixed(2)}, ${camera.position.y.toFixed(2)}, ${camera.position.z.toFixed(2)});`);
-            console.log(`camera.fov = ${camera.fov};`);
-            console.log(`modelScale = ${modelScale};`);
-            console.log(`modelGroup.position.set(${modelGroup.position.x.toFixed(2)}, ${modelGroup.position.y.toFixed(2)}, ${modelGroup.position.z.toFixed(2)});`);
-            console.log(`modelGroup.rotation.set(${modelGroup.rotation.x.toFixed(4)}, ${modelGroup.rotation.y.toFixed(4)}, ${modelGroup.rotation.z.toFixed(4)});`);
-        }}, 'log').name('Log Values to Console');
     }
 
     // ── Animations ──
