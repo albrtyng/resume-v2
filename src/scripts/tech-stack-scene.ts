@@ -89,13 +89,13 @@ function initTechStackScene() {
             modelGroup.position.set(-0.799, 0.1, 0);
             modelGroup.rotation.set(0.1084, 0.2884, 0);
         } else if (bp === 'desktop') {
-            modelGroup.scale.setScalar(0.175);
-            modelGroup.position.set(-1, -0.199, -0.699);
-            modelGroup.rotation.set(0.1584, 0.2784, 0);
+            modelGroup.scale.setScalar(0.15);
+            modelGroup.position.set(-0.699, -0.199, -0.699);
+            modelGroup.rotation.set(0.1384, 0.1684, -0.001);
         } else if (bp === 'desktop-xl') {
-            modelGroup.scale.setScalar(0.239);
-            modelGroup.position.set(-1.4, -0.199, -0.699);
-            modelGroup.rotation.set(0.1284, 0.2884, 0);
+            modelGroup.scale.setScalar(0.2);
+            modelGroup.position.set(-1, -0.199, -0.699);
+            modelGroup.rotation.set(0.1284, 0.1784, 0);
         } else {
             // desktop-2xl (1920+)
             modelGroup.scale.setScalar(0.25);
