@@ -1,9 +1,9 @@
+import { registerSlots, reportProgress } from './loading-coordinator';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { registerSlots, reportProgress } from './loading-coordinator';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,7 +31,9 @@ function initShipScene() {
         alpha: true,
         antialias: !isMobile,
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+    renderer.setPixelRatio(
+        Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2),
+    );
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
@@ -180,7 +182,11 @@ function initShipScene() {
                 resolve,
                 (xhr) => {
                     if (xhr.total) {
-                        reportProgress(slotIndex, xhr.loaded / xhr.total);
+                        // Cap at 0.95 — full 1.0 is reported after model setup
+                        reportProgress(
+                            slotIndex,
+                            Math.min(xhr.loaded / xhr.total, 0.95),
+                        );
                     }
                 },
                 reject,
@@ -223,6 +229,10 @@ function initShipScene() {
         loadedModel = comboGroup;
         alignModelToGridLine(comboGroup);
         modelLoaded = true;
+
+        // Report completion after model is set up and ready to render
+        reportProgress(shipSlotStart, 1);
+        reportProgress(shipSlotStart + 1, 1);
 
         startAnimations();
     });
