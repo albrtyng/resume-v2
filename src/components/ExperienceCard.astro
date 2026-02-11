@@ -6,12 +6,12 @@ interface Props {
     role: string;
     duration: string;
     bullets: Bullet[];
+    url: string;
     index: number;
     total: number;
 }
 
-const { company, role, duration, bullets, index, total } = Astro.props;
-const isLast = index === total - 1;
+const { company, role, duration, bullets, url, index, total } = Astro.props;
 
 function renderBullet(bullet: Bullet): string {
     let html = bullet.text;
@@ -23,41 +23,52 @@ function renderBullet(bullet: Bullet): string {
     }
     return html;
 }
+
+/**
+ * Derive start/end labels for flanking the content:
+ *   "May 2024 — Present" → { start: "SINCE", end: "2024" }
+ *   "Oct 2020 — Aug 2023" → { start: "2020", end: "2023" }
+ *   "Jan 2018 — Aug 2019" → { start: "2018", end: "2019" }
+ */
+function getDurationParts(dur: string): { start: string; end: string } {
+    if (dur.toLowerCase().includes('present')) {
+        const yearMatch = dur.match(/(\d{4})/);
+        return { start: 'SINCE', end: yearMatch?.[1] ?? '' };
+    }
+    const years = dur.match(/(\d{4})/g);
+    if (years && years.length >= 2) {
+        return { start: years[0], end: years[1] };
+    }
+    return { start: dur, end: '' };
+}
+
+const { start: durationStart, end: durationEnd } = getDurationParts(duration);
 ---
 
-<article
-    class="experience-card"
->
-    <div class="experience-card-header">
-        <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-            <h3
-                class="font-bold"
-                style={`color: var(--color-text); font-size: clamp(1.5rem, 3vw, 2.5rem);`}
-            >
-                {company}
-            </h3>
-            <span
-                class="text-xs uppercase tracking-widest sm:text-sm"
-                style="color: var(--color-muted);"
-            >
-                {duration}
-            </span>
+<article class="experience-card">
+    <hr class="experience-separator" />
+    <div class="experience-card-grid">
+        <div class="experience-card-index">
+            {durationStart}
         </div>
-
-        <p class="mt-1" style="color: var(--color-accent);">
-            {role}
-        </p>
-    </div>
-
-    <div class="experience-card-body">
-        <ul class="flex flex-col gap-4">
-            {bullets.map((bullet) => (
-                <li
-                    class="leading-relaxed md:text-base"
-                    style="color: var(--color-text);"
-                    set:html={renderBullet(bullet)}
-                />
-            ))}
-        </ul>
+        <div class="experience-card-content">
+            <div class="experience-card-header">
+                <h3 class="experience-card-company">{company}</h3>
+                <div class="experience-card-meta">
+                    <span class="experience-card-role">{role}</span>
+                </div>
+            </div>
+            <div class="experience-card-body">
+                <ul class="experience-card-bullets">
+                    {bullets.map((bullet) => (
+                        <li set:html={renderBullet(bullet)} />
+                    ))}
+                </ul>
+                <a href={url} target="_blank" rel="noopener noreferrer" class="experience-card-cta">View on LinkedIn ↗</a>
+            </div>
+        </div>
+        <div class="experience-card-index experience-card-index-end">
+            {durationEnd}
+        </div>
     </div>
 </article>

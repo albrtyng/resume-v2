@@ -43,6 +43,82 @@ if (prefersReducedMotion) {
     });
 }
 
+function splitText(el: Element): HTMLSpanElement[] {
+    const text = el.textContent || '';
+    el.textContent = '';
+    const chars: HTMLSpanElement[] = [];
+    for (const char of text) {
+        const wrapper = document.createElement('span');
+        wrapper.style.display = 'inline-block';
+        wrapper.style.overflow = 'hidden';
+        wrapper.style.verticalAlign = 'top';
+        const inner = document.createElement('span');
+        inner.textContent = char === ' ' ? '\u00A0' : char;
+        inner.style.display = 'inline-block';
+        inner.classList.add('split-char');
+        wrapper.appendChild(inner);
+        el.appendChild(wrapper);
+        chars.push(inner);
+    }
+    return chars;
+}
+
+function setupExperienceCards() {
+    const container = document.getElementById('experience-cards');
+    const cards = container?.querySelectorAll('.experience-card');
+    if (!container || !cards?.length) return;
+
+    const header = document.getElementById('site-header');
+    const headerHeight = header?.offsetHeight ?? 93;
+    const firstCardGrid = container.querySelector('.experience-card-grid');
+    const cardPaddingTop = firstCardGrid
+        ? parseFloat(getComputedStyle(firstCardGrid).paddingTop)
+        : 40;
+
+    const firstCard = cards[0] as HTMLElement;
+    const firstCompany = firstCard.querySelector('.experience-card-company');
+    const companyHeight = firstCompany
+        ? firstCompany.getBoundingClientRect().height
+        : 60;
+    const companyStyle = firstCompany ? getComputedStyle(firstCompany) : null;
+    const companyMarginTop = companyStyle
+        ? parseFloat(companyStyle.marginTop)
+        : 0;
+
+    const INITIAL_TOP = headerHeight;
+    // Peek = grid padding-top + any margin above company + company heading height
+    const PEEK_HEIGHT = Math.min(cardPaddingTop + companyMarginTop + companyHeight, 130);
+
+    cards.forEach((card, i) => {
+        const el = card as HTMLElement;
+        const top = INITIAL_TOP + i * PEEK_HEIGHT;
+        el.style.top = `${top}px`;
+        el.style.zIndex = `${i + 1}`;
+    });
+
+    // Equalize unstick points so all cards unstick simultaneously.
+    // A sticky element unsticks when the container bottom reaches its stuck bottom
+    // (assignedTop + height + marginBottom). Without equalization, card[0] unsticks
+    // first and slides behind still-stuck cards, further covering their headers.
+    const stuckBottoms: number[] = [];
+    cards.forEach((card, i) => {
+        const el = card as HTMLElement;
+        const assignedTop = INITIAL_TOP + i * PEEK_HEIGHT;
+        stuckBottoms.push(assignedTop + el.offsetHeight);
+    });
+    const maxStuckBottom = Math.max(...stuckBottoms);
+
+    cards.forEach((card, i) => {
+        const el = card as HTMLElement;
+        const mb = maxStuckBottom - stuckBottoms[i];
+        el.style.marginBottom = `${mb}px`;
+    });
+
+    // Padding gives the last card enough time to be read before the section scrolls off.
+    const paddingBottom = maxStuckBottom - INITIAL_TOP;
+    container.style.paddingBottom = `${paddingBottom}px`;
+}
+
 function initAnimations() {
     // Fade out loading counter alongside shutter reveal
     gsap.to('#hero-loader', {
@@ -240,27 +316,9 @@ function initAnimations() {
             },
         });
 
-        // Cards parallax stacking — earlier cards scale down as next card scrolls over
-        const cards = gsap.utils.toArray<HTMLElement>('.experience-card');
-        cards.forEach((card, i) => {
-            if (i === cards.length - 1) return; // last card doesn't scale
-            const nextCard = cards[i + 1];
-            const targetScale = 1 - (cards.length - i) * 0.05;
-            gsap.to(card, {
-                scale: targetScale,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: nextCard,
-                    start: 'top bottom',
-                    end: 'top top',
-                    scrub: true,
-                },
-            });
-        });
-
         // Divider lines animate width
         gsap.utils
-            .toArray<HTMLElement>('.experience-divider')
+            .toArray<HTMLElement>('.experience-separator')
             .forEach((divider) => {
                 gsap.to(divider, {
                     width: '100%',
@@ -273,6 +331,80 @@ function initAnimations() {
                     },
                 });
             });
+
+        // Card text reveal animations
+        const experienceCards = gsap.utils.toArray<HTMLElement>('.experience-card');
+        experienceCards.forEach((card) => {
+            const company = card.querySelector('.experience-card-company');
+            const role = card.querySelector('.experience-card-role');
+            const bullets = card.querySelectorAll('.experience-card-bullets li');
+            const cta = card.querySelector('.experience-card-cta');
+            const indices = card.querySelectorAll('.experience-card-index');
+
+            // Split company + role into chars
+            const companyChars = company ? splitText(company) : [];
+            const roleChars = role ? splitText(role) : [];
+            const indexChars: HTMLSpanElement[] = [];
+            indices.forEach((idx) => indexChars.push(...splitText(idx)));
+
+            // Set initial state
+            gsap.set([...companyChars, ...roleChars, ...indexChars], { yPercent: 100 });
+            gsap.set(bullets, { opacity: 0, y: 20 });
+            if (cta) gsap.set(cta, { opacity: 0, y: 10 });
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 75%',
+                    toggleActions: 'play none none none',
+                },
+            });
+
+            // Index chars
+            if (indexChars.length) {
+                tl.to(indexChars, {
+                    yPercent: 0,
+                    duration: 0.5,
+                    stagger: 0.02,
+                    ease: 'power3.out',
+                }, 0);
+            }
+
+            // Company chars
+            tl.to(companyChars, {
+                yPercent: 0,
+                duration: 0.5,
+                stagger: 0.02,
+                ease: 'power3.out',
+            }, 0);
+
+            // Role chars (slight delay)
+            tl.to(roleChars, {
+                yPercent: 0,
+                duration: 0.4,
+                stagger: 0.015,
+                ease: 'power3.out',
+            }, 0.15);
+
+            // Bullets stagger
+            tl.to(bullets, {
+                opacity: 1,
+                y: 0,
+                duration: 0.4,
+                stagger: 0.08,
+                ease: 'power2.out',
+            }, 0.3);
+
+            // CTA
+            if (cta) {
+                tl.to(cta, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.3,
+                    ease: 'power2.out',
+                }, 0.5);
+            }
+        });
 
         // ── Section Divider ──
         const dividerChars = gsap.utils.toArray<HTMLElement>(

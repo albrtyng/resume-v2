@@ -10,31 +10,34 @@ import { jobs } from '../data/experience';
     >
         <img src="/images/torn-paper.png" class="w-full" />
     </div>
+
     <div class="relative z-20 px-6 pt-24 md:pt-32">
-        <!-- Heading stays narrow -->
-        <div class="mx-auto w-full max-w-3xl">
+        <div class="mx-auto w-full max-w-4xl">
             <h2
                 id="experience-heading"
                 class="gsap-animated mb-16 font-bold md:mb-24"
-                style="font-size: clamp(2rem, 5vw, 5rem); opacity: 0; clip-path: inset(0 100% 0 0);"
+                style="font-family: var(--font-display); font-size: clamp(5rem, 14vw, 16rem); letter-spacing: 0.04em; opacity: 0; clip-path: inset(0 100% 0 0);"
             >
-                Experience
+                EXPERIENCE
             </h2>
-        </div>
-
-        <!-- Cards get wider -->
-        <div id="experience-cards" class="mx-auto w-full max-w-5xl">
-            {jobs.map((job, i) => (
-                <ExperienceCard
-                    company={job.company}
-                    role={job.role}
-                    duration={job.duration}
-                    bullets={job.bullets}
-                    index={i}
-                    total={jobs.length}
-                />
-            ))}
         </div>
     </div>
 
+    <div
+        id="experience-cards"
+        class="relative z-20"
+        style="margin-left: calc(-1 * clamp(1rem, 5vw, 6rem)); margin-right: calc(-1 * clamp(1rem, 5vw, 6rem));"
+    >
+        {jobs.map((job, i) => (
+            <ExperienceCard
+                company={job.company}
+                role={job.role}
+                duration={job.duration}
+                bullets={job.bullets}
+                url={job.url}
+                index={i}
+                total={jobs.length}
+            />
+        ))}
+    </div>
 </section>
