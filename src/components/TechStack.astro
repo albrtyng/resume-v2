@@ -1,0 +1,18 @@
+---
+import SectionDivider from './SectionDivider.astro';
+---
+
+<div id="tech-stack" class="relative overflow-visible" style="width: 100%; padding: 6rem 0;">
+    <div id="tech-stack-text" class="relative z-10">
+        <SectionDivider lines={["MODERN", "TECH STACK"]} />
+    </div>
+    <canvas
+        id="tech-stack-canvas"
+        class="pointer-events-none absolute z-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen max-w-[1024px] h-full max-h-[768px] lg:w-[1024px] lg:h-[768px] xl:max-w-[1440px] xl:w-[1440px] 2xl:max-w-[2160px] 2xl:w-[2160px]"
+        aria-hidden="true"
+    ></canvas>
+</div>
+
+<script>
+    import '../scripts/tech-stack-scene';
+</script>

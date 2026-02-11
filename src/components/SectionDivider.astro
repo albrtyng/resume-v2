@@ -1,0 +1,58 @@
+---
+interface Props {
+    lines: string[];
+}
+
+const { lines } = Astro.props;
+---
+
+<div class="section-divider">
+    {lines.map((line) => (
+        <div class="section-divider-line">
+            {line.split('').map((char) => (
+                <span class="section-divider-char">
+                    <span class="section-divider-char-inner">
+                        <span>{char === ' ' ? '\u00A0' : char}</span>
+                        <span>{char === ' ' ? '\u00A0' : char}</span>
+                    </span>
+                </span>
+            ))}
+        </div>
+    ))}
+</div>
+
+<style>
+    .section-divider {
+        width: 100%;
+        text-align: center;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(6rem, 18vw, 24rem);
+        letter-spacing: 0.02em;
+        line-height: 0.9;
+        margin: 0;
+    }
+
+    .section-divider-line {
+        display: block;
+        line-height: 0;
+    }
+
+    .section-divider-char {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: top;
+        height: var(--char-h);
+        line-height: var(--char-h);
+        --char-h: 0.75em;
+    }
+
+    .section-divider-char-inner {
+        display: block;
+    }
+
+    .section-divider-char-inner span {
+        display: block;
+        line-height: var(--char-h);
+    }
+</style>
