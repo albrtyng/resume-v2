@@ -43,24 +43,15 @@ if (prefersReducedMotion) {
     });
 }
 
-function splitText(el: Element): HTMLSpanElement[] {
-    const text = el.textContent || '';
-    el.textContent = '';
-    const chars: HTMLSpanElement[] = [];
-    for (const char of text) {
-        const wrapper = document.createElement('span');
-        wrapper.style.display = 'inline-block';
-        wrapper.style.overflow = 'hidden';
-        wrapper.style.verticalAlign = 'top';
-        const inner = document.createElement('span');
-        inner.textContent = char === ' ' ? '\u00A0' : char;
-        inner.style.display = 'inline-block';
-        inner.classList.add('split-char');
-        wrapper.appendChild(inner);
-        el.appendChild(wrapper);
-        chars.push(inner);
+function wrapLine(el: Element): HTMLSpanElement {
+    const inner = document.createElement('span');
+    inner.style.display = 'block';
+    while (el.firstChild) {
+        inner.appendChild(el.firstChild);
     }
-    return chars;
+    (el as HTMLElement).style.overflow = 'hidden';
+    el.appendChild(inner);
+    return inner;
 }
 
 function setupExperienceCards() {
@@ -388,14 +379,15 @@ function initAnimations() {
             const cta = card.querySelector('.experience-card-cta');
             const indices = card.querySelectorAll('.experience-card-index');
 
-            // Split company + role into chars
-            const companyChars = company ? splitText(company) : [];
-            const roleChars = role ? splitText(role) : [];
-            const indexChars: HTMLSpanElement[] = [];
-            indices.forEach((idx) => indexChars.push(...splitText(idx)));
+            // Wrap company, role, index in line-level containers
+            const companyLine = company ? wrapLine(company) : null;
+            const roleLine = role ? wrapLine(role) : null;
+            const indexLines: HTMLSpanElement[] = [];
+            indices.forEach((idx) => indexLines.push(wrapLine(idx)));
 
             // Set initial state
-            gsap.set([...companyChars, ...roleChars, ...indexChars], { yPercent: 100 });
+            const allLines = [...indexLines, companyLine, roleLine].filter(Boolean) as HTMLSpanElement[];
+            gsap.set(allLines, { yPercent: 100 });
             gsap.set(bullets, { opacity: 0, y: 20 });
             if (cta) gsap.set(cta, { opacity: 0, y: 10 });
 
@@ -407,31 +399,33 @@ function initAnimations() {
                 },
             });
 
-            // Index chars
-            if (indexChars.length) {
-                tl.to(indexChars, {
+            // Index lines
+            if (indexLines.length) {
+                tl.to(indexLines, {
                     yPercent: 0,
                     duration: 0.5,
-                    stagger: 0.02,
+                    stagger: 0.1,
                     ease: 'power3.out',
                 }, 0);
             }
 
-            // Company chars
-            tl.to(companyChars, {
-                yPercent: 0,
-                duration: 0.5,
-                stagger: 0.02,
-                ease: 'power3.out',
-            }, 0);
+            // Company line
+            if (companyLine) {
+                tl.to(companyLine, {
+                    yPercent: 0,
+                    duration: 0.5,
+                    ease: 'power3.out',
+                }, 0);
+            }
 
-            // Role chars (slight delay)
-            tl.to(roleChars, {
-                yPercent: 0,
-                duration: 0.4,
-                stagger: 0.015,
-                ease: 'power3.out',
-            }, 0.15);
+            // Role line (slight delay)
+            if (roleLine) {
+                tl.to(roleLine, {
+                    yPercent: 0,
+                    duration: 0.4,
+                    ease: 'power3.out',
+                }, 0.15);
+            }
 
             // Bullets stagger
             tl.to(bullets, {
@@ -541,15 +535,7 @@ function initAnimations() {
         );
         gsap.set(footerChars, { yPercent: 100 });
 
-        fadeInTl.to(
-            '#footer-links',
-            {
-                opacity: 1,
-                y: 0,
-                duration: 0.01,
-            },
-            '>',
-        );
+        fadeInTl.to('#footer-links', { opacity: 1, y: 0, duration: 0.01 }, '>');
 
         fadeInTl.to(footerChars, {
             yPercent: 0,
@@ -557,9 +543,7 @@ function initAnimations() {
             stagger: 0.03,
             ease: 'power1.inOut',
             onComplete: () => {
-                footerChars.forEach((el) =>
-                    el.style.removeProperty('transform'),
-                );
+                footerChars.forEach((el) => el.style.removeProperty('transform'));
             },
         });
     });

@@ -64,7 +64,16 @@ const { start: durationStart, end: durationEnd } = getDurationParts(duration);
                         <li set:html={renderBullet(bullet)} />
                     ))}
                 </ul>
-                <a href={url} target="_blank" rel="noopener noreferrer" class="experience-card-cta">View on LinkedIn ↗</a>
+                <a href={url} target="_blank" rel="noopener noreferrer" class="experience-card-cta flip-link">
+                    {('View on LinkedIn ↗').split('').map((char, i) => (
+                        <span class="flip-link-char">
+                            <span class="flip-link-char-inner" style={`transition-delay: ${i * 0.015}s;`}>
+                                <span>{char === ' ' ? '\u00A0' : char}</span>
+                                <span>{char === ' ' ? '\u00A0' : char}</span>
+                            </span>
+                        </span>
+                    ))}
+                </a>
             </div>
         </div>
         <div class="experience-card-index experience-card-index-end">

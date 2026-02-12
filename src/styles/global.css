@@ -379,6 +379,10 @@ body::before {
     transition: background-color 0.2s, color 0.2s;
 }
 
+.experience-card-cta .flip-link-char-inner {
+    transition: transform 0.15s ease;
+}
+
 .experience-card-cta:hover {
     background-color: var(--color-text);
     color: var(--color-bg);

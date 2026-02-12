@@ -16,7 +16,7 @@ export const jobs: Job[] = [
         company: 'Super.com',
         role: 'Software Engineer II',
         duration: 'May 2024 — Present',
-        url: 'https://www.linkedin.com/company/super-com/',
+        url: 'https://www.linkedin.com/in/albrtyng/',
         bullets: [
             {
                 text: 'Led the architecturing and implementation of idempotent balance transfer service, facilitating seamless migration of 350k users from a legacy program',
@@ -43,7 +43,7 @@ export const jobs: Job[] = [
         company: 'Konrad Group',
         role: 'Software Engineer II',
         duration: 'Oct 2020 — Aug 2023',
-        url: 'https://www.linkedin.com/company/konaborat-group/',
+        url: 'https://www.linkedin.com/in/albrtyng/',
         bullets: [
             {
                 text: 'Delivered high quality, robust production code, with proven results of doubling traffic and engagement for several high-profile clientele including Kia Canada, Cadillac Fairview, Marks & Spencer, and Autozone',
@@ -63,7 +63,7 @@ export const jobs: Job[] = [
         company: 'Magnet Forensics',
         role: 'Software Intern',
         duration: 'Jan 2018 — Aug 2019',
-        url: 'https://www.linkedin.com/company/magnet-forensics/',
+        url: 'https://www.linkedin.com/in/albrtyng/',
         bullets: [
             {
                 text: 'Architected and implemented several data parsing features in Magnet Axiom used in forensic cases by 4000+ law enforcement and corporate customers worldwide, including the FBI, Department of Homeland Security, and LAPD',
