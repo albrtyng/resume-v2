@@ -7,11 +7,12 @@ interface Props {
     duration: string;
     bullets: Bullet[];
     url: string;
+    image?: string;
     index: number;
     total: number;
 }
 
-const { company, role, duration, bullets, url, index, total } = Astro.props;
+const { company, role, duration, bullets, url, image, index, total } = Astro.props;
 
 function renderBullet(bullet: Bullet): string {
     let html = bullet.text;
@@ -59,23 +60,32 @@ const { start: durationStart, end: durationEnd } = getDurationParts(duration);
                 </div>
             </div>
             <div class="experience-card-body">
-                <ul class="experience-card-bullets">
-                    {bullets.map((bullet) => (
-                        <li set:html={renderBullet(bullet)} />
-                    ))}
-                </ul>
-                <a href={url} target="_blank" rel="noopener noreferrer" class="experience-card-cta flip-link">
-                    {('View on LinkedIn ↗').split('').map((char, i) => (
-                        <span class="flip-link-char">
-                            <span class="flip-link-char-inner" style={`transition-delay: ${i * 0.015}s;`}>
-                                <span>{char === ' ' ? '\u00A0' : char}</span>
-                                <span>{char === ' ' ? '\u00A0' : char}</span>
-                            </span>
-                        </span>
-                    ))}
-                </a>
+                <div class="experience-card-body-inner">
+                    <div class="experience-card-body-text">
+                        <ul class="experience-card-bullets">
+                            {bullets.map((bullet) => (
+                                <li set:html={renderBullet(bullet)} />
+                            ))}
+                        </ul>
+                        <a href={url} target="_blank" rel="noopener noreferrer" class="experience-card-cta flip-link">
+                            {('View on LinkedIn ↗').split('').map((char, i) => (
+                                <span class="flip-link-char">
+                                    <span class="flip-link-char-inner" style={`transition-delay: ${i * 0.015}s;`}>
+                                        <span>{char === ' ' ? '\u00A0' : char}</span>
+                                        <span>{char === ' ' ? '\u00A0' : char}</span>
+                                    </span>
+                                </span>
+                            ))}
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+        {image && (
+            <div class="experience-card-image">
+                <img src={image} alt="" loading="lazy" />
+            </div>
+        )}
         <div class="experience-card-index experience-card-index-end">
             {durationEnd}
         </div>

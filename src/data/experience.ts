@@ -9,6 +9,7 @@ export interface Job {
     duration: string;
     bullets: Bullet[];
     url: string;
+    image?: string;
 }
 
 export const jobs: Job[] = [
@@ -17,6 +18,7 @@ export const jobs: Job[] = [
         role: 'Software Engineer II',
         duration: 'May 2024 — Present',
         url: 'https://www.linkedin.com/in/albrtyng/',
+        image: '/images/credit-card.png',
         bullets: [
             {
                 text: 'Led the architecturing and implementation of idempotent balance transfer service, facilitating seamless migration of 350k users from a legacy program',
@@ -44,6 +46,7 @@ export const jobs: Job[] = [
         role: 'Software Engineer II',
         duration: 'Oct 2020 — Aug 2023',
         url: 'https://www.linkedin.com/in/albrtyng/',
+        image: '/images/website-under-maintenance.png',
         bullets: [
             {
                 text: 'Delivered high quality, robust production code, with proven results of doubling traffic and engagement for several high-profile clientele including Kia Canada, Cadillac Fairview, Marks & Spencer, and Autozone',
@@ -64,6 +67,7 @@ export const jobs: Job[] = [
         role: 'Software Intern',
         duration: 'Jan 2018 — Aug 2019',
         url: 'https://www.linkedin.com/in/albrtyng/',
+        image: '/images/magnet.png',
         bullets: [
             {
                 text: 'Architected and implemented several data parsing features in Magnet Axiom used in forensic cases by 4000+ law enforcement and corporate customers worldwide, including the FBI, Department of Homeland Security, and LAPD',

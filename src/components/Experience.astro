@@ -1,5 +1,6 @@
 ---
 import ExperienceCard from './ExperienceCard.astro';
+import Suitcase from './Suitcase.astro';
 import { jobs } from '../data/experience';
 ---
 
@@ -21,6 +22,7 @@ import { jobs } from '../data/experience';
                 EXPERIENCE
             </h2>
         </div>
+        <Suitcase />
     </div>
 
     <div
@@ -35,6 +37,7 @@ import { jobs } from '../data/experience';
                 duration={job.duration}
                 bullets={job.bullets}
                 url={job.url}
+                image={job.image}
                 index={i}
                 total={jobs.length}
             />

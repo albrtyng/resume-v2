@@ -278,7 +278,7 @@ body::before {
 
 @media (min-width: 768px) {
     .experience-card-grid {
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: auto 1fr 1fr auto;
         padding: 2.5rem clamp(1rem, 5vw, 6rem);
         gap: 2rem;
     }
@@ -304,7 +304,6 @@ body::before {
 }
 
 .experience-card-content {
-    max-width: 50rem;
 }
 
 .experience-card-index-end {
@@ -344,6 +343,41 @@ body::before {
 
 .experience-card-body {
     margin-top: 1.5rem;
+}
+
+.experience-card-body-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.experience-card-body-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.experience-card-image {
+    display: none;
+}
+
+@media (min-width: 1024px) {
+    .experience-card-image {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-shrink: 0;
+        width: clamp(14rem, 22vw, 24rem);
+    }
+
+    .experience-card-image img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .experience-card-image:has(img[src*="magnet"]) img {
+        width: 80%;
+    }
 }
 
 .experience-card-bullets {
