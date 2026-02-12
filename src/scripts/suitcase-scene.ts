@@ -5,8 +5,6 @@ import * as THREE from 'three';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-gsap.registerPlugin(ScrollTrigger);
-
 type Breakpoint =
     | 'mobile'
     | 'tablet'
@@ -22,21 +20,18 @@ function getBreakpoint(width: number): Breakpoint {
     return 'desktop-2xl';
 }
 
-const prefersReducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)',
-).matches;
+gsap.registerPlugin(ScrollTrigger);
 
-const techSlotStart = registerSlots(1);
+const suitcaseSlotStart = registerSlots(1);
 
-initTechStackScene();
+initSuitcaseScene();
 
-function initTechStackScene() {
+function initSuitcaseScene() {
     const canvas = document.getElementById(
-        'tech-stack-canvas',
+        'suitcase-canvas',
     ) as HTMLCanvasElement | null;
-    const wrapperEl = document.getElementById('tech-stack');
-    const textEl = document.getElementById('tech-stack-text');
-    if (!canvas || !wrapperEl || !textEl) return;
+    const wrapperEl = document.getElementById('suitcase-scene');
+    if (!canvas || !wrapperEl) return;
 
     // ── Renderer ──
     const isHighPerf = window.innerWidth >= 1024;
@@ -60,7 +55,7 @@ function initTechStackScene() {
     camera.position.set(-0.7, 1.6, 4.0);
     camera.lookAt(0, 0, 0);
 
-    // ── Lighting (matches hero) ──
+    // ── Lighting (matches hero & tech stack) ──
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
 
     const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
@@ -80,26 +75,26 @@ function initTechStackScene() {
 
     function applyBreakpoint(bp: Breakpoint) {
         if (bp === 'mobile') {
-            modelGroup.scale.setScalar(0.093);
-            modelGroup.position.set(-0.699, 0.1, 0);
-            modelGroup.rotation.set(0.1084, 0.2284, -0.001);
+            modelGroup.scale.setScalar(0.108);
+            modelGroup.position.set(1.5, 0.1, 0);
+            modelGroup.rotation.set(-0.1715, -0.771, 0.0084);
         } else if (bp === 'tablet') {
-            modelGroup.scale.setScalar(0.12);
-            modelGroup.position.set(-0.799, 0.1, 0);
-            modelGroup.rotation.set(0.1084, 0.2884, 0);
+            modelGroup.scale.setScalar(0.121);
+            modelGroup.position.set(0.5, -0.099, -0.5);
+            modelGroup.rotation.set(-0.221, -0.431, -0.051);
         } else if (bp === 'desktop') {
-            modelGroup.scale.setScalar(0.15);
-            modelGroup.position.set(-0.699, -0.199, -0.699);
-            modelGroup.rotation.set(0.1384, 0.1684, -0.001);
+            modelGroup.scale.setScalar(0.038);
+            modelGroup.position.set(0.2, 0, -0.099);
+            modelGroup.rotation.set(-0.181, -0.461, -0.051);
         } else if (bp === 'desktop-xl') {
-            modelGroup.scale.setScalar(0.2);
-            modelGroup.position.set(-1, -0.199, -0.699);
-            modelGroup.rotation.set(0.1284, 0.1784, 0);
+            modelGroup.scale.setScalar(0.037);
+            modelGroup.position.set(0.1, 0.1, 0.1);
+            modelGroup.rotation.set(-0.291, -0.531, -0.071);
         } else {
             // desktop-2xl (1920+)
-            modelGroup.scale.setScalar(0.25);
-            modelGroup.position.set(-1.5, -0.199, -0.699);
-            modelGroup.rotation.set(0.1584, 0.2784, 0);
+            modelGroup.scale.setScalar(0.058);
+            modelGroup.position.set(-0.5, 0.1, 0);
+            modelGroup.rotation.set(-0.0415, -0.4115, -0.0715);
         }
     }
 
@@ -125,7 +120,7 @@ function initTechStackScene() {
     let modelLoaded = false;
 
     loader.load(
-        '/models/tech-stack.glb',
+        '/models/suitcase.glb',
         (gltf) => {
             modelGroup.add(gltf.scene);
             loadedModel = modelGroup;
@@ -134,24 +129,36 @@ function initTechStackScene() {
 
             modelLoaded = true;
 
-            reportProgress(techSlotStart, 1);
-            startAnimations();
+            reportProgress(suitcaseSlotStart, 1);
+            setupSlideUpAnimation();
         },
         (xhr) => {
             if (xhr.total) {
                 // Cap at 0.95 — full 1.0 is reported after model setup
                 reportProgress(
-                    techSlotStart,
+                    suitcaseSlotStart,
                     Math.min(xhr.loaded / xhr.total, 0.95),
                 );
             }
         },
     );
 
-    // ── Animations ──
-    function startAnimations() {
-        if (prefersReducedMotion) return;
-        // Parallax removed — will be re-added after positioning is verified
+    // ── Slide-up animation (syncs with experience heading reveal) ──
+    function setupSlideUpAnimation() {
+        const targetY = modelGroup.position.y;
+        // Start 0.5 units below final position
+        modelGroup.position.y = targetY - 0.5;
+
+        gsap.to(modelGroup.position, {
+            y: targetY,
+            duration: 1,
+            ease: 'power3.out',
+            scrollTrigger: {
+                trigger: '#experience-heading',
+                start: 'top 80%',
+                toggleActions: 'play none none none',
+            },
+        });
     }
 
     // ── Render loop ──

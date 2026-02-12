@@ -6,9 +6,13 @@ interface Props {
     role: string;
     duration: string;
     bullets: Bullet[];
+    url: string;
+    image?: string;
+    index: number;
+    total: number;
 }
 
-const { company, role, duration, bullets } = Astro.props;
+const { company, role, duration, bullets, url, image, index, total } = Astro.props;
 
 function renderBullet(bullet: Bullet): string {
     let html = bullet.text;
@@ -20,42 +24,70 @@ function renderBullet(bullet: Bullet): string {
     }
     return html;
 }
+
+/**
+ * Derive start/end labels for flanking the content:
+ *   "May 2024 — Present" → { start: "SINCE", end: "2024" }
+ *   "Oct 2020 — Aug 2023" → { start: "2020", end: "2023" }
+ *   "Jan 2018 — Aug 2019" → { start: "2018", end: "2019" }
+ */
+function getDurationParts(dur: string): { start: string; end: string } {
+    if (dur.toLowerCase().includes('present')) {
+        const yearMatch = dur.match(/(\d{4})/);
+        return { start: 'SINCE', end: yearMatch?.[1] ?? '' };
+    }
+    const years = dur.match(/(\d{4})/g);
+    if (years && years.length >= 2) {
+        return { start: years[0], end: years[1] };
+    }
+    return { start: dur, end: '' };
+}
+
+const { start: durationStart, end: durationEnd } = getDurationParts(duration);
 ---
 
-<article class="experience-card gsap-animated" style="opacity: 0; transform: translateY(40px);">
-    <div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-        <h3
-            class="text-lg font-bold sm:text-xl md:text-2xl"
-            style="color: var(--color-text);"
-        >
-            {company}
-        </h3>
-        <span
-            class="text-xs tracking-wide sm:text-sm"
-            style="color: var(--color-muted);"
-        >
-            {duration}
-        </span>
+<article class="experience-card">
+    <hr class="experience-separator" />
+    <div class="experience-card-grid">
+        <div class="experience-card-index">
+            {durationStart}
+        </div>
+        <div class="experience-card-content">
+            <div class="experience-card-header">
+                <h3 class="experience-card-company">{company}</h3>
+                <div class="experience-card-meta">
+                    <span class="experience-card-role">{role}</span>
+                </div>
+            </div>
+            <div class="experience-card-body">
+                <div class="experience-card-body-inner">
+                    <div class="experience-card-body-text">
+                        <ul class="experience-card-bullets">
+                            {bullets.map((bullet) => (
+                                <li set:html={renderBullet(bullet)} />
+                            ))}
+                        </ul>
+                        <a href={url} target="_blank" rel="noopener noreferrer" class="experience-card-cta flip-link">
+                            {('View on LinkedIn ↗').split('').map((char, i) => (
+                                <span class="flip-link-char">
+                                    <span class="flip-link-char-inner" style={`transition-delay: ${i * 0.015}s;`}>
+                                        <span>{char === ' ' ? '\u00A0' : char}</span>
+                                        <span>{char === ' ' ? '\u00A0' : char}</span>
+                                    </span>
+                                </span>
+                            ))}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {image && (
+            <div class="experience-card-image">
+                <img src={image} alt="" loading="lazy" />
+            </div>
+        )}
+        <div class="experience-card-index experience-card-index-end">
+            {durationEnd}
+        </div>
     </div>
-
-    <p class="mt-1 text-sm" style="color: var(--color-accent);">
-        {role}
-    </p>
-
-    <ul class="mt-4 flex flex-col gap-3">
-        {bullets.map((bullet) => (
-            <li
-                class="experience-bullet gsap-animated text-sm leading-relaxed md:text-base"
-                style={`color: var(--color-text); opacity: 0; transform: translateY(20px);`}
-                set:html={renderBullet(bullet)}
-            />
-        ))}
-    </ul>
 </article>
-
-<!-- Divider line -->
-<div
-    class="experience-divider mx-auto my-8 h-px md:my-12"
-    style="background-color: var(--color-muted); opacity: 0.2; width: 0%; max-width: 100%;"
->
-</div>
