@@ -114,7 +114,7 @@ function setupExperienceCards() {
         });
 
         // Padding gives the last card enough time to be read before the section scrolls off.
-        const paddingBottom = maxStuckBottom - INITIAL_TOP;
+        const paddingBottom = 160;
         container.style.paddingBottom = `${paddingBottom}px`;
     } else {
         // Small viewport: sequential pinning with smooth exit
