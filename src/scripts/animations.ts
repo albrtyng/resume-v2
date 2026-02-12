@@ -89,34 +89,81 @@ function setupExperienceCards() {
     // Peek = grid padding-top + any margin above company + company heading height
     const PEEK_HEIGHT = Math.min(cardPaddingTop + companyMarginTop + companyHeight, 130);
 
+    // Check if every card fits in its available viewport space with full stacking
+    const STACK_BUFFER = 80; // guard against font-load shift + splitText reflow
+    let canStack = true;
     cards.forEach((card, i) => {
         const el = card as HTMLElement;
-        const top = INITIAL_TOP + i * PEEK_HEIGHT;
-        el.style.top = `${top}px`;
-        el.style.zIndex = `${i + 1}`;
+        const availableSpace = window.innerHeight - (INITIAL_TOP + i * PEEK_HEIGHT);
+        if (el.offsetHeight + STACK_BUFFER > availableSpace) canStack = false;
     });
 
-    // Equalize unstick points so all cards unstick simultaneously.
-    // A sticky element unsticks when the container bottom reaches its stuck bottom
-    // (assignedTop + height + marginBottom). Without equalization, card[0] unsticks
-    // first and slides behind still-stuck cards, further covering their headers.
-    const stuckBottoms: number[] = [];
-    cards.forEach((card, i) => {
-        const el = card as HTMLElement;
-        const assignedTop = INITIAL_TOP + i * PEEK_HEIGHT;
-        stuckBottoms.push(assignedTop + el.offsetHeight);
-    });
-    const maxStuckBottom = Math.max(...stuckBottoms);
+    if (canStack) {
+        // Standard stacking: CSS sticky with peeking headers
+        cards.forEach((card, i) => {
+            const el = card as HTMLElement;
+            const top = INITIAL_TOP + i * PEEK_HEIGHT;
+            el.style.top = `${top}px`;
+            el.style.zIndex = `${i + 1}`;
+        });
 
-    cards.forEach((card, i) => {
-        const el = card as HTMLElement;
-        const mb = maxStuckBottom - stuckBottoms[i];
-        el.style.marginBottom = `${mb}px`;
-    });
+        // Equalize unstick points so all cards unstick simultaneously.
+        const stuckBottoms: number[] = [];
+        cards.forEach((card, i) => {
+            const el = card as HTMLElement;
+            const assignedTop = INITIAL_TOP + i * PEEK_HEIGHT;
+            stuckBottoms.push(assignedTop + el.offsetHeight);
+        });
+        const maxStuckBottom = Math.max(...stuckBottoms);
 
-    // Padding gives the last card enough time to be read before the section scrolls off.
-    const paddingBottom = maxStuckBottom - INITIAL_TOP;
-    container.style.paddingBottom = `${paddingBottom}px`;
+        cards.forEach((card, i) => {
+            const el = card as HTMLElement;
+            const mb = maxStuckBottom - stuckBottoms[i];
+            el.style.marginBottom = `${mb}px`;
+        });
+
+        // Padding gives the last card enough time to be read before the section scrolls off.
+        const paddingBottom = maxStuckBottom - INITIAL_TOP;
+        container.style.paddingBottom = `${paddingBottom}px`;
+    } else {
+        // Small viewport: sequential pinning with smooth exit
+        cards.forEach((card, i) => {
+            const el = card as HTMLElement;
+            el.style.position = 'relative';
+            el.style.zIndex = `${i + 1}`;
+
+            // Only add exit animation for non-last cards
+            if (i < cards.length - 1) {
+                const tl = gsap.timeline();
+                // Slide up + fade out immediately on scroll
+                tl.to(el, {
+                    yPercent: -10,
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power2.in',
+                });
+
+                ScrollTrigger.create({
+                    trigger: el,
+                    start: `top ${INITIAL_TOP}`,
+                    end: () => `+=${el.offsetHeight}`,
+                    pin: true,
+                    pinSpacing: true,
+                    animation: tl,
+                    scrub: 0.3,
+                });
+            } else {
+                // Last card: just pin, no exit animation needed
+                ScrollTrigger.create({
+                    trigger: el,
+                    start: `top ${INITIAL_TOP}`,
+                    end: () => `+=${el.offsetHeight}`,
+                    pin: true,
+                    pinSpacing: true,
+                });
+            }
+        });
+    }
 }
 
 function initAnimations() {
