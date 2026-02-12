@@ -1,7 +1,6 @@
 import { registerSlots, reportProgress } from './loading-coordinator';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import GUI from 'lil-gui';
 import * as THREE from 'three';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -132,7 +131,6 @@ function initSuitcaseScene() {
 
             reportProgress(suitcaseSlotStart, 1);
             setupSlideUpAnimation();
-            setupDebugGUI();
         },
         (xhr) => {
             if (xhr.total) {
@@ -161,85 +159,6 @@ function initSuitcaseScene() {
                 toggleActions: 'play none none none',
             },
         });
-    }
-
-    // ── Debug GUI ──
-    function setupDebugGUI() {
-        const gui = new GUI({ title: 'Suitcase Scene' });
-
-        const camFolder = gui.addFolder('Camera');
-        camFolder
-            .add(camera.position, 'x', -20, 20, 0.1)
-            .name('X')
-            .onChange(() => camera.lookAt(0, 0, 0));
-        camFolder
-            .add(camera.position, 'y', -20, 20, 0.1)
-            .name('Y')
-            .onChange(() => camera.lookAt(0, 0, 0));
-        camFolder
-            .add(camera.position, 'z', 1, 30, 0.1)
-            .name('Z')
-            .onChange(() => camera.lookAt(0, 0, 0));
-        camFolder
-            .add(camera, 'fov', 10, 120, 1)
-            .name('FOV')
-            .onChange(() => camera.updateProjectionMatrix());
-
-        const modelFolder = gui.addFolder('Model');
-        modelFolder
-            .add(modelGroup.scale, 'x', 0.01, 1, 0.001)
-            .name('Scale')
-            .onChange((v: number) => {
-                modelGroup.scale.setScalar(v);
-            });
-        modelFolder.add(modelGroup.position, 'x', -10, 10, 0.1).name('Pos X');
-        modelFolder.add(modelGroup.position, 'y', -10, 10, 0.1).name('Pos Y');
-        modelFolder.add(modelGroup.position, 'z', -10, 10, 0.1).name('Pos Z');
-        modelFolder
-            .add(modelGroup.rotation, 'x', -Math.PI, Math.PI, 0.01)
-            .name('Rotation X');
-        modelFolder
-            .add(modelGroup.rotation, 'y', -Math.PI, Math.PI, 0.01)
-            .name('Rotation Y');
-        modelFolder
-            .add(modelGroup.rotation, 'z', -Math.PI, Math.PI, 0.01)
-            .name('Rotation Z');
-
-        // ── Breakpoint info ──
-        const bpInfo = { breakpoint: getBreakpoint(window.innerWidth) };
-        const bpController = gui
-            .add(bpInfo, 'breakpoint')
-            .name('Breakpoint')
-            .disable();
-        window.addEventListener('resize', () => {
-            bpInfo.breakpoint = getBreakpoint(window.innerWidth);
-            bpController.updateDisplay();
-        });
-
-        gui.add(
-            {
-                log: () => {
-                    const bp = getBreakpoint(window.innerWidth);
-                    console.log(
-                        `// Breakpoint: ${bp} (${window.innerWidth}px)`,
-                    );
-                    console.log(
-                        `camera.position.set(${camera.position.x.toFixed(2)}, ${camera.position.y.toFixed(2)}, ${camera.position.z.toFixed(2)});`,
-                    );
-                    console.log(`camera.fov = ${camera.fov};`);
-                    console.log(
-                        `modelGroup.scale.setScalar(${modelGroup.scale.x.toFixed(4)});`,
-                    );
-                    console.log(
-                        `modelGroup.position.set(${modelGroup.position.x.toFixed(4)}, ${modelGroup.position.y.toFixed(4)}, ${modelGroup.position.z.toFixed(4)});`,
-                    );
-                    console.log(
-                        `modelGroup.rotation.set(${modelGroup.rotation.x.toFixed(4)}, ${modelGroup.rotation.y.toFixed(4)}, ${modelGroup.rotation.z.toFixed(4)});`,
-                    );
-                },
-            },
-            'log',
-        ).name('Log Values to Console');
     }
 
     // ── Render loop ──
