@@ -261,6 +261,7 @@ body::before {
 }
 
 .experience-card-grid {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
     padding: 2rem clamp(1rem, 5vw, 6rem);
@@ -268,6 +269,8 @@ body::before {
 }
 
 .experience-card-content {
+    position: relative;
+    z-index: 1;
     grid-column: 1 / -1;
 }
 
@@ -294,6 +297,8 @@ body::before {
 }
 
 .experience-card-index {
+    position: relative;
+    z-index: 1;
     font-family: var(--font-display);
     font-weight: 700;
     font-size: clamp(2.5rem, 6vw, 5rem);
@@ -357,16 +362,33 @@ body::before {
 }
 
 .experience-card-image {
-    display: none;
+    position: absolute;
+    top: 2rem;
+    right: clamp(1rem, 5vw, 6rem);
+    width: 12rem;
+    height: 12rem;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.experience-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 @media (min-width: 1024px) {
     .experience-card-image {
+        position: static;
         display: flex;
         align-items: center;
         justify-content: flex-start;
         flex-shrink: 0;
         width: clamp(14rem, 22vw, 24rem);
+        height: auto;
+        opacity: 1;
+        pointer-events: auto;
+        z-index: auto;
     }
 
     .experience-card-image img {
