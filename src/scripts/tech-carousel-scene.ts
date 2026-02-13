@@ -230,7 +230,6 @@ function initTechCarouselScene() {
         allModelsLoaded = true;
         buildRows();
         renderer.render(scene, camera);
-        setupDebugGUI();
     });
 
     // ── Build / rebuild rows from loaded models ──
@@ -393,51 +392,6 @@ function initTechCarouselScene() {
     // ── Resize handler ──
     const onResize = () => applyConfig();
     window.addEventListener('resize', onResize);
-
-    // ── Debug GUI (dev only) ──
-    function setupDebugGUI() {
-        if (!import.meta.env.DEV) return;
-
-        import('lil-gui').then(({ GUI }) => {
-            const gui = new GUI({ title: 'Tech Carousel' });
-
-            const bp = getBreakpoint(window.innerWidth);
-            const debugInfo = { breakpoint: bp };
-            gui.add(debugInfo, 'breakpoint').disable();
-
-            const config = BREAKPOINT_CONFIGS[bp];
-
-            const topFolder = gui.addFolder('Top Row');
-            topFolder
-                .add(config, 'topScale', 0.1, 5, 0.1)
-                .onChange(() => buildRows());
-            topFolder
-                .add(config, 'topSpacing', 1, 10, 0.5)
-                .onChange(() => buildRows());
-            topFolder
-                .add(config, 'topY', -5, 5, 0.1)
-                .onChange(() => buildRows());
-
-            const bottomFolder = gui.addFolder('Bottom Row');
-            bottomFolder
-                .add(config, 'bottomScale', 0.1, 5, 0.1)
-                .onChange(() => buildRows());
-            bottomFolder
-                .add(config, 'bottomSpacing', 1, 10, 0.5)
-                .onChange(() => buildRows());
-            bottomFolder
-                .add(config, 'bottomY', -5, 5, 0.1)
-                .onChange(() => buildRows());
-
-            const generalFolder = gui.addFolder('General');
-            generalFolder.add(config, 'speed', 0, 3, 0.1);
-            generalFolder
-                .add(config, 'frustumHeight', 1, 10, 0.5)
-                .onChange(() => applyConfig());
-
-            document.addEventListener('astro:before-swap', () => gui.destroy());
-        });
-    }
 
     // ── Cleanup ──
     document.addEventListener('astro:before-swap', () => {
