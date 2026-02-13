@@ -8,11 +8,12 @@ import Link from './Link.astro';
     style="opacity: 0; background-color: var(--color-muted); margin: 6rem calc(-1 * clamp(1rem, 5vw, 6rem)) 0; overflow: clip; position: relative;"
 >
     <div
-        style="padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 5vw, 6rem); padding-left: calc(100% / 8);"
+        class="relative z-10"
+        style="display: flex; flex-direction: column; justify-content: space-between; padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 6rem); padding-left: calc(100% / 8);"
     >
         <div
             id="footer-tagline"
-            style="font-family: var(--font-display); font-size: clamp(4.5rem, 13vw, 14rem); line-height: 1; letter-spacing: 0.03em; text-transform: uppercase; max-width: max-content;"
+            style="font-family: var(--font-display); font-size: clamp(4.5rem, 13vw, 14rem); line-height: 1; text-transform: uppercase; max-width: max-content;"
         >
             <div style="display: flex; justify-content: flex-start; gap: 1.5rem;">
                 <span class="footer-word gsap-animated text-white" style="opacity: 0; transform: translateX(-100%);">Let's</span>
@@ -26,7 +27,7 @@ import Link from './Link.astro';
         <div
             id="footer-links"
             class="gsap-animated"
-            style="opacity: 0; transform: translateY(20px); font-family: var(--font-body); font-size: clamp(1.5rem, 4vw, 3rem); letter-spacing: -0.02em; color: white; margin-top: 1rem; display: flex; flex-direction: row; align-items: flex-start; gap: 1.5rem;"
+            style="opacity: 0; transform: translateY(20px); font-family: var(--font-body); font-size: clamp(1.5rem, 4vw, 3rem); color: white; display: flex; flex-direction: row; align-items: flex-start; gap: 1.5rem;"
         >
             <Link text="EMAIL ↗" href="mailto:albertesyang@gmail.com" />
             <Link text="LINKEDIN ↗" href="https://linkedin.com/in/albrtyng" />
@@ -35,7 +36,8 @@ import Link from './Link.astro';
 
     <canvas
         id="contact-book-canvas"
-        style="position: absolute; top: 0; right: 0; width: 50%; height: 100%; pointer-events: none;"
+        class="pointer-events-none absolute z-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen max-w-[1024px] h-full max-h-[768px] lg:w-[1024px] lg:h-[768px] xl:max-w-[1440px] xl:w-[1440px] 2xl:max-w-[2160px] 2xl:w-[2160px]"
+        aria-hidden="true"
     ></canvas>
 
     <div
@@ -44,7 +46,7 @@ import Link from './Link.astro';
     >
         <div
             class="footer-ticker-track"
-            style="display: inline-block; font-family: var(--font-display); font-size: clamp(6rem, 18vw, 20rem); color: rgba(255,255,255,0.15); text-transform: uppercase; letter-spacing: -0.02em;"
+            style="display: inline-block; font-family: var(--font-display); font-size: clamp(6rem, 18vw, 20rem); color: rgba(255,255,255,0.15); text-transform: uppercase;"
         >
             <span>GET IN TOUCH&nbsp;&nbsp;</span>
             <span>GET IN TOUCH&nbsp;&nbsp;</span>

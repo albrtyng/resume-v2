@@ -73,30 +73,26 @@ function initContactBookScene() {
     // ── Sizing ──
     let loadedModel: THREE.Group | null = null;
     let normalizedScale = 1.0;
+    let debugInfo: { breakpoint: string } | null = null;
 
     function applyBreakpoint(bp: Breakpoint) {
-        let bpScale: number;
-        let posX: number;
-
         if (bp === 'mobile') {
-            bpScale = 0.8;
-            posX = 0;
+            modelGroup.scale.setScalar(normalizedScale * 1.64);
+            modelGroup.position.set(2, 0.486, 0);
         } else if (bp === 'tablet') {
-            bpScale = 1.0;
-            posX = 0.3;
+            modelGroup.scale.setScalar(normalizedScale * 1.64);
+            modelGroup.position.set(1.541, 0.483, 0);
         } else if (bp === 'desktop') {
-            bpScale = 1.2;
-            posX = 0.3;
+            modelGroup.scale.setScalar(normalizedScale * 0.82);
+            modelGroup.position.set(1.7, 0.2, 0);
         } else if (bp === 'desktop-xl') {
-            bpScale = 1.4;
-            posX = 0.3;
+            modelGroup.scale.setScalar(normalizedScale * 1.4);
+            modelGroup.position.set(0.3, 0, 0);
         } else {
-            bpScale = 1.6;
-            posX = 0.3;
+            // desktop-2xl (1920+)
+            modelGroup.scale.setScalar(normalizedScale * 1.8);
+            modelGroup.position.set(2.911, 0.206, 0);
         }
-
-        modelGroup.scale.setScalar(normalizedScale * bpScale);
-        modelGroup.position.set(posX, 0, 0);
     }
 
     function updateSize() {
@@ -109,6 +105,10 @@ function initContactBookScene() {
 
         if (loadedModel) {
             applyBreakpoint(bp);
+        }
+
+        if (debugInfo) {
+            debugInfo.breakpoint = bp;
         }
     }
     updateSize();
@@ -131,8 +131,6 @@ function initContactBookScene() {
 
             const maxDim = Math.max(size.x, size.y, size.z);
             normalizedScale = maxDim > 0 ? 1.0 / maxDim : 1.0;
-
-            console.log('[contact-book] bbox size:', size, 'center:', center, 'normalizedScale:', normalizedScale);
 
             modelGroup.add(gltf.scene);
             loadedModel = modelGroup;
@@ -176,7 +174,7 @@ function initContactBookScene() {
 
         // Gyroscopic tumble: different frequencies per axis create a precessing loop
         modelGroup.rotation.x = Math.sin(t * 0.7) * 0.6;
-        modelGroup.rotation.y = t * 0.8;                    // continuous primary spin
+        modelGroup.rotation.y = t * 0.8; // continuous primary spin
         modelGroup.rotation.z = Math.cos(t * 0.5) * 0.4;
 
         renderer.render(scene, camera);
@@ -203,6 +201,9 @@ function initContactBookScene() {
         import('lil-gui').then(({ GUI }) => {
             const gui = new GUI({ title: 'Contact Book' });
 
+            debugInfo = { breakpoint: getBreakpoint(window.innerWidth) };
+            gui.add(debugInfo, 'breakpoint').disable();
+
             const posFolder = gui.addFolder('Position');
             posFolder.add(modelGroup.position, 'x', -5, 5, 0.001);
             posFolder.add(modelGroup.position, 'y', -5, 5, 0.001);
@@ -215,9 +216,11 @@ function initContactBookScene() {
 
             const scaleParams = { scale: modelGroup.scale.x };
             const scaleFolder = gui.addFolder('Scale');
-            scaleFolder.add(scaleParams, 'scale', 0.01, 5, 0.001).onChange((v: number) => {
-                modelGroup.scale.setScalar(v);
-            });
+            scaleFolder
+                .add(scaleParams, 'scale', 0.01, 5, 0.001)
+                .onChange((v: number) => {
+                    modelGroup.scale.setScalar(v);
+                });
 
             document.addEventListener('astro:before-swap', () => gui.destroy());
         });
