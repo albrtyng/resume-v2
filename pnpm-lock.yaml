@@ -20,9 +20,6 @@ importers:
       lenis:
         specifier: ^1.3.17
         version: 1.3.17
-      lil-gui:
-        specifier: ^0.21.0
-        version: 0.21.0
       tailwindcss:
         specifier: ^4.0.7
         version: 4.1.18
@@ -36,6 +33,9 @@ importers:
       '@types/three':
         specifier: ^0.182.0
         version: 0.182.0
+      lil-gui:
+        specifier: ^0.21.0
+        version: 0.21.0
       prettier:
         specifier: ^3.5.1
         version: 3.8.1

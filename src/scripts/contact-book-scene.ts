@@ -73,8 +73,6 @@ function initContactBookScene() {
     // ── Sizing ──
     let loadedModel: THREE.Group | null = null;
     let normalizedScale = 1.0;
-    let debugInfo: { breakpoint: string } | null = null;
-
     function applyBreakpoint(bp: Breakpoint) {
         if (bp === 'mobile') {
             modelGroup.scale.setScalar(normalizedScale * 1.64);
@@ -107,9 +105,6 @@ function initContactBookScene() {
             applyBreakpoint(bp);
         }
 
-        if (debugInfo) {
-            debugInfo.breakpoint = bp;
-        }
     }
     updateSize();
 
@@ -142,7 +137,6 @@ function initContactBookScene() {
             renderer.render(scene, camera);
 
             reportProgress(contactSlotStart, 1);
-            setupDebugGUI();
         },
         (xhr) => {
             if (xhr.total) {
@@ -193,38 +187,6 @@ function initContactBookScene() {
     // ── Resize handler ──
     const onResize = () => updateSize();
     window.addEventListener('resize', onResize);
-
-    // ── Debug GUI (dev only) ──
-    function setupDebugGUI() {
-        if (!import.meta.env.DEV) return;
-
-        import('lil-gui').then(({ GUI }) => {
-            const gui = new GUI({ title: 'Contact Book' });
-
-            debugInfo = { breakpoint: getBreakpoint(window.innerWidth) };
-            gui.add(debugInfo, 'breakpoint').disable();
-
-            const posFolder = gui.addFolder('Position');
-            posFolder.add(modelGroup.position, 'x', -5, 5, 0.001);
-            posFolder.add(modelGroup.position, 'y', -5, 5, 0.001);
-            posFolder.add(modelGroup.position, 'z', -5, 5, 0.001);
-
-            const rotFolder = gui.addFolder('Rotation');
-            rotFolder.add(modelGroup.rotation, 'x', -Math.PI, Math.PI, 0.001);
-            rotFolder.add(modelGroup.rotation, 'y', -Math.PI, Math.PI, 0.001);
-            rotFolder.add(modelGroup.rotation, 'z', -Math.PI, Math.PI, 0.001);
-
-            const scaleParams = { scale: modelGroup.scale.x };
-            const scaleFolder = gui.addFolder('Scale');
-            scaleFolder
-                .add(scaleParams, 'scale', 0.01, 5, 0.001)
-                .onChange((v: number) => {
-                    modelGroup.scale.setScalar(v);
-                });
-
-            document.addEventListener('astro:before-swap', () => gui.destroy());
-        });
-    }
 
     // ── Cleanup on Astro page navigation ──
     document.addEventListener('astro:before-swap', () => {
