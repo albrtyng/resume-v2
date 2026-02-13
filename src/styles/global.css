@@ -9,14 +9,6 @@
 }
 
 @font-face {
-    font-family: 'Array';
-    src: url('/fonts/Array-Semibold.woff2') format('woff2');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
     font-family: 'General Sans';
     src: url('/fonts/GeneralSans-Regular.woff2') format('woff2');
     font-weight: 400;
@@ -49,7 +41,6 @@
     --color-hero: #9cf6fb;
     --color-accent-light: #e1fcfd;
     --font-display: 'Mango Grotesque', system-ui, sans-serif;
-    --font-heading: 'Array', system-ui, sans-serif;
     --font-body: 'General Sans', system-ui, sans-serif;
 }
 
@@ -82,7 +73,7 @@ h1 {
 }
 
 h2, h3 {
-    font-family: var(--font-heading);
+    font-family: var(--font-display);
     letter-spacing: -0.02em;
 }
 
@@ -442,6 +433,20 @@ body::before {
 .experience-card-cta:hover {
     background-color: var(--color-text);
     color: var(--color-bg);
+}
+
+#footer-links .flip-link {
+    align-self: flex-start;
+}
+
+/* Footer ticker */
+@keyframes footer-ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.footer-ticker-track {
+    animation: footer-ticker 15s linear infinite;
 }
 
 /* Reduced motion: show everything immediately, skip animations */

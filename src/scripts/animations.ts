@@ -502,7 +502,7 @@ function initAnimations() {
             },
         });
 
-        // Timeline 1: staggered fade-in left to right
+        // Timeline: words → links → ticker
         const fadeInTl = gsap.timeline({
             scrollTrigger: {
                 trigger: '#footer',
@@ -518,7 +518,7 @@ function initAnimations() {
             stagger: 0.1,
         });
 
-        // Timeline 2: snap Create & Ship to y=0 after fade-in completes
+        // Snap "make" & "something" to y=0 after fade-in completes
         fadeInTl.to(
             '.footer-word-snap',
             {
@@ -546,6 +546,14 @@ function initAnimations() {
                 footerChars.forEach((el) => el.style.removeProperty('transform'));
             },
         });
+
+        // Ticker entrance: slide up then infinite scroll starts
+        fadeInTl.to('.footer-ticker', {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+        }, '>-0.2');
     });
 
     // Cleanup on page navigation (Astro view transitions)
