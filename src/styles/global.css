@@ -146,9 +146,9 @@ body::before {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 48px;
+    height: auto;
     font-family: var(--font-body);
-    font-size: clamp(0.75rem, 1.1vw, 1rem);
+    font-size: clamp(0.75rem, 1.6vw, 1.35rem);
     color: #ffffff;
     transition: color 0.3s ease;
 }
