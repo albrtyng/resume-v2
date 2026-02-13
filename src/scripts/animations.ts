@@ -158,6 +158,9 @@ function setupExperienceCards() {
 }
 
 function initAnimations() {
+    // Scroll to top while shutter still covers the screen
+    window.scrollTo(0, 0);
+
     // Fade out loading counter alongside shutter reveal
     gsap.to('#hero-loader', {
         yPercent: -50,
