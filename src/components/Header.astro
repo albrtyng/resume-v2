@@ -17,9 +17,9 @@ const ctaChars = 'Get in Touch'.split('');
             <span class="header-word-wrap header-bold-wrap"><span class="header-word header-block-bold">Building at</span></span>
             <span class="header-word-wrap header-normal-wrap">
                 <span class="header-word">
-                    <a href="https://www.linkedin.com/in/albrtyng/" target="_blank" rel="noopener noreferrer" class="flip-link">
+                    <a href="https://www.linkedin.com/in/albrtyng/" target="_blank" rel="noopener noreferrer" class="flip-link" aria-label="Super.com">
                         {superChars.map((char, i) => (
-                            <span class="flip-link-char">
+                            <span class="flip-link-char" aria-hidden="true">
                                 <span
                                     class="flip-link-char-inner"
                                     style={`transition-delay: ${i * 0.015}s;`}
@@ -44,9 +44,9 @@ const ctaChars = 'Get in Touch'.split('');
         <div class="header-block" data-header-block="4">
             <span class="header-word-wrap header-bold-wrap">
                 <span class="header-word">
-                    <a href="mailto:albertesyang@gmail.com" class="flip-link header-pill">
+                    <a href="mailto:albertesyang@gmail.com" class="flip-link header-pill" aria-label="Get in Touch">
                         {ctaChars.map((char, i) => (
-                            <span class="flip-link-char">
+                            <span class="flip-link-char" aria-hidden="true">
                                 <span
                                     class="flip-link-char-inner"
                                     style={`transition-delay: ${i * 0.015}s;`}

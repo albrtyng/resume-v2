@@ -10,6 +10,8 @@ const {
     title = 'Albert Yang | Software Engineer',
     description = 'Portfolio of Albert Yang. 6+ years building products used by millions.',
 } = Astro.props;
+
+const canonicalURL = 'https://albertyang.ca/';
 ---
 
 <!doctype html>
@@ -18,10 +20,24 @@ const {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={description} />
+        <meta name="theme-color" content="#4a5fc1" />
         <title>{title}</title>
+        <link rel="canonical" href={canonicalURL} />
         <script is:inline>
             history.scrollRestoration = 'manual';
         </script>
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:locale" content="en_US" />
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
 
         <!-- Preload critical fonts -->
         <link
@@ -38,6 +54,13 @@ const {
             type="font/woff2"
             crossorigin
         />
+        <link
+            rel="preload"
+            href="/fonts/GeneralSans-Regular.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
         <!-- Preload 3D models -->
         <link rel="preload" href="/models/ship.glb" as="fetch" crossorigin />
         <link rel="preload" href="/models/tech-stack.glb" as="fetch" crossorigin />
@@ -45,6 +68,7 @@ const {
         <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
     </head>
     <body>
+        <a href="#experience" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:p-4 focus:text-black">Skip to content</a>
         <Header />
         <slot />
         <script>

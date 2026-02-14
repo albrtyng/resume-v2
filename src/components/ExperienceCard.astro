@@ -1,4 +1,6 @@
 ---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import type { Bullet } from '../data/experience';
 
 interface Props {
@@ -7,12 +9,13 @@ interface Props {
     duration: string;
     bullets: Bullet[];
     url: string;
-    image?: string;
+    image?: ImageMetadata;
+    imageAlt?: string;
     index: number;
     total: number;
 }
 
-const { company, role, duration, bullets, url, image, index, total } = Astro.props;
+const { company, role, duration, bullets, url, image, imageAlt, index, total } = Astro.props;
 
 function renderBullet(bullet: Bullet): string {
     let html = bullet.text;
@@ -44,6 +47,7 @@ function getDurationParts(dur: string): { start: string; end: string } {
 }
 
 const { start: durationStart, end: durationEnd } = getDurationParts(duration);
+const companySlug = company.toLowerCase().replace(/[\s.]+/g, '');
 ---
 
 <article class="experience-card">
@@ -67,9 +71,9 @@ const { start: durationStart, end: durationEnd } = getDurationParts(duration);
                                 <li set:html={renderBullet(bullet)} />
                             ))}
                         </ul>
-                        <a href={url} target="_blank" rel="noopener noreferrer" class="experience-card-cta flip-link">
+                        <a href={url} target="_blank" rel="noopener noreferrer" class="experience-card-cta flip-link" aria-label={`View ${company} on LinkedIn`}>
                             {('View on LinkedIn ↗').split('').map((char, i) => (
-                                <span class="flip-link-char">
+                                <span class="flip-link-char" aria-hidden="true">
                                     <span class="flip-link-char-inner" style={`transition-delay: ${i * 0.015}s;`}>
                                         <span>{char === ' ' ? '\u00A0' : char}</span>
                                         <span>{char === ' ' ? '\u00A0' : char}</span>
@@ -82,8 +86,8 @@ const { start: durationStart, end: durationEnd } = getDurationParts(duration);
             </div>
         </div>
         {image && (
-            <div class="experience-card-image">
-                <img src={image} alt="" loading="lazy" />
+            <div class="experience-card-image" data-company={companySlug}>
+                <Picture src={image} formats={['avif', 'webp']} alt={imageAlt || `${company} illustration`} loading="lazy" />
             </div>
         )}
         <div class="experience-card-index experience-card-index-end">

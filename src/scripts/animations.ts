@@ -292,22 +292,6 @@ function initAnimations() {
             delay: 2.5,
         });
 
-        // Scroll indicator
-        gsap.to('#scroll-indicator', {
-            opacity: 1,
-            duration: 0.6,
-            delay: 2.5,
-            ease: 'power2.out',
-        });
-
-        gsap.to('#scroll-indicator svg', {
-            y: 6,
-            duration: 1.2,
-            repeat: -1,
-            yoyo: true,
-            ease: 'power1.inOut',
-        });
-
         // Hero parallax on scroll
         gsap.to('#hero-headline-area', {
             yPercent: -12,

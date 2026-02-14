@@ -8,9 +8,9 @@ const { text, href } = Astro.props;
 const chars = text.split('');
 ---
 
-<a href={href} target="_blank" rel="noopener noreferrer" class="flip-link">
+<a href={href} target="_blank" rel="noopener noreferrer" class="flip-link" aria-label={text}>
     {chars.map((char, i) => (
-        <span class="flip-link-char">
+        <span class="flip-link-char" aria-hidden="true">
             <span
                 class="flip-link-char-inner"
                 style={`transition-delay: ${i * 0.03}s;`}
