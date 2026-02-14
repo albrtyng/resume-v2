@@ -388,7 +388,7 @@ body::before {
         object-fit: contain;
     }
 
-    .experience-card-image:has(img[src*="magnet"]) img {
+    .experience-card-image[data-company="magnetforensics"] img {
         width: 80%;
     }
 }

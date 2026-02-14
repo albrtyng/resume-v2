@@ -6,9 +6,9 @@ interface Props {
 const { lines } = Astro.props;
 ---
 
-<div class="section-divider">
+<div class="section-divider" aria-label={lines.join(' ')}>
     {lines.map((line) => (
-        <div class="section-divider-line">
+        <div class="section-divider-line" aria-hidden="true">
             {line.split('').map((char) => (
                 <span class="section-divider-char">
                     <span class="section-divider-char-inner">

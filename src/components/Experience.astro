@@ -1,7 +1,9 @@
 ---
+import { Picture } from 'astro:assets';
 import ExperienceCard from './ExperienceCard.astro';
 import Suitcase from './Suitcase.astro';
 import { jobs } from '../data/experience';
+import tornPaper from '../assets/images/torn-paper.png';
 ---
 
 <section id="experience" class="relative z-10 w-full overflow-visible">
@@ -9,7 +11,7 @@ import { jobs } from '../data/experience';
         class="absolute top-0 z-10 -translate-y-3/4"
         style="left: calc(-1 * clamp(1rem, 5vw, 6rem)); right: calc(-1 * clamp(1rem, 5vw, 6rem));"
     >
-        <img src="/images/torn-paper.png" class="w-full" />
+        <Picture src={tornPaper} formats={['avif', 'webp']} alt="Decorative torn paper divider" loading="lazy" width={1370} height={104} class="w-full" />
     </div>
 
     <div class="relative z-20 px-6 pt-24 md:pt-32">
@@ -38,6 +40,7 @@ import { jobs } from '../data/experience';
                 bullets={job.bullets}
                 url={job.url}
                 image={job.image}
+                imageAlt={job.imageAlt}
                 index={i}
                 total={jobs.length}
             />
