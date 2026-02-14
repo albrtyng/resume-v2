@@ -1,4 +1,5 @@
 import { registerSlots, reportProgress } from './loading-coordinator';
+import { computeFrustumScale } from './frustum-scale';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
@@ -7,9 +8,23 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Detect mobile (<640px) for layout/perf adjustments
+// Detect mobile (<640px) for perf adjustments (antialias, pixelRatio)
 let isMobile = window.innerWidth < 640;
-let modelScale = isMobile ? 0.85 : 1.2;
+
+// Viewport-responsive tuning: interpolate between mobile and desktop targets
+const NARROW_W = 375; // mobile baseline
+const WIDE_W = 1536; // 2xl breakpoint
+
+const NARROW_COVERAGE = 0.35; // smaller on mobile
+const WIDE_COVERAGE = 0.52; // full size at 2xl
+
+const GRID_LINE_NDC_X = 0.75; // right-edge target on desktop (87.5% from left)
+
+let viewportT = 0; // 0 = mobile, 1 = desktop 2xl
+let shipCoverage = WIDE_COVERAGE;
+
+let rawModelHeight = 1; // measured after model loads
+let modelScale = 1; // recomputed on every resize
 const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
 ).matches;
@@ -60,9 +75,11 @@ function initShipScene() {
     let loadedModel: THREE.Group | null = null;
 
     function updateSize() {
-        const wasMobile = isMobile;
         isMobile = window.innerWidth < 640;
-        modelScale = isMobile ? 0.85 : 1.2;
+
+        // Interpolate coverage based on viewport width (0 = mobile, 1 = 2xl)
+        viewportT = Math.min(Math.max((window.innerWidth - NARROW_W) / (WIDE_W - NARROW_W), 0), 1);
+        shipCoverage = NARROW_COVERAGE + (WIDE_COVERAGE - NARROW_COVERAGE) * viewportT;
 
         const rect = heroEl!.getBoundingClientRect();
         renderer.setSize(rect.width, rect.height);
@@ -70,47 +87,43 @@ function initShipScene() {
         camera.updateProjectionMatrix();
 
         if (loadedModel) {
-            if (wasMobile !== isMobile) {
-                comboGroup.scale.setScalar(modelScale);
-                waterGroup.scale.setScalar(modelScale);
-            }
+            modelScale = computeFrustumScale(camera, rawModelHeight, shipCoverage);
+            comboGroup.scale.setScalar(modelScale);
+            waterGroup.scale.setScalar(modelScale);
             alignModelToGridLine(loadedModel);
         }
     }
     updateSize();
 
-    // Align model's right bounding-box edge with the 1st grid line (12.5% from left).
-    // Converts that screen-space position to world-space at the model's depth.
+    // Convert an NDC x value to world-space x at z=0.
+    function ndcToWorldX(ndcX: number): number {
+        const target = new THREE.Vector3(ndcX, 0, 0).unproject(camera);
+        const dir = target.sub(camera.position).normalize();
+        const dist = -camera.position.z / dir.z;
+        return camera.position.x + dir.x * dist;
+    }
+
+    // Position the model between centered (mobile) and right-aligned (desktop).
     function alignModelToGridLine(model: THREE.Group) {
-        // First grid line from the right is at 87.5% from the left = NDC x of +0.75
-        // (NDC goes from -1 on left to +1 on right: -1 + 2*0.875 = 0.75)
-        const ndcX = isMobile ? 1.05 : 0.75;
-        const targetWorld = new THREE.Vector3(ndcX, 0, 0).unproject(camera);
-        // Unproject gives a point on the near plane ray; we need the X at z=0
-        const dir = targetWorld.sub(camera.position).normalize();
-        const t = -camera.position.z / dir.z;
-        const worldX = camera.position.x + dir.x * t;
-
-        // Temporarily set full scale to get accurate bounding box
-        const savedScale = model.scale.clone();
-        model.scale.setScalar(modelScale);
-
         const box = new THREE.Box3().setFromObject(model);
+        const centerOffset = (box.max.x + box.min.x) / 2 - model.position.x;
         const rightEdgeOffset = box.max.x - model.position.x;
-        model.position.x = worldX - rightEdgeOffset;
 
-        // Keep waterGroup aligned with the ship
+        // Centered: model center at viewport center
+        const centeredX = ndcToWorldX(0) - centerOffset;
+        // Right-aligned: model right edge at grid line
+        const rightAlignedX = ndcToWorldX(GRID_LINE_NDC_X) - rightEdgeOffset;
+
+        // Blend from centered (t=0) to right-aligned (t=1)
+        model.position.x = centeredX + (rightAlignedX - centeredX) * viewportT;
+
         waterGroup.position.x = model.position.x;
-
-        // Restore scale
-        model.scale.copy(savedScale);
     }
 
     // ── Model containers (separated to avoid GSAP property conflicts) ──
     const scrollContainer = new THREE.Group(); // scroll parallax only
     const rockContainer = new THREE.Group(); // idle rocking (ship only)
     const waterGroup = new THREE.Group(); // water (no rocking)
-    waterGroup.scale.setScalar(modelScale);
     waterGroup.rotation.y = Math.PI / 8;
     scrollContainer.add(rockContainer);
     scrollContainer.add(waterGroup);
@@ -132,7 +145,6 @@ function initShipScene() {
 
     // Container for both models so they share scale/rotation/position
     const comboGroup = new THREE.Group();
-    comboGroup.scale.setScalar(modelScale);
     comboGroup.rotation.y = Math.PI / 8;
     rockContainer.add(comboGroup);
 
@@ -201,6 +213,16 @@ function initShipScene() {
     ]).then(([shipGltf, waterGltf]) => {
         // Add ship to combo group
         comboGroup.add(shipGltf.scene);
+
+        // Measure unscaled bounding box
+        comboGroup.scale.setScalar(1);
+        const rawBox = new THREE.Box3().setFromObject(comboGroup);
+        rawModelHeight = rawBox.max.y - rawBox.min.y;
+
+        // Compute and apply frustum-relative scale
+        modelScale = computeFrustumScale(camera, rawModelHeight, shipCoverage);
+        comboGroup.scale.setScalar(modelScale);
+        waterGroup.scale.setScalar(modelScale);
 
         // Process water meshes
         const waterMeshes: THREE.Mesh[] = [];
