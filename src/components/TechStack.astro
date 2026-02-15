@@ -14,5 +14,7 @@ import SectionDivider from './SectionDivider.astro';
 </div>
 
 <script>
-    import '../scripts/tech-stack-scene';
+    window.addEventListener('models:hero-ready', () => {
+        import('../scripts/tech-stack-scene');
+    }, { once: true });
 </script>

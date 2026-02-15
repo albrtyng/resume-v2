@@ -10,5 +10,7 @@
 </div>
 
 <script>
-    import '../scripts/suitcase-scene';
+    window.addEventListener('models:hero-ready', () => {
+        import('../scripts/suitcase-scene');
+    }, { once: true });
 </script>

@@ -1,10 +1,9 @@
-import { registerSlots, reportProgress } from './loading-coordinator';
+import { registerCriticalSlots, reportCriticalProgress } from './loading-coordinator';
+import { gltfLoader } from './shared-loader';
 import { computeFrustumScale } from './frustum-scale';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,7 +28,8 @@ const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
 ).matches;
 
-const shipSlotStart = registerSlots(2);
+// Only 1 critical slot — the ship hull. Water loads in background.
+const shipSlotStart = registerCriticalSlots(1);
 
 initShipScene();
 
@@ -132,10 +132,6 @@ function initShipScene() {
     scene.add(scrollContainer);
 
     // ── Load model ──
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/draco/');
-    const loader = new GLTFLoader();
-    loader.setDRACOLoader(dracoLoader);
     let modelLoaded = false;
 
     // Water animation state
@@ -182,9 +178,8 @@ function initShipScene() {
         });
     }
 
-    // ── Loading (delegated to shared coordinator) ──
+    // ── Loading helper ──
     function loadWithProgress(
-        gltfLoader: GLTFLoader,
         url: string,
         slotIndex: number,
     ): Promise<import('three/addons/loaders/GLTFLoader.js').GLTF> {
@@ -194,8 +189,7 @@ function initShipScene() {
                 resolve,
                 (xhr) => {
                     if (xhr.total) {
-                        // Cap at 0.95 — full 1.0 is reported after model setup
-                        reportProgress(
+                        reportCriticalProgress(
                             slotIndex,
                             Math.min(xhr.loaded / xhr.total, 0.95),
                         );
@@ -206,12 +200,17 @@ function initShipScene() {
         });
     }
 
-    // ── Parallel loading: ship + water ──
-    Promise.all([
-        loadWithProgress(loader, '/models/ship.glb', shipSlotStart),
-        loadWithProgress(loader, '/models/ship-water.glb', shipSlotStart + 1),
-    ]).then(([shipGltf, waterGltf]) => {
-        // Add ship to combo group
+    // Check if we should skip water (slow connections)
+    function shouldSkipWater(): boolean {
+        const conn = (navigator as any).connection;
+        if (!conn) return false;
+        if (conn.saveData) return true;
+        const ect = conn.effectiveType;
+        return ect === '2g' || ect === 'slow-2g';
+    }
+
+    // ── Phase 1: Load ship (critical) ──
+    loadWithProgress('/models/ship.glb', shipSlotStart).then((shipGltf) => {
         comboGroup.add(shipGltf.scene);
 
         // Measure unscaled bounding box
@@ -224,39 +223,63 @@ function initShipScene() {
         comboGroup.scale.setScalar(modelScale);
         waterGroup.scale.setScalar(modelScale);
 
-        // Process water meshes
-        const waterMeshes: THREE.Mesh[] = [];
-        waterGltf.scene.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
-                const mat = child.material as THREE.MeshStandardMaterial;
-                if (mat.name === 'Water') {
-                    waterMeshes.push(child);
-                }
-            }
-        });
-
-        for (const mesh of waterMeshes) {
-            const mat = mesh.material as THREE.MeshStandardMaterial;
-            mat.color.set(0x3b82f6);
-            waterMesh = mesh;
-            mesh.scale.setScalar(1.005);
-            mesh.rotation.y = Math.PI / 6;
-            mesh.position.y -= 0.5;
-            const pos = mesh.geometry.attributes.position;
-            waterOrigPositions = new Float32Array(pos.array);
-            waterGroup.add(mesh);
-        }
-
         // Align and mark ready
         loadedModel = comboGroup;
         alignModelToGridLine(comboGroup);
         modelLoaded = true;
 
-        // Report completion after model is set up and ready to render
-        reportProgress(shipSlotStart, 1);
-        reportProgress(shipSlotStart + 1, 1);
+        // Report critical completion — page can now reveal
+        reportCriticalProgress(shipSlotStart, 1);
 
         startAnimations();
+
+        // ── Phase 2: Load water (deferred — waits for scroll or idle timeout) ──
+        if (!shouldSkipWater()) {
+            const loadWater = () => {
+                gltfLoader.load('/models/ship-water.glb', (waterGltf) => {
+                    const waterMeshes: THREE.Mesh[] = [];
+                    waterGltf.scene.traverse((child) => {
+                        if (child instanceof THREE.Mesh) {
+                            const mat = child.material as THREE.MeshStandardMaterial;
+                            if (mat.name === 'Water') {
+                                waterMeshes.push(child);
+                            }
+                        }
+                    });
+
+                    for (const mesh of waterMeshes) {
+                        const mat = mesh.material as THREE.MeshStandardMaterial;
+                        mat.color.set(0x3b82f6);
+                        mat.transparent = true;
+                        mat.opacity = 0;
+                        waterMesh = mesh;
+                        mesh.scale.setScalar(1.005);
+                        mesh.rotation.y = Math.PI / 6;
+                        mesh.position.y -= 0.5;
+                        const pos = mesh.geometry.attributes.position;
+                        waterOrigPositions = new Float32Array(pos.array);
+                        waterGroup.add(mesh);
+
+                        // Fade water in
+                        gsap.to(mat, {
+                            opacity: 1,
+                            duration: 1.2,
+                            ease: 'power2.out',
+                        });
+                    }
+                });
+            };
+
+            let triggered = false;
+            const trigger = () => {
+                if (triggered) return;
+                triggered = true;
+                window.removeEventListener('scroll', trigger);
+                loadWater();
+            };
+            window.addEventListener('scroll', trigger, { once: true, passive: true });
+            setTimeout(trigger, 5000);
+        }
     });
 
     // ── Render loop ──
