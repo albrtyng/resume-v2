@@ -6,7 +6,7 @@ interface Props {
 const { lines } = Astro.props;
 ---
 
-<div class="section-divider" aria-label={lines.join(' ')}>
+<div class="section-divider" role="heading" aria-level="2" aria-label={lines.join(' ')}>
     {lines.map((line) => (
         <div class="section-divider-line" aria-hidden="true">
             {line.split('').map((char) => (

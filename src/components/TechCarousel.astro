@@ -15,5 +15,7 @@
 </div>
 
 <script>
-    import '../scripts/tech-carousel-scene';
+    window.addEventListener('models:hero-ready', () => {
+        import('../scripts/tech-carousel-scene');
+    }, { once: true });
 </script>

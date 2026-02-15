@@ -1,8 +1,7 @@
 import gsap from 'gsap';
 
-// Shared loading progress coordinator.
-// Both scene scripts import this module — Vite deduplicates the import so
-// they share the same singleton state.
+// Loading progress coordinator for critical (hero) assets only.
+// Below-fold scenes no longer register here — they lazy-load independently.
 
 let totalSlots = 0;
 const slotProgress: number[] = [];
@@ -11,8 +10,8 @@ let dispatched = false;
 const loaderText = document.getElementById('hero-loader-text');
 const progress = { value: 0 };
 
-/** Register N loading slots. Returns the starting slot index. */
-export function registerSlots(count: number): number {
+/** Register N critical loading slots. Returns the starting slot index. */
+export function registerCriticalSlots(count: number): number {
     const start = totalSlots;
     for (let i = 0; i < count; i++) {
         slotProgress.push(0);
@@ -21,8 +20,8 @@ export function registerSlots(count: number): number {
     return start;
 }
 
-/** Report 0-1 progress for a given slot. */
-export function reportProgress(slotIndex: number, fraction: number) {
+/** Report 0-1 progress for a given critical slot. */
+export function reportCriticalProgress(slotIndex: number, fraction: number) {
     slotProgress[slotIndex] = fraction;
 
     const sum = slotProgress.reduce((a, b) => a + b, 0);
@@ -37,12 +36,12 @@ export function reportProgress(slotIndex: number, fraction: number) {
         },
     });
 
-    // Check if all slots are complete (fire only once)
+    // Check if all critical slots are complete (fire only once)
     if (!dispatched && slotProgress.every((p) => p >= 1)) {
         dispatched = true;
         // Small delay to let the counter tween finish at 100%
         gsap.delayedCall(0.35, () => {
-            window.dispatchEvent(new Event('models:all-ready'));
+            window.dispatchEvent(new Event('models:hero-ready'));
         });
     }
 }

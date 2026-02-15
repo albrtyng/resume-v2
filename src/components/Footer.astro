@@ -59,6 +59,8 @@ import Link from './Link.astro';
     </div>
 
     <script>
-        import '../scripts/contact-book-scene';
+        window.addEventListener('models:hero-ready', () => {
+            import('../scripts/contact-book-scene');
+        }, { once: true });
     </script>
 </footer>
