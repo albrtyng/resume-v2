@@ -1,7 +1,9 @@
-import { gltfLoader } from './shared-loader';
+import { registerSlots, reportProgress } from './loading-coordinator';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 type Breakpoint =
     | 'mobile'
@@ -19,6 +21,8 @@ function getBreakpoint(width: number): Breakpoint {
 }
 
 gsap.registerPlugin(ScrollTrigger);
+
+const suitcaseSlotStart = registerSlots(1);
 
 initSuitcaseScene();
 
@@ -108,41 +112,36 @@ function initSuitcaseScene() {
     }
     updateSize();
 
-    // ── Deferred model loading via IntersectionObserver ──
+    // ── Load model ──
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/draco/');
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
     let modelLoaded = false;
 
-    canvas.style.opacity = '0';
+    loader.load(
+        '/models/suitcase.glb',
+        (gltf) => {
+            modelGroup.add(gltf.scene);
+            loadedModel = modelGroup;
 
-    let loadObserver: IntersectionObserver;
+            applyBreakpoint(getBreakpoint(window.innerWidth));
 
-    function setupLoadObserver() {
-        loadObserver = new IntersectionObserver(
-            ([entry]) => {
-                if (!entry.isIntersecting) return;
-                loadObserver.disconnect();
+            modelLoaded = true;
 
-                gltfLoader.load(
-                    '/models/suitcase.glb',
-                    (gltf) => {
-                        modelGroup.add(gltf.scene);
-                        loadedModel = modelGroup;
-
-                        applyBreakpoint(getBreakpoint(window.innerWidth));
-
-                        modelLoaded = true;
-
-                        gsap.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.6 });
-                        setupSlideUpAnimation();
-                    },
+            reportProgress(suitcaseSlotStart, 1);
+            setupSlideUpAnimation();
+        },
+        (xhr) => {
+            if (xhr.total) {
+                // Cap at 0.95 — full 1.0 is reported after model setup
+                reportProgress(
+                    suitcaseSlotStart,
+                    Math.min(xhr.loaded / xhr.total, 0.95),
                 );
-            },
-            { rootMargin: '0px 0px 200px 0px' },
-        );
-        loadObserver.observe(wrapperEl);
-    }
-
-    // Wait for hero to finish loading before competing for bandwidth
-    window.addEventListener('models:hero-ready', setupLoadObserver, { once: true });
+            }
+        },
+    );
 
     // ── Slide-up animation (syncs with experience heading reveal) ──
     function setupSlideUpAnimation() {
@@ -188,7 +187,6 @@ function initSuitcaseScene() {
 
     // ── Cleanup on Astro page navigation ──
     document.addEventListener('astro:before-swap', () => {
-        loadObserver.disconnect();
         observer.disconnect();
         window.removeEventListener('resize', onResize);
 

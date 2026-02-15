@@ -1,7 +1,9 @@
-import { gltfLoader } from './shared-loader';
+import { registerSlots, reportProgress } from './loading-coordinator';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,6 +25,8 @@ function getBreakpoint(width: number): Breakpoint {
 const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
 ).matches;
+
+const techSlotStart = registerSlots(1);
 
 initTechStackScene();
 
@@ -113,42 +117,36 @@ function initTechStackScene() {
     }
     updateSize();
 
-    // ── Deferred model loading via IntersectionObserver ──
+    // ── Load model ──
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/draco/');
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
     let modelLoaded = false;
 
-    // Start hidden — fade in when model loads
-    canvas.style.opacity = '0';
+    loader.load(
+        '/models/tech-stack.glb',
+        (gltf) => {
+            modelGroup.add(gltf.scene);
+            loadedModel = modelGroup;
 
-    let loadObserver: IntersectionObserver;
+            applyBreakpoint(getBreakpoint(window.innerWidth));
 
-    function setupLoadObserver() {
-        loadObserver = new IntersectionObserver(
-            ([entry]) => {
-                if (!entry.isIntersecting) return;
-                loadObserver.disconnect();
+            modelLoaded = true;
 
-                gltfLoader.load(
-                    '/models/tech-stack.glb',
-                    (gltf) => {
-                        modelGroup.add(gltf.scene);
-                        loadedModel = modelGroup;
-
-                        applyBreakpoint(getBreakpoint(window.innerWidth));
-
-                        modelLoaded = true;
-
-                        gsap.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.6 });
-                        startAnimations();
-                    },
+            reportProgress(techSlotStart, 1);
+            startAnimations();
+        },
+        (xhr) => {
+            if (xhr.total) {
+                // Cap at 0.95 — full 1.0 is reported after model setup
+                reportProgress(
+                    techSlotStart,
+                    Math.min(xhr.loaded / xhr.total, 0.95),
                 );
-            },
-            { rootMargin: '0px 0px 200px 0px' },
-        );
-        loadObserver.observe(wrapperEl);
-    }
-
-    // Wait for hero to finish loading before competing for bandwidth
-    window.addEventListener('models:hero-ready', setupLoadObserver, { once: true });
+            }
+        },
+    );
 
     // ── Animations ──
     function startAnimations() {
@@ -182,7 +180,6 @@ function initTechStackScene() {
 
     // ── Cleanup on Astro page navigation ──
     document.addEventListener('astro:before-swap', () => {
-        loadObserver.disconnect();
         observer.disconnect();
         window.removeEventListener('resize', onResize);
 
