@@ -1,4 +1,5 @@
 import { gltfLoader } from './shared-loader';
+import { downgradeToPhong } from './material-utils';
 import gsap from 'gsap';
 import {
     WebGLRenderer,
@@ -6,13 +7,13 @@ import {
     ACESFilmicToneMapping,
     Scene,
     OrthographicCamera,
-    AmbientLight,
-    DirectionalLight,
     Group,
     Box3,
     Vector3,
     Mesh,
     Clock,
+    AmbientLight,
+    DirectionalLight,
 } from 'three';
 
 type Breakpoint =
@@ -130,6 +131,7 @@ function initTechCarouselScene() {
         canvas,
         alpha: true,
         antialias: isHighPerf,
+        powerPreference: 'high-performance',
     });
     renderer.setPixelRatio(
         Math.min(window.devicePixelRatio, isHighPerf ? 2 : 1.5),
@@ -140,6 +142,12 @@ function initTechCarouselScene() {
 
     // ── Scene ──
     const scene = new Scene();
+
+    // ── Lights ──
+    scene.add(new AmbientLight(0xffffff, 0.6));
+    const dirLight = new DirectionalLight(0xffffff, 1.5);
+    dirLight.position.set(5, 8, 5);
+    scene.add(dirLight);
 
     // ── Orthographic Camera ──
     let currentConfig = BREAKPOINT_CONFIGS[getBreakpoint(window.innerWidth)];
@@ -155,17 +163,6 @@ function initTechCarouselScene() {
     );
     camera.position.set(0, 0, 10);
     camera.lookAt(0, 0, 0);
-
-    // ── Lighting ──
-    scene.add(new AmbientLight(0xffffff, 0.6));
-
-    const keyLight = new DirectionalLight(0xffffff, 1.5);
-    keyLight.position.set(5, 8, 5);
-    scene.add(keyLight);
-
-    const fillLight = new DirectionalLight(0x9cf6fb, 0.4);
-    fillLight.position.set(-3, 2, -2);
-    scene.add(fillLight);
 
     // ── Row containers ──
     const topRowGroup = new Group();
@@ -309,6 +306,7 @@ function initTechCarouselScene() {
                                 const normScale = maxDim > 0 ? 1.0 / maxDim : 1.0;
                                 normalizedScales.set(name, normScale);
 
+                                downgradeToPhong(gltf.scene);
                                 resolve({ name, scene: gltf.scene });
                             },
                             undefined,
@@ -367,7 +365,6 @@ function initTechCarouselScene() {
                     -(-bottomRowGroup.position.x % bottomStripWidth);
             }
 
-            // Gyroscopic rotation on each model
             for (const set of topSets) rotateModels(set, elapsed, 0);
             for (const set of bottomSets)
                 rotateModels(set, elapsed, topModelCount);

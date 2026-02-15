@@ -1,6 +1,9 @@
-import { registerCriticalSlots, reportCriticalProgress } from './loading-coordinator';
-import { gltfLoader } from './shared-loader';
 import { computeFrustumScale } from './frustum-scale';
+import {
+    registerCriticalSlots,
+    reportCriticalProgress,
+} from './loading-coordinator';
+import { gltfLoader } from './shared-loader';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -16,8 +19,9 @@ import {
     Vector3,
     Mesh,
     Clock,
+    PlaneGeometry,
+    MeshStandardMaterial,
 } from 'three';
-import type { MeshStandardMaterial } from 'three';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -59,6 +63,7 @@ function initShipScene() {
         canvas,
         alpha: true,
         antialias: !isMobile,
+        powerPreference: 'high-performance',
     });
     renderer.setPixelRatio(
         Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2),
@@ -92,8 +97,12 @@ function initShipScene() {
         isMobile = window.innerWidth < 640;
 
         // Interpolate coverage based on viewport width (0 = mobile, 1 = 2xl)
-        viewportT = Math.min(Math.max((window.innerWidth - NARROW_W) / (WIDE_W - NARROW_W), 0), 1);
-        shipCoverage = NARROW_COVERAGE + (WIDE_COVERAGE - NARROW_COVERAGE) * viewportT;
+        viewportT = Math.min(
+            Math.max((window.innerWidth - NARROW_W) / (WIDE_W - NARROW_W), 0),
+            1,
+        );
+        shipCoverage =
+            NARROW_COVERAGE + (WIDE_COVERAGE - NARROW_COVERAGE) * viewportT;
 
         const rect = heroEl!.getBoundingClientRect();
         renderer.setSize(rect.width, rect.height);
@@ -101,7 +110,11 @@ function initShipScene() {
         camera.updateProjectionMatrix();
 
         if (loadedModel) {
-            modelScale = computeFrustumScale(camera, rawModelHeight, shipCoverage);
+            modelScale = computeFrustumScale(
+                camera,
+                rawModelHeight,
+                shipCoverage,
+            );
             comboGroup.scale.setScalar(modelScale);
             waterGroup.scale.setScalar(modelScale);
             alignModelToGridLine(loadedModel);
@@ -149,8 +162,7 @@ function initShipScene() {
     let modelLoaded = false;
 
     // Water animation state
-    let waterMesh: Mesh | null = null;
-    let waterOrigPositions: Float32Array | null = null;
+    let waterShader: { uniforms: { uTime: { value: number } } } | null = null;
     const clock = new Clock();
 
     // Container for both models so they share scale/rotation/position
@@ -216,6 +228,7 @@ function initShipScene() {
 
     // Check if we should skip water (slow connections)
     function shouldSkipWater(): boolean {
+        if (window.innerWidth < 640) return true;
         const conn = (navigator as any).connection;
         if (!conn) return false;
         if (conn.saveData) return true;
@@ -248,7 +261,45 @@ function initShipScene() {
         startAnimations();
 
         // ── Phase 2: Load water ──
-        if (!shouldSkipWater()) {
+        if (shouldSkipWater()) {
+            // Mobile: procedural lightweight plane instead of 8.8MB GLB
+            const geometry = new PlaneGeometry(12, 12, 32, 32);
+            const mat = new MeshStandardMaterial({
+                color: 0x3b82f6,
+                transparent: true,
+                opacity: 0,
+            });
+            const mesh = new Mesh(geometry, mat);
+            mesh.rotation.x = -Math.PI / 2;
+            mesh.position.y -= 0.5;
+            mesh.scale.setScalar(1.04);
+
+            if (!prefersReducedMotion) {
+                mat.onBeforeCompile = (shader) => {
+                    shader.uniforms.uTime = { value: 0 };
+                    shader.vertexShader =
+                        'uniform float uTime;\n' + shader.vertexShader;
+                    shader.vertexShader = shader.vertexShader.replace(
+                        '#include <begin_vertex>',
+                        `#include <begin_vertex>
+                        float ox = position.x;
+                        float oz = position.z;
+                        transformed.y += sin(ox * 2.0 + uTime * 2.0) * 0.12
+                                       + sin(oz * 1.5 + uTime * 1.5) * 0.08
+                                       + sin((ox + oz) * 3.0 + uTime * 2.5) * 0.05;`,
+                    );
+                    waterShader = shader as unknown as typeof waterShader;
+                };
+            }
+
+            waterGroup.add(mesh);
+
+            gsap.to(mat, {
+                opacity: 1,
+                duration: 1.2,
+                ease: 'power2.out',
+            });
+        } else {
             gltfLoader.load('/models/ship-water.glb', (waterGltf) => {
                 const waterMeshes: Mesh[] = [];
                 waterGltf.scene.traverse((child) => {
@@ -265,12 +316,30 @@ function initShipScene() {
                     mat.color.set(0x3b82f6);
                     mat.transparent = true;
                     mat.opacity = 0;
-                    waterMesh = mesh;
-                    mesh.scale.setScalar(1.005);
+                    mesh.scale.setScalar(1.04);
                     mesh.rotation.y = Math.PI / 6;
                     mesh.position.y -= 0.5;
-                    const pos = mesh.geometry.attributes.position;
-                    waterOrigPositions = new Float32Array(pos.array);
+
+                    // Move wave animation to GPU via vertex shader injection
+                    if (!prefersReducedMotion) {
+                        mat.onBeforeCompile = (shader) => {
+                            shader.uniforms.uTime = { value: 0 };
+                            shader.vertexShader =
+                                'uniform float uTime;\n' + shader.vertexShader;
+                            shader.vertexShader = shader.vertexShader.replace(
+                                '#include <begin_vertex>',
+                                `#include <begin_vertex>
+                                float ox = position.x;
+                                float oz = position.z;
+                                transformed.y += sin(ox * 2.0 + uTime * 2.0) * 0.12
+                                               + sin(oz * 1.5 + uTime * 1.5) * 0.08
+                                               + sin((ox + oz) * 3.0 + uTime * 2.5) * 0.05;`,
+                            );
+                            waterShader =
+                                shader as unknown as typeof waterShader;
+                        };
+                    }
+
                     waterGroup.add(mesh);
 
                     // Fade water in
@@ -289,27 +358,9 @@ function initShipScene() {
 
     function render() {
         if (isVisible && modelLoaded) {
-            // Animate water vertices
-            if (waterMesh && waterOrigPositions && !prefersReducedMotion) {
-                const time = clock.getElapsedTime();
-                const pos = waterMesh.geometry.attributes.position;
-                const arr = pos.array as Float32Array;
-
-                for (let i = 0; i < pos.count; i++) {
-                    const ox = waterOrigPositions[i * 3];
-                    const oz = waterOrigPositions[i * 3 + 2];
-
-                    // Layer sine waves at different frequencies for natural motion
-                    arr[i * 3 + 1] =
-                        waterOrigPositions[i * 3 + 1] +
-                        Math.sin(ox * 2 + time * 2.0) * 0.12 +
-                        Math.sin(oz * 1.5 + time * 1.5) * 0.08 +
-                        Math.sin((ox + oz) * 3 + time * 2.5) * 0.05;
-                }
-
-                pos.needsUpdate = true;
+            if (waterShader) {
+                waterShader.uniforms.uTime.value = clock.getElapsedTime();
             }
-
             renderer.render(scene, camera);
         }
         requestAnimationFrame(render);

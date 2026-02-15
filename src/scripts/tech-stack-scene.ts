@@ -1,4 +1,5 @@
 import { gltfLoader } from './shared-loader';
+import { downgradeToPhong } from './material-utils';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -50,9 +51,10 @@ function initTechStackScene() {
         canvas,
         alpha: true,
         antialias: isHighPerf,
+        powerPreference: 'high-performance',
     });
     renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, isHighPerf ? 2 : 1.5),
+        Math.min(window.devicePixelRatio, isHighPerf ? 2 : 1),
     );
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.toneMapping = ACESFilmicToneMapping;
@@ -72,10 +74,6 @@ function initTechStackScene() {
     const keyLight = new DirectionalLight(0xffffff, 1.5);
     keyLight.position.set(5, 8, 5);
     scene.add(keyLight);
-
-    const fillLight = new DirectionalLight(0x9cf6fb, 0.4);
-    fillLight.position.set(-3, 2, -2);
-    scene.add(fillLight);
 
     // ── Model container ──
     const modelGroup = new Group();
@@ -119,6 +117,7 @@ function initTechStackScene() {
 
         if (loadedModel) {
             applyBreakpoint(bp);
+            renderOnce();
         }
     }
     updateSize();
@@ -140,12 +139,14 @@ function initTechStackScene() {
                 gltfLoader.load(
                     '/models/tech-stack.glb',
                     (gltf) => {
+                        downgradeToPhong(gltf.scene);
                         modelGroup.add(gltf.scene);
                         loadedModel = modelGroup;
 
                         applyBreakpoint(getBreakpoint(window.innerWidth));
 
                         modelLoaded = true;
+                        renderOnce();
 
                         gsap.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.6 });
                         startAnimations();
@@ -166,25 +167,12 @@ function initTechStackScene() {
         // Parallax removed — will be re-added after positioning is verified
     }
 
-    // ── Render loop ──
-    let isVisible = false;
-
-    function render() {
-        if (isVisible && modelLoaded) {
+    // ── Render on demand (static scene — no continuous loop) ──
+    function renderOnce() {
+        if (modelLoaded) {
             renderer.render(scene, camera);
         }
-        requestAnimationFrame(render);
     }
-    requestAnimationFrame(render);
-
-    // ── IntersectionObserver — pause when off-screen ──
-    const observer = new IntersectionObserver(
-        ([entry]) => {
-            isVisible = entry.isIntersecting;
-        },
-        { threshold: 0 },
-    );
-    observer.observe(wrapperEl);
 
     // ── Resize handler ──
     const onResize = () => updateSize();
@@ -193,7 +181,6 @@ function initTechStackScene() {
     // ── Cleanup on Astro page navigation ──
     document.addEventListener('astro:before-swap', () => {
         loadObserver.disconnect();
-        observer.disconnect();
         window.removeEventListener('resize', onResize);
 
         scene.traverse((child) => {
