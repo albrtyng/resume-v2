@@ -67,12 +67,34 @@ const canonicalURL = 'https://albertyang.ca/';
 
         <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
     </head>
-    <body>
+    <body style="overflow: hidden;">
         <a href="#experience" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:p-4 focus:text-black">Skip to content</a>
         <Header />
         <slot />
+        <script is:inline>
+            // Handle prefers-reduced-motion immediately (no GSAP/Lenis needed)
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelectorAll('.gsap-animated').forEach(function(el) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'none';
+                    el.style.clipPath = 'none';
+                });
+                var overlay = document.getElementById('hero-with-albert-overlay');
+                if (overlay) overlay.style.display = 'none';
+                var shutter = document.getElementById('hero-shutter');
+                if (shutter) shutter.remove();
+                var loader = document.getElementById('hero-loader');
+                if (loader) loader.remove();
+                document.body.style.overflow = '';
+            }
+        </script>
         <script>
-            import '../scripts/animations';
+            // Defer animations.ts (GSAP + Lenis) until hero model is ready
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                window.addEventListener('models:hero-ready', () => {
+                    import('../scripts/animations');
+                }, { once: true });
+            }
         </script>
     </body>
 </html>

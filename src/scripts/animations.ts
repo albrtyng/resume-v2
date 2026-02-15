@@ -16,32 +16,8 @@ gsap.ticker.add((time) => {
 });
 gsap.ticker.lagSmoothing(0);
 
-// Respect reduced motion preference
-const prefersReducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)',
-).matches;
-
-// Block scrolling until loading is finished
-lenis.stop();
-
-if (prefersReducedMotion) {
-    // Show everything immediately
-    gsap.set('.gsap-animated', {
-        opacity: 1,
-        y: 0,
-        x: 0,
-        yPercent: 0,
-        clipPath: 'none',
-    });
-    gsap.set('#hero-with-albert-overlay', { display: 'none' });
-    document.getElementById('hero-shutter')?.remove();
-    document.getElementById('hero-loader')?.remove();
-    lenis.start();
-} else {
-    window.addEventListener('models:hero-ready', () => initAnimations(), {
-        once: true,
-    });
-}
+// Module is dynamically imported when models:hero-ready fires — initialize immediately.
+initAnimations();
 
 function wrapLine(el: Element): HTMLSpanElement {
     const inner = document.createElement('span');
@@ -233,6 +209,7 @@ function initAnimations() {
             ease: 'power3.inOut',
             onComplete: () => {
                 document.getElementById('hero-shutter')?.remove();
+                document.body.style.overflow = '';
                 lenis.start();
             },
         });

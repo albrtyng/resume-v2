@@ -1,5 +1,3 @@
-import gsap from 'gsap';
-
 // Loading progress coordinator for critical (hero) assets only.
 // Below-fold scenes no longer register here — they lazy-load independently.
 
@@ -8,7 +6,26 @@ const slotProgress: number[] = [];
 let dispatched = false;
 
 const loaderText = document.getElementById('hero-loader-text');
-const progress = { value: 0 };
+
+// Vanilla tween state (replaces GSAP)
+let displayValue = 0;
+let targetValue = 0;
+let tweenActive = false;
+
+function tweenProgress() {
+    const diff = targetValue - displayValue;
+    if (Math.abs(diff) < 0.5) {
+        displayValue = targetValue;
+        if (loaderText) loaderText.textContent = `${Math.round(displayValue)}%`;
+        tweenActive = false;
+        return;
+    }
+    // Ease-out: close ~70% of remaining gap each frame (~equivalent to power1.out over 0.3s)
+    displayValue += diff * 0.15;
+    if (loaderText) loaderText.textContent = `${Math.round(displayValue)}%`;
+    tweenActive = true;
+    requestAnimationFrame(tweenProgress);
+}
 
 /** Register N critical loading slots. Returns the starting slot index. */
 export function registerCriticalSlots(count: number): number {
@@ -25,23 +42,19 @@ export function reportCriticalProgress(slotIndex: number, fraction: number) {
     slotProgress[slotIndex] = fraction;
 
     const sum = slotProgress.reduce((a, b) => a + b, 0);
-    const overall = (sum / totalSlots) * 100;
+    targetValue = (sum / totalSlots) * 100;
 
-    gsap.to(progress, {
-        value: overall,
-        duration: 0.3,
-        ease: 'power1.out',
-        onUpdate: () => {
-            if (loaderText) loaderText.textContent = `${Math.round(progress.value)}%`;
-        },
-    });
+    if (!tweenActive) {
+        tweenActive = true;
+        requestAnimationFrame(tweenProgress);
+    }
 
     // Check if all critical slots are complete (fire only once)
     if (!dispatched && slotProgress.every((p) => p >= 1)) {
         dispatched = true;
-        // Small delay to let the counter tween finish at 100%
-        gsap.delayedCall(0.35, () => {
+        // Small delay to let the counter finish at 100%
+        setTimeout(() => {
             window.dispatchEvent(new Event('models:hero-ready'));
-        });
+        }, 350);
     }
 }

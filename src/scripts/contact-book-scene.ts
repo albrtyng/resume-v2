@@ -1,6 +1,19 @@
 import { gltfLoader } from './shared-loader';
 import gsap from 'gsap';
-import * as THREE from 'three';
+import {
+    WebGLRenderer,
+    SRGBColorSpace,
+    ACESFilmicToneMapping,
+    Scene,
+    PerspectiveCamera,
+    AmbientLight,
+    DirectionalLight,
+    Group,
+    Box3,
+    Vector3,
+    Mesh,
+    Clock,
+} from 'three';
 
 type Breakpoint =
     | 'mobile'
@@ -32,7 +45,7 @@ function initContactBookScene() {
 
     // ── Renderer ──
     const isHighPerf = window.innerWidth >= 1024;
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
         canvas,
         alpha: true,
         antialias: isHighPerf,
@@ -40,35 +53,35 @@ function initContactBookScene() {
     renderer.setPixelRatio(
         Math.min(window.devicePixelRatio, isHighPerf ? 2 : 1.5),
     );
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
 
     // ── Scene ──
-    const scene = new THREE.Scene();
+    const scene = new Scene();
 
     // ── Camera ──
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    const camera = new PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.set(0, 0, 5);
     camera.lookAt(0, 0, 0);
 
     // ── Lighting ──
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    scene.add(new AmbientLight(0xffffff, 0.6));
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    const keyLight = new DirectionalLight(0xffffff, 1.5);
     keyLight.position.set(5, 8, 5);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x9cf6fb, 0.4);
+    const fillLight = new DirectionalLight(0x9cf6fb, 0.4);
     fillLight.position.set(-3, 2, -2);
     scene.add(fillLight);
 
     // ── Model container ──
-    const modelGroup = new THREE.Group();
+    const modelGroup = new Group();
     scene.add(modelGroup);
 
     // ── Sizing ──
-    let loadedModel: THREE.Group | null = null;
+    let loadedModel: Group | null = null;
     let normalizedScale = 1.0;
     function applyBreakpoint(bp: Breakpoint) {
         if (bp === 'mobile') {
@@ -121,9 +134,9 @@ function initContactBookScene() {
                 gltfLoader.load(
                     '/models/contact-book.glb',
                     (gltf) => {
-                        const box = new THREE.Box3().setFromObject(gltf.scene);
-                        const center = box.getCenter(new THREE.Vector3());
-                        const size = box.getSize(new THREE.Vector3());
+                        const box = new Box3().setFromObject(gltf.scene);
+                        const center = box.getCenter(new Vector3());
+                        const size = box.getSize(new Vector3());
 
                         gltf.scene.position.sub(center);
 
@@ -160,7 +173,7 @@ function initContactBookScene() {
 
     // ── Gyroscope animation ──
     let animationId: number;
-    const clock = new THREE.Clock();
+    const clock = new Clock();
 
     function animate() {
         animationId = requestAnimationFrame(animate);
@@ -199,7 +212,7 @@ function initContactBookScene() {
         cancelAnimationFrame(animationId);
 
         scene.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
+            if (child instanceof Mesh) {
                 child.geometry?.dispose();
                 if (Array.isArray(child.material)) {
                     child.material.forEach((m) => m.dispose());
