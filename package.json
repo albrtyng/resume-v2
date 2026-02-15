@@ -8,7 +8,8 @@
         "build": "astro build",
         "preview": "astro preview",
         "lint": "eslint .",
-        "format": "prettier --ignore-path .gitignore --write \"**/*.+(css|js|ts|astro|json)\""
+        "format": "prettier --ignore-path .gitignore --write \"**/*.+(css|js|ts|astro|json)\"",
+        "optimize-models": "node scripts/optimize-models.mjs"
     },
     "dependencies": {
         "@tailwindcss/vite": "^4.0.7",
@@ -20,6 +21,7 @@
         "three": "^0.182.0"
     },
     "devDependencies": {
+        "@gltf-transform/cli": "^4.3.0",
         "@trivago/prettier-plugin-sort-imports": "^5.2.2",
         "@types/three": "^0.182.0",
         "lil-gui": "^0.21.0",

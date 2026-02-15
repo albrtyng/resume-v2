@@ -1,5 +1,6 @@
 import { gltfLoader } from './shared-loader';
 import { downgradeToPhong } from './material-utils';
+import { createPlaceholder } from './placeholder';
 import gsap from 'gsap';
 import {
     WebGLRenderer,
@@ -129,29 +130,37 @@ function initContactBookScene() {
                 if (!entry.isIntersecting) return;
                 loadObserver.disconnect();
 
+                // Show animated placeholder immediately while model downloads
+                const placeholder = createPlaceholder(scene, { animate: true });
+                canvas.style.opacity = '1';
+                isVisible = true;
+
                 gltfLoader.load(
                     '/models/contact-book.glb',
                     (gltf) => {
-                        const box = new Box3().setFromObject(gltf.scene);
-                        const center = box.getCenter(new Vector3());
-                        const size = box.getSize(new Vector3());
+                        // Fade out placeholder, then show model
+                        placeholder.remove(() => {
+                            const box = new Box3().setFromObject(gltf.scene);
+                            const center = box.getCenter(new Vector3());
+                            const size = box.getSize(new Vector3());
 
-                        gltf.scene.position.sub(center);
+                            gltf.scene.position.sub(center);
 
-                        const maxDim = Math.max(size.x, size.y, size.z);
-                        normalizedScale = maxDim > 0 ? 1.0 / maxDim : 1.0;
+                            const maxDim = Math.max(size.x, size.y, size.z);
+                            normalizedScale = maxDim > 0 ? 1.0 / maxDim : 1.0;
 
-                        downgradeToPhong(gltf.scene);
-                        modelGroup.add(gltf.scene);
-                        loadedModel = modelGroup;
+                            downgradeToPhong(gltf.scene);
+                            modelGroup.add(gltf.scene);
+                            loadedModel = modelGroup;
 
-                        applyBreakpoint(getBreakpoint(window.innerWidth));
+                            applyBreakpoint(getBreakpoint(window.innerWidth));
 
-                        modelLoaded = true;
+                            modelLoaded = true;
 
-                        renderer.render(scene, camera);
+                            renderer.render(scene, camera);
 
-                        gsap.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.6 });
+                            gsap.fromTo(canvas, { opacity: 0.3 }, { opacity: 1, duration: 0.4 });
+                        });
                     },
                     undefined,
                     (error) => {
@@ -159,7 +168,7 @@ function initContactBookScene() {
                     },
                 );
             },
-            { rootMargin: '0px 0px 200px 0px' },
+            { rootMargin: '0px 0px 400px 0px' },
         );
         loadObserver.observe(footerEl);
     }

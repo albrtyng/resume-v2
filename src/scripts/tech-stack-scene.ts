@@ -1,5 +1,6 @@
 import { gltfLoader } from './shared-loader';
 import { downgradeToPhong } from './material-utils';
+import { createPlaceholder } from './placeholder';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -136,24 +137,32 @@ function initTechStackScene() {
                 if (!entry.isIntersecting) return;
                 loadObserver.disconnect();
 
+                // Show placeholder immediately while model downloads
+                const placeholder = createPlaceholder(scene);
+                canvas.style.opacity = '1';
+                renderer.render(scene, camera);
+
                 gltfLoader.load(
                     '/models/tech-stack.glb',
                     (gltf) => {
-                        downgradeToPhong(gltf.scene);
-                        modelGroup.add(gltf.scene);
-                        loadedModel = modelGroup;
+                        // Fade out placeholder, then show model
+                        placeholder.remove(() => {
+                            downgradeToPhong(gltf.scene);
+                            modelGroup.add(gltf.scene);
+                            loadedModel = modelGroup;
 
-                        applyBreakpoint(getBreakpoint(window.innerWidth));
+                            applyBreakpoint(getBreakpoint(window.innerWidth));
 
-                        modelLoaded = true;
-                        renderOnce();
+                            modelLoaded = true;
+                            renderOnce();
 
-                        gsap.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.6 });
-                        startAnimations();
+                            gsap.fromTo(canvas, { opacity: 0.3 }, { opacity: 1, duration: 0.4 });
+                            startAnimations();
+                        });
                     },
                 );
             },
-            { rootMargin: '0px 0px 200px 0px' },
+            { rootMargin: '0px 0px 400px 0px' },
         );
         loadObserver.observe(wrapperEl);
     }

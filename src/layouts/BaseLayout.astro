@@ -63,7 +63,8 @@ const canonicalURL = 'https://albertyang.ca/';
         />
         <!-- Preload 3D models -->
         <link rel="preload" href="/models/ship.glb" as="fetch" crossorigin fetchpriority="high" />
-
+        <link rel="prefetch" href="/models/tech-stack.glb" as="fetch" crossorigin />
+        <link rel="prefetch" href="/models/contact-book.glb" as="fetch" crossorigin />
 
         <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
     </head>
@@ -93,6 +94,30 @@ const canonicalURL = 'https://albertyang.ca/';
             if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
                 window.addEventListener('models:hero-ready', () => {
                     import('../scripts/animations');
+
+                    // Cache-warm below-fold models during idle time
+                    const conn = (navigator as any).connection;
+                    if (conn?.saveData) return;
+
+                    const models = ['/models/tech-stack.glb', '/models/contact-book.glb', '/models/suitcase.glb'];
+                    let i = 0;
+                    function warmNext() {
+                        if (i >= models.length) return;
+                        fetch(models[i++], { priority: 'low' } as RequestInit)
+                            .catch(() => {})
+                            .finally(() => {
+                                if (typeof requestIdleCallback !== 'undefined') {
+                                    requestIdleCallback(warmNext);
+                                } else {
+                                    setTimeout(warmNext, 100);
+                                }
+                            });
+                    }
+                    if (typeof requestIdleCallback !== 'undefined') {
+                        requestIdleCallback(warmNext);
+                    } else {
+                        setTimeout(warmNext, 100);
+                    }
                 }, { once: true });
             }
         </script>
