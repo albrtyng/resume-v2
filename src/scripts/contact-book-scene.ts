@@ -1,6 +1,7 @@
-import { gltfLoader } from './shared-loader';
-import gsap from 'gsap';
+import { registerSlots, reportProgress } from './loading-coordinator';
 import * as THREE from 'three';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 type Breakpoint =
     | 'mobile'
@@ -20,6 +21,8 @@ function getBreakpoint(width: number): Breakpoint {
 const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
 ).matches;
+
+const contactSlotStart = registerSlots(1);
 
 initContactBookScene();
 
@@ -105,55 +108,49 @@ function initContactBookScene() {
     }
     updateSize();
 
-    // ── Deferred model loading via IntersectionObserver ──
+    // ── Load model ──
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('/draco/');
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
     let modelLoaded = false;
 
-    canvas.style.opacity = '0';
+    loader.load(
+        '/models/contact-book.glb',
+        (gltf) => {
+            const box = new THREE.Box3().setFromObject(gltf.scene);
+            const center = box.getCenter(new THREE.Vector3());
+            const size = box.getSize(new THREE.Vector3());
 
-    let loadObserver: IntersectionObserver;
+            gltf.scene.position.sub(center);
 
-    function setupLoadObserver() {
-        loadObserver = new IntersectionObserver(
-            ([entry]) => {
-                if (!entry.isIntersecting) return;
-                loadObserver.disconnect();
+            const maxDim = Math.max(size.x, size.y, size.z);
+            normalizedScale = maxDim > 0 ? 1.0 / maxDim : 1.0;
 
-                gltfLoader.load(
-                    '/models/contact-book.glb',
-                    (gltf) => {
-                        const box = new THREE.Box3().setFromObject(gltf.scene);
-                        const center = box.getCenter(new THREE.Vector3());
-                        const size = box.getSize(new THREE.Vector3());
+            modelGroup.add(gltf.scene);
+            loadedModel = modelGroup;
 
-                        gltf.scene.position.sub(center);
+            applyBreakpoint(getBreakpoint(window.innerWidth));
 
-                        const maxDim = Math.max(size.x, size.y, size.z);
-                        normalizedScale = maxDim > 0 ? 1.0 / maxDim : 1.0;
+            modelLoaded = true;
 
-                        modelGroup.add(gltf.scene);
-                        loadedModel = modelGroup;
+            renderer.render(scene, camera);
 
-                        applyBreakpoint(getBreakpoint(window.innerWidth));
-
-                        modelLoaded = true;
-
-                        renderer.render(scene, camera);
-
-                        gsap.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.6 });
-                    },
-                    undefined,
-                    (error) => {
-                        console.error('Failed to load contact-book model:', error);
-                    },
+            reportProgress(contactSlotStart, 1);
+        },
+        (xhr) => {
+            if (xhr.total) {
+                reportProgress(
+                    contactSlotStart,
+                    Math.min(xhr.loaded / xhr.total, 0.95),
                 );
-            },
-            { rootMargin: '0px 0px 200px 0px' },
-        );
-        loadObserver.observe(footerEl);
-    }
-
-    // Wait for hero to finish loading before competing for bandwidth
-    window.addEventListener('models:hero-ready', setupLoadObserver, { once: true });
+            }
+        },
+        (error) => {
+            console.error('Failed to load contact-book model:', error);
+            reportProgress(contactSlotStart, 1);
+        },
+    );
 
     // ── IntersectionObserver — pause when off-screen ──
     let isVisible = false;
@@ -193,7 +190,6 @@ function initContactBookScene() {
 
     // ── Cleanup on Astro page navigation ──
     document.addEventListener('astro:before-swap', () => {
-        loadObserver.disconnect();
         observer.disconnect();
         window.removeEventListener('resize', onResize);
         cancelAnimationFrame(animationId);

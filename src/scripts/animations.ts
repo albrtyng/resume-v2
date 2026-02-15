@@ -38,7 +38,7 @@ if (prefersReducedMotion) {
     document.getElementById('hero-loader')?.remove();
     lenis.start();
 } else {
-    window.addEventListener('models:hero-ready', () => initAnimations(), {
+    window.addEventListener('models:all-ready', () => initAnimations(), {
         once: true,
     });
 }
