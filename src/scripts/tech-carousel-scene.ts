@@ -1,7 +1,6 @@
-import { registerSlots, reportProgress } from './loading-coordinator';
+import { gltfLoader } from './shared-loader';
+import gsap from 'gsap';
 import * as THREE from 'three';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 type Breakpoint =
     | 'mobile'
@@ -103,8 +102,6 @@ const prefersReducedMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
 ).matches;
 
-const carouselSlotStart = registerSlots(9);
-
 initTechCarouselScene();
 
 function initTechCarouselScene() {
@@ -177,60 +174,6 @@ function initTechCarouselScene() {
     // Store loaded model scenes for rebuilding on resize
     const loadedModels: Map<string, THREE.Group> = new Map();
     let allModelsLoaded = false;
-
-    // ── Load models ──
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/draco/');
-    const loader = new GLTFLoader();
-    loader.setDRACOLoader(dracoLoader);
-
-    // Only load each unique model once
-    const allModelNames = [...TOP_ROW_UNIQUE, ...BOTTOM_ROW_UNIQUE];
-
-    const loadPromises = allModelNames.map((name, i) => {
-        const slotIndex = carouselSlotStart + i;
-        return new Promise<{ name: string; scene: THREE.Group }>((resolve) => {
-            loader.load(
-                `/models/${name}.glb`,
-                (gltf) => {
-                    // Center and normalize
-                    const box = new THREE.Box3().setFromObject(gltf.scene);
-                    const center = box.getCenter(new THREE.Vector3());
-                    const size = box.getSize(new THREE.Vector3());
-                    gltf.scene.position.sub(center);
-
-                    const maxDim = Math.max(size.x, size.y, size.z);
-                    const normScale = maxDim > 0 ? 1.0 / maxDim : 1.0;
-                    normalizedScales.set(name, normScale);
-
-                    reportProgress(slotIndex, 1);
-                    resolve({ name, scene: gltf.scene });
-                },
-                (xhr) => {
-                    if (xhr.total) {
-                        reportProgress(
-                            slotIndex,
-                            Math.min(xhr.loaded / xhr.total, 0.95),
-                        );
-                    }
-                },
-                (error) => {
-                    console.error(`Failed to load ${name} model:`, error);
-                    reportProgress(slotIndex, 1);
-                    resolve({ name, scene: new THREE.Group() });
-                },
-            );
-        });
-    });
-
-    Promise.all(loadPromises).then((results) => {
-        for (const { name, scene: modelScene } of results) {
-            loadedModels.set(name, modelScene);
-        }
-        allModelsLoaded = true;
-        buildRows();
-        renderer.render(scene, camera);
-    });
 
     // ── Build / rebuild rows from loaded models ──
     function buildRows() {
@@ -326,6 +269,62 @@ function initTechCarouselScene() {
     }
     applyConfig();
 
+    // ── Deferred model loading via IntersectionObserver ──
+    canvas.style.opacity = '0';
+
+    let loadObserver: IntersectionObserver;
+
+    function setupLoadObserver() {
+        loadObserver = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) return;
+                loadObserver.disconnect();
+
+                const allModelNames = [...TOP_ROW_UNIQUE, ...BOTTOM_ROW_UNIQUE];
+
+                const loadPromises = allModelNames.map((name) => {
+                    return new Promise<{ name: string; scene: THREE.Group }>((resolve) => {
+                        gltfLoader.load(
+                            `/models/${name}.glb`,
+                            (gltf) => {
+                                const box = new THREE.Box3().setFromObject(gltf.scene);
+                                const center = box.getCenter(new THREE.Vector3());
+                                const size = box.getSize(new THREE.Vector3());
+                                gltf.scene.position.sub(center);
+
+                                const maxDim = Math.max(size.x, size.y, size.z);
+                                const normScale = maxDim > 0 ? 1.0 / maxDim : 1.0;
+                                normalizedScales.set(name, normScale);
+
+                                resolve({ name, scene: gltf.scene });
+                            },
+                            undefined,
+                            (error) => {
+                                console.error(`Failed to load ${name} model:`, error);
+                                resolve({ name, scene: new THREE.Group() });
+                            },
+                        );
+                    });
+                });
+
+                Promise.all(loadPromises).then((results) => {
+                    for (const { name, scene: modelScene } of results) {
+                        loadedModels.set(name, modelScene);
+                    }
+                    allModelsLoaded = true;
+                    buildRows();
+                    renderer.render(scene, camera);
+                    gsap.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.6 });
+                });
+            },
+            { rootMargin: '0px 0px 200px 0px' },
+        );
+        loadObserver.observe(wrapperEl);
+    }
+
+    // Hero is already ready (this script is dynamically imported after models:hero-ready)
+    setupLoadObserver();
+
     // ── Animation ──
     let isVisible = false;
     let animationId: number;
@@ -395,6 +394,7 @@ function initTechCarouselScene() {
 
     // ── Cleanup ──
     document.addEventListener('astro:before-swap', () => {
+        loadObserver.disconnect();
         observer.disconnect();
         window.removeEventListener('resize', onResize);
         cancelAnimationFrame(animationId);
