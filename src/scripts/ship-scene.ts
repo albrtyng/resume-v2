@@ -3,7 +3,21 @@ import { gltfLoader } from './shared-loader';
 import { computeFrustumScale } from './frustum-scale';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import * as THREE from 'three';
+import {
+    WebGLRenderer,
+    SRGBColorSpace,
+    ACESFilmicToneMapping,
+    Scene,
+    PerspectiveCamera,
+    AmbientLight,
+    DirectionalLight,
+    Group,
+    Box3,
+    Vector3,
+    Mesh,
+    Clock,
+} from 'three';
+import type { MeshStandardMaterial } from 'three';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -41,7 +55,7 @@ function initShipScene() {
     if (!canvas || !heroEl) return;
 
     // ── Renderer ──
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
         canvas,
         alpha: true,
         antialias: !isMobile,
@@ -49,30 +63,30 @@ function initShipScene() {
     renderer.setPixelRatio(
         Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2),
     );
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
 
     // ── Scene ──
-    const scene = new THREE.Scene();
+    const scene = new Scene();
 
     // ── Camera ──
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    const camera = new PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.set(0, 1.25, 8);
     camera.lookAt(0, -0.75, 0);
 
     // ── Lighting ──
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    const ambientLight = new AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    const keyLight = new DirectionalLight(0xffffff, 1.5);
     keyLight.position.set(5, 8, 5);
 
-    const fillLight = new THREE.DirectionalLight(0x9cf6fb, 0.4);
+    const fillLight = new DirectionalLight(0x9cf6fb, 0.4);
     fillLight.position.set(-3, 2, -2);
 
     // ── Sizing ──
-    let loadedModel: THREE.Group | null = null;
+    let loadedModel: Group | null = null;
 
     function updateSize() {
         isMobile = window.innerWidth < 640;
@@ -97,15 +111,15 @@ function initShipScene() {
 
     // Convert an NDC x value to world-space x at z=0.
     function ndcToWorldX(ndcX: number): number {
-        const target = new THREE.Vector3(ndcX, 0, 0).unproject(camera);
+        const target = new Vector3(ndcX, 0, 0).unproject(camera);
         const dir = target.sub(camera.position).normalize();
         const dist = -camera.position.z / dir.z;
         return camera.position.x + dir.x * dist;
     }
 
     // Position the model between centered (mobile) and right-aligned (desktop).
-    function alignModelToGridLine(model: THREE.Group) {
-        const box = new THREE.Box3().setFromObject(model);
+    function alignModelToGridLine(model: Group) {
+        const box = new Box3().setFromObject(model);
         const centerOffset = (box.max.x + box.min.x) / 2 - model.position.x;
         const rightEdgeOffset = box.max.x - model.position.x;
 
@@ -121,9 +135,9 @@ function initShipScene() {
     }
 
     // ── Model containers (separated to avoid GSAP property conflicts) ──
-    const scrollContainer = new THREE.Group(); // scroll parallax only
-    const rockContainer = new THREE.Group(); // idle rocking (ship only)
-    const waterGroup = new THREE.Group(); // water (no rocking)
+    const scrollContainer = new Group(); // scroll parallax only
+    const rockContainer = new Group(); // idle rocking (ship only)
+    const waterGroup = new Group(); // water (no rocking)
     waterGroup.rotation.y = Math.PI / 8;
     scrollContainer.add(rockContainer);
     scrollContainer.add(waterGroup);
@@ -135,12 +149,12 @@ function initShipScene() {
     let modelLoaded = false;
 
     // Water animation state
-    let waterMesh: THREE.Mesh | null = null;
+    let waterMesh: Mesh | null = null;
     let waterOrigPositions: Float32Array | null = null;
-    const clock = new THREE.Clock();
+    const clock = new Clock();
 
     // Container for both models so they share scale/rotation/position
-    const comboGroup = new THREE.Group();
+    const comboGroup = new Group();
     comboGroup.rotation.y = Math.PI / 8;
     rockContainer.add(comboGroup);
 
@@ -215,7 +229,7 @@ function initShipScene() {
 
         // Measure unscaled bounding box
         comboGroup.scale.setScalar(1);
-        const rawBox = new THREE.Box3().setFromObject(comboGroup);
+        const rawBox = new Box3().setFromObject(comboGroup);
         rawModelHeight = rawBox.max.y - rawBox.min.y;
 
         // Compute and apply frustum-relative scale
@@ -236,10 +250,10 @@ function initShipScene() {
         // ── Phase 2: Load water ──
         if (!shouldSkipWater()) {
             gltfLoader.load('/models/ship-water.glb', (waterGltf) => {
-                const waterMeshes: THREE.Mesh[] = [];
+                const waterMeshes: Mesh[] = [];
                 waterGltf.scene.traverse((child) => {
-                    if (child instanceof THREE.Mesh) {
-                        const mat = child.material as THREE.MeshStandardMaterial;
+                    if (child instanceof Mesh) {
+                        const mat = child.material as MeshStandardMaterial;
                         if (mat.name === 'Water') {
                             waterMeshes.push(child);
                         }
@@ -247,7 +261,7 @@ function initShipScene() {
                 });
 
                 for (const mesh of waterMeshes) {
-                    const mat = mesh.material as THREE.MeshStandardMaterial;
+                    const mat = mesh.material as MeshStandardMaterial;
                     mat.color.set(0x3b82f6);
                     mat.transparent = true;
                     mat.opacity = 0;
@@ -322,7 +336,7 @@ function initShipScene() {
 
         // Dispose three.js resources
         scene.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
+            if (child instanceof Mesh) {
                 child.geometry?.dispose();
                 if (Array.isArray(child.material)) {
                     child.material.forEach((m) => m.dispose());

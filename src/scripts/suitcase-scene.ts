@@ -1,7 +1,19 @@
 import { gltfLoader } from './shared-loader';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import * as THREE from 'three';
+import {
+    WebGLRenderer,
+    SRGBColorSpace,
+    ACESFilmicToneMapping,
+    Scene,
+    PerspectiveCamera,
+    AmbientLight,
+    DirectionalLight,
+    Group,
+    Mesh,
+} from 'three';
+
+gsap.registerPlugin(ScrollTrigger);
 
 type Breakpoint =
     | 'mobile'
@@ -18,8 +30,6 @@ function getBreakpoint(width: number): Breakpoint {
     return 'desktop-2xl';
 }
 
-gsap.registerPlugin(ScrollTrigger);
-
 initSuitcaseScene();
 
 function initSuitcaseScene() {
@@ -31,7 +41,7 @@ function initSuitcaseScene() {
 
     // ── Renderer ──
     const isHighPerf = window.innerWidth >= 1024;
-    const renderer = new THREE.WebGLRenderer({
+    const renderer = new WebGLRenderer({
         canvas,
         alpha: true,
         antialias: isHighPerf,
@@ -39,35 +49,35 @@ function initSuitcaseScene() {
     renderer.setPixelRatio(
         Math.min(window.devicePixelRatio, isHighPerf ? 2 : 1.5),
     );
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
 
     // ── Scene ──
-    const scene = new THREE.Scene();
+    const scene = new Scene();
 
     // ── Camera ──
-    const camera = new THREE.PerspectiveCamera(20, 1, 0.1, 100);
+    const camera = new PerspectiveCamera(20, 1, 0.1, 100);
     camera.position.set(-0.7, 1.6, 4.0);
     camera.lookAt(0, 0, 0);
 
     // ── Lighting (matches hero & tech stack) ──
-    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    scene.add(new AmbientLight(0xffffff, 0.6));
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    const keyLight = new DirectionalLight(0xffffff, 1.5);
     keyLight.position.set(5, 8, 5);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0x9cf6fb, 0.4);
+    const fillLight = new DirectionalLight(0x9cf6fb, 0.4);
     fillLight.position.set(-3, 2, -2);
     scene.add(fillLight);
 
     // ── Model container ──
-    const modelGroup = new THREE.Group();
+    const modelGroup = new Group();
     scene.add(modelGroup);
 
     // ── Sizing ──
-    let loadedModel: THREE.Group | null = null;
+    let loadedModel: Group | null = null;
 
     function applyBreakpoint(bp: Breakpoint) {
         if (bp === 'mobile') {
@@ -193,7 +203,7 @@ function initSuitcaseScene() {
         window.removeEventListener('resize', onResize);
 
         scene.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
+            if (child instanceof Mesh) {
                 child.geometry?.dispose();
                 if (Array.isArray(child.material)) {
                     child.material.forEach((m) => m.dispose());
