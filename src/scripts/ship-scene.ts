@@ -233,52 +233,40 @@ function initShipScene() {
 
         startAnimations();
 
-        // ── Phase 2: Load water (deferred — waits for scroll or idle timeout) ──
+        // ── Phase 2: Load water ──
         if (!shouldSkipWater()) {
-            const loadWater = () => {
-                gltfLoader.load('/models/ship-water.glb', (waterGltf) => {
-                    const waterMeshes: THREE.Mesh[] = [];
-                    waterGltf.scene.traverse((child) => {
-                        if (child instanceof THREE.Mesh) {
-                            const mat = child.material as THREE.MeshStandardMaterial;
-                            if (mat.name === 'Water') {
-                                waterMeshes.push(child);
-                            }
+            gltfLoader.load('/models/ship-water.glb', (waterGltf) => {
+                const waterMeshes: THREE.Mesh[] = [];
+                waterGltf.scene.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        const mat = child.material as THREE.MeshStandardMaterial;
+                        if (mat.name === 'Water') {
+                            waterMeshes.push(child);
                         }
-                    });
-
-                    for (const mesh of waterMeshes) {
-                        const mat = mesh.material as THREE.MeshStandardMaterial;
-                        mat.color.set(0x3b82f6);
-                        mat.transparent = true;
-                        mat.opacity = 0;
-                        waterMesh = mesh;
-                        mesh.scale.setScalar(1.005);
-                        mesh.rotation.y = Math.PI / 6;
-                        mesh.position.y -= 0.5;
-                        const pos = mesh.geometry.attributes.position;
-                        waterOrigPositions = new Float32Array(pos.array);
-                        waterGroup.add(mesh);
-
-                        // Fade water in
-                        gsap.to(mat, {
-                            opacity: 1,
-                            duration: 1.2,
-                            ease: 'power2.out',
-                        });
                     }
                 });
-            };
 
-            let triggered = false;
-            const trigger = () => {
-                if (triggered) return;
-                triggered = true;
-                window.removeEventListener('scroll', trigger);
-                loadWater();
-            };
-            window.addEventListener('scroll', trigger, { once: true, passive: true });
-            setTimeout(trigger, 5000);
+                for (const mesh of waterMeshes) {
+                    const mat = mesh.material as THREE.MeshStandardMaterial;
+                    mat.color.set(0x3b82f6);
+                    mat.transparent = true;
+                    mat.opacity = 0;
+                    waterMesh = mesh;
+                    mesh.scale.setScalar(1.005);
+                    mesh.rotation.y = Math.PI / 6;
+                    mesh.position.y -= 0.5;
+                    const pos = mesh.geometry.attributes.position;
+                    waterOrigPositions = new Float32Array(pos.array);
+                    waterGroup.add(mesh);
+
+                    // Fade water in
+                    gsap.to(mat, {
+                        opacity: 1,
+                        duration: 1.2,
+                        ease: 'power2.out',
+                    });
+                }
+            });
         }
     });
 
