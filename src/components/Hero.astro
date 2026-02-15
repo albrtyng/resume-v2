@@ -6,14 +6,6 @@
     class="relative flex min-h-svh flex-col justify-center overflow-hidden"
     style="background-color: #4a5fc1; margin: 0 calc(-1 * clamp(1rem, 5vw, 6rem));"
 >
-    <!-- Decorative vertical grid lines -->
-    <div
-        id="hero-grid"
-        class="gsap-animated pointer-events-none absolute inset-0 z-0"
-        style="opacity: 0;"
-        aria-hidden="true"
-    ></div>
-
     <!-- 3D ship canvas — renders behind text, above grid -->
     <canvas
         id="hero-ship-canvas"
@@ -100,7 +92,7 @@
                 <div
                     id="hero-with-albert-overlay"
                     class=""
-                    style="background: #9EF5FB; padding-top: 0.15em; padding-bottom: 0.15em;"
+                    style="background: #9EF5FB; padding-top: 0.15em; padding-bottom: 0.15em; visibility: hidden;"
                 >
                     <div
                         class="font-bold uppercase"

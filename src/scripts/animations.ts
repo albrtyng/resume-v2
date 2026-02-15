@@ -269,7 +269,7 @@ function initAnimations() {
         );
         withAlbertTl.fromTo(
             '#hero-with-albert-overlay',
-            { yPercent: 100 },
+            { yPercent: 100, visibility: 'visible' },
             { yPercent: 0, duration: 0.7, ease: 'power3.out' },
             0,
         );
@@ -284,13 +284,6 @@ function initAnimations() {
             },
         );
 
-        // Grid lines fade in
-        gsap.to('#hero-grid', {
-            opacity: 1,
-            duration: 1,
-            ease: 'power2.out',
-            delay: 2.5,
-        });
 
         // Hero parallax on scroll
         gsap.to('#hero-headline-area', {

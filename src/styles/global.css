@@ -77,20 +77,6 @@ h2, h3 {
     letter-spacing: -0.02em;
 }
 
-#hero-grid {
-    background-image: repeating-linear-gradient(
-        90deg, rgba(158,245,251,0.06) 0px, rgba(158,245,251,0.06) 1px,
-        transparent 1px, transparent
-    );
-    background-size: calc(100% / 4) 100%;
-}
-
-@media (min-width: 640px) {
-    #hero-grid {
-        background-size: calc(100% / 8) 100%;
-    }
-}
-
 /* Noise texture overlay */
 body::before {
     content: '';
