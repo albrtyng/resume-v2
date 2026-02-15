@@ -1,4 +1,5 @@
 import { gltfLoader } from './shared-loader';
+import { downgradeToPhong } from './material-utils';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -45,9 +46,10 @@ function initSuitcaseScene() {
         canvas,
         alpha: true,
         antialias: isHighPerf,
+        powerPreference: 'high-performance',
     });
     renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio, isHighPerf ? 2 : 1.5),
+        Math.min(window.devicePixelRatio, isHighPerf ? 2 : 1),
     );
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.toneMapping = ACESFilmicToneMapping;
@@ -67,10 +69,6 @@ function initSuitcaseScene() {
     const keyLight = new DirectionalLight(0xffffff, 1.5);
     keyLight.position.set(5, 8, 5);
     scene.add(keyLight);
-
-    const fillLight = new DirectionalLight(0x9cf6fb, 0.4);
-    fillLight.position.set(-3, 2, -2);
-    scene.add(fillLight);
 
     // ── Model container ──
     const modelGroup = new Group();
@@ -114,6 +112,7 @@ function initSuitcaseScene() {
 
         if (loadedModel) {
             applyBreakpoint(bp);
+            if (isVisible) renderOnce();
         }
     }
     updateSize();
@@ -134,12 +133,14 @@ function initSuitcaseScene() {
                 gltfLoader.load(
                     '/models/suitcase.glb',
                     (gltf) => {
+                        downgradeToPhong(gltf.scene);
                         modelGroup.add(gltf.scene);
                         loadedModel = modelGroup;
 
                         applyBreakpoint(getBreakpoint(window.innerWidth));
 
                         modelLoaded = true;
+                        renderOnce();
 
                         gsap.fromTo(canvas, { opacity: 0 }, { opacity: 1, duration: 0.6 });
                         setupSlideUpAnimation();
@@ -164,6 +165,7 @@ function initSuitcaseScene() {
             y: targetY,
             duration: 1,
             ease: 'power3.out',
+            onUpdate: renderOnce,
             scrollTrigger: {
                 trigger: '#experience-heading',
                 start: 'top 80%',
@@ -172,18 +174,16 @@ function initSuitcaseScene() {
         });
     }
 
-    // ── Render loop ──
+    // ── Render on demand (static scene — no continuous loop) ──
     let isVisible = false;
 
-    function render() {
-        if (isVisible && modelLoaded) {
+    function renderOnce() {
+        if (modelLoaded) {
             renderer.render(scene, camera);
         }
-        requestAnimationFrame(render);
     }
-    requestAnimationFrame(render);
 
-    // ── IntersectionObserver — pause when off-screen ──
+    // ── IntersectionObserver — guard resize re-renders ──
     const observer = new IntersectionObserver(
         ([entry]) => {
             isVisible = entry.isIntersecting;

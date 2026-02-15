@@ -4,16 +4,14 @@ import Lenis from 'lenis';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const lenis = new Lenis({
-    lerp: 0.15,
-    wheelMultiplier: 1.5,
-});
-
-lenis.on('scroll', ScrollTrigger.update);
-
-gsap.ticker.add((time) => {
-    lenis.raf(time * 1000);
-});
+const isMobile = window.innerWidth < 640;
+if (!isMobile) {
+    const lenis = new Lenis({ lerp: 0.15, wheelMultiplier: 1.5 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+    });
+}
 gsap.ticker.lagSmoothing(0);
 
 // Module is dynamically imported when models:hero-ready fires — initialize immediately.
