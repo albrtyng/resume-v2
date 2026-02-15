@@ -5,11 +5,12 @@ import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
 
 const isMobile = window.innerWidth < 640;
+let lenis: Lenis | undefined;
 if (!isMobile) {
-    const lenis = new Lenis({ lerp: 0.15, wheelMultiplier: 1.5 });
+    lenis = new Lenis({ lerp: 0.15, wheelMultiplier: 1.5 });
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
+        lenis!.raf(time * 1000);
     });
 }
 gsap.ticker.lagSmoothing(0);
@@ -208,7 +209,7 @@ function initAnimations() {
             onComplete: () => {
                 document.getElementById('hero-shutter')?.remove();
                 document.body.style.overflow = '';
-                lenis.start();
+                lenis?.start();
             },
         });
 
