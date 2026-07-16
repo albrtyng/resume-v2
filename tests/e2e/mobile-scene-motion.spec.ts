@@ -28,7 +28,7 @@ test('keeps the compact skyline streetcar and water moving', async ({
     const scene = page.locator('[data-skyline-scene]');
     const streetcar = scene.locator('[data-streetcar]');
     const atmosphere = scene.locator('.skyline__horizon-haze');
-    const water = scene.locator('.skyline__wave--one');
+    const water = scene.locator('.skyline__wave--two');
 
     await expect(scene).toHaveAttribute('data-motion', 'active');
     await expect(streetcar).toHaveCSS(

@@ -11,6 +11,13 @@ const localTimeScenarios = [
     { hour: 2, state: 'night' },
 ] as const;
 
+const seawallColors = {
+    dawn: 'rgb(111, 130, 121)',
+    midday: 'rgb(126, 145, 135)',
+    dusk: 'rgb(76, 99, 89)',
+    night: 'rgb(35, 58, 58)',
+} as const;
+
 const skylineBoundaryScenarios = [
     { hour: 4, state: 'night' },
     { hour: 5, state: 'dawn' },
@@ -1533,6 +1540,9 @@ test.describe('skyline time states', () => {
             await expect(scene.locator('[data-sky-object]')).toBeAttached();
             await expect(scene.locator('[data-stars]')).toBeAttached();
             await expect(scene.locator('[data-window-lights]')).toBeAttached();
+            await expect(
+                scene.locator('.streetcar-streetscape__foreground-foundation'),
+            ).toHaveCSS('fill', seawallColors[state]);
             const beacon = scene.locator('[data-beacon]');
             await expect(beacon).toBeVisible();
             await expect(beacon).toHaveCSS('animation-name', 'beacon');

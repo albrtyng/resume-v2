@@ -73,7 +73,7 @@
 }
 
 .hero__title {
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.24em;
     max-width: 7ch;
     font-size: var(--text-title);
     line-height: 0.79;
@@ -187,6 +187,9 @@
         fill var(--motion-state) ease,
         stroke var(--motion-state) ease;
     fill: var(--hero-facts-surface);
+}
+
+.hero__facts-ground-body {
     stroke: var(--hero-surface-border);
     stroke-width: 1.5;
 }
@@ -394,7 +397,7 @@ html[data-time-state='night'] .hero__time-label--night {
     }
 
     .hero__title {
-        margin-bottom: 1rem;
+        margin-bottom: 0.2em;
         max-width: none;
         font-size: clamp(4.7rem, 23vw, 7.3rem);
     }

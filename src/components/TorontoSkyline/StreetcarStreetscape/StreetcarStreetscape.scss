@@ -1,9 +1,4 @@
 .streetcar-streetscape {
-    --streetscape-ground: color-mix(
-        in srgb,
-        var(--skyline-near) 74%,
-        var(--paper-deep)
-    );
     --streetscape-backdrop: color-mix(
         in srgb,
         var(--skyline-near) 84%,
@@ -29,11 +24,6 @@
         calc(var(--scene-y) * -0.42)
     );
     transition: transform 120ms linear;
-}
-
-.streetcar-streetscape__city-ground {
-    transition: fill var(--motion-state) ease;
-    fill: var(--streetscape-ground);
 }
 
 .streetcar-streetscape__background-city {
@@ -147,7 +137,8 @@
 }
 
 .streetcar-streetscape__foreground-foundation {
-    fill: color-mix(in srgb, var(--spruce-deep) 86%, var(--skyline-near));
+    transition: fill var(--motion-state) ease;
+    fill: var(--seawall);
 }
 
 .streetcar-streetscape__road-surface {
@@ -175,28 +166,7 @@
     transform: translateY(20px);
 }
 
-html[data-time-state='dawn'] .streetcar-streetscape {
-    --streetscape-ground: color-mix(
-        in srgb,
-        var(--skyline-near) 68%,
-        var(--paper-deep)
-    );
-}
-
-html[data-time-state='midday'] .streetcar-streetscape {
-    --streetscape-ground: color-mix(
-        in srgb,
-        var(--skyline-near) 62%,
-        var(--paper-deep)
-    );
-}
-
 html[data-time-state='night'] .streetcar-streetscape {
-    --streetscape-ground: color-mix(
-        in srgb,
-        var(--skyline-near) 90%,
-        var(--skyline-mid)
-    );
     --streetscape-backdrop: color-mix(
         in srgb,
         var(--skyline-near) 90%,

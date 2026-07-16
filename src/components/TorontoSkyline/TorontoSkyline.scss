@@ -19,6 +19,10 @@
     overflow: visible;
 }
 
+.skyline__illustration {
+    transform: translateY(-15px);
+}
+
 .skyline__fleck-dot {
     opacity: 0.36;
     fill: var(--paper-light);
