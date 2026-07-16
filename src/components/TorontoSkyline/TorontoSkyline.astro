@@ -1,5 +1,6 @@
 ---
 import CNTower from './CNTower/CNTower.astro';
+import LakeOntario from './LakeOntario/LakeOntario.astro';
 import NewCityHall from './NewCityHall/NewCityHall.astro';
 import RogersCentre from './RogersCentre/RogersCentre.astro';
 import StreetcarStreetscape from './StreetcarStreetscape/StreetcarStreetscape.astro';
@@ -52,7 +53,19 @@ import './TorontoSkyline.scss';
             <circle cx="1380" cy="206" r="1.1"></circle>
         </g>
 
-        <g class="skyline__celestial" data-sky-object>
+        <g
+            class="skyline__celestial"
+            data-sky-object
+            data-reflection-source="celestial"
+            data-reflection-x="1190"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-source-anchor="celestial"
+                cx="1190"
+                cy="218"
+                r="1"
+            ></circle>
             <circle class="skyline__celestial-halo" cx="1190" cy="218" r="76"
             ></circle>
             <circle class="skyline__celestial-core" cx="1190" cy="218" r="45"
@@ -265,23 +278,6 @@ import './TorontoSkyline.scss';
             <StreetcarStreetscape />
         </g>
 
-        <g class="skyline__water" data-water-layer>
-            <path
-                class="skyline__water-base"
-                d="M0 680C190 660 382 704 600 679C815 654 1010 686 1212 662C1378 650 1490 674 1600 654V820H0Z"
-            ></path>
-            <path
-                class="skyline__wave skyline__wave--two"
-                d="M-80 728C118 686 276 758 470 716C667 673 818 748 1017 708C1209 670 1408 738 1680 694"
-            ></path>
-            <path
-                class="skyline__wave skyline__wave--three"
-                d="M-120 785C87 750 263 807 463 776C672 743 846 803 1054 769C1246 738 1413 794 1720 752"
-            ></path>
-            <path
-                class="skyline__water-brush"
-                d="M79 690C210 676 346 692 474 680M566 748C731 731 876 750 1034 735M1140 676C1270 661 1402 674 1518 663"
-            ></path>
-        </g>
+        <LakeOntario />
     </svg>
 </div>

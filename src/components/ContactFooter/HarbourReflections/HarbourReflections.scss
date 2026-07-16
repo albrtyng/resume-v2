@@ -1,0 +1,215 @@
+.harbour-reflections {
+    --harbour-reflection-celestial: color-mix(
+        in srgb,
+        var(--sky-object) 78%,
+        var(--water-light)
+    );
+    --harbour-reflection-cn: #75ddff;
+    --harbour-reflection-stadium: #b98dff;
+    --harbour-reflection-city-hall: color-mix(
+        in srgb,
+        var(--window) 74%,
+        #ef8d5f
+    );
+    --harbour-reflection-lights: color-mix(
+        in srgb,
+        var(--window) 78%,
+        var(--sky-horizon)
+    );
+    --harbour-reflection-fire: #ff9b5e;
+
+    pointer-events: none;
+}
+
+.harbour-reflections__depth {
+    opacity: 0.18;
+    fill: color-mix(in srgb, var(--harbour-water-near) 78%, var(--spruce-deep));
+}
+
+.harbour-reflections__depth path:last-child {
+    opacity: 0.72;
+}
+
+.harbour-reflections__celestial {
+    transform-box: view-box;
+    transform-origin: center;
+    transition:
+        opacity var(--motion-state) ease,
+        transform var(--motion-state) ease;
+}
+
+.harbour-reflections__celestial-soft,
+.harbour-reflections__celestial-core,
+.harbour-reflections__landmark,
+.harbour-reflections__city-lights,
+.harbour-reflections__ferry-route,
+.harbour-reflections__bonfire {
+    transition: opacity var(--motion-state) ease;
+}
+
+.harbour-reflections__celestial-soft {
+    opacity: 0.2;
+    fill: var(--harbour-reflection-celestial);
+}
+
+.harbour-reflections__celestial-core {
+    opacity: 0.45;
+    fill: var(--harbour-reflection-celestial);
+}
+
+.harbour-reflections__landmark {
+    opacity: 0;
+}
+
+.harbour-reflections__landmark--stadium {
+    fill: var(--harbour-reflection-stadium);
+}
+
+.harbour-reflections__landmark--cn {
+    fill: var(--harbour-reflection-cn);
+}
+
+.harbour-reflections__landmark--city-hall {
+    fill: var(--harbour-reflection-city-hall);
+}
+
+.harbour-reflections__city-lights {
+    opacity: var(--window-alpha);
+    fill: var(--harbour-reflection-lights);
+}
+
+.harbour-reflections__city-lights path {
+    opacity: 0.42;
+}
+
+.harbour-reflections__ferry-route {
+    transform: translateX(820px);
+    transform-box: view-box;
+    transform-origin: left top;
+    opacity: var(--window-alpha);
+}
+
+.harbour-reflections__ferry-scale {
+    transform: translateY(150px) scale(0.44);
+    transform-box: view-box;
+    transform-origin: left top;
+}
+
+.harbour-reflections__ferry-body {
+    opacity: 0.16;
+    fill: color-mix(in srgb, var(--paper-light) 36%, var(--water-light));
+}
+
+.harbour-reflections__ferry-lights {
+    opacity: 0.72;
+    fill: var(--harbour-reflection-lights);
+}
+
+.harbour-reflections__bonfire {
+    opacity: 0.52;
+    transform-box: view-box;
+    transform-origin: 1121px 406px;
+}
+
+.harbour-reflections__bonfire-glow {
+    opacity: 0.34;
+    fill: var(--harbour-reflection-fire);
+}
+
+.harbour-reflections__bonfire-core {
+    opacity: 0.82;
+    fill: color-mix(
+        in srgb,
+        var(--harbour-reflection-fire) 68%,
+        var(--sun)
+    );
+}
+
+html[data-time-state='night'] .harbour-reflections__celestial-soft {
+    opacity: 0.32;
+}
+
+html[data-time-state='night'] .harbour-reflections__celestial-core {
+    opacity: 0.72;
+}
+
+html[data-time-state='night'] .harbour-reflections__landmark {
+    opacity: 0.76;
+}
+
+html[data-time-state='night'] .harbour-reflections__landmark--cn,
+html[data-time-state='night'] .harbour-reflections__landmark--city-hall {
+    opacity: 0.9;
+}
+
+html[data-time-state='night'] .harbour-reflections__landmark--cn,
+html[data-time-state='night'] .harbour-reflections__landmark--stadium,
+html[data-time-state='night'] .harbour-reflections__landmark--city-hall,
+html[data-time-state='night'] .harbour-reflections__ferry-lights,
+html[data-time-state='night'] .harbour-reflections__bonfire-core {
+    filter: drop-shadow(0 0 4px currentColor);
+}
+
+html[data-time-state='night'] .harbour-reflections__bonfire {
+    opacity: 0.9;
+}
+
+.contact-footer[data-contact-motion='full']
+    .harbour-reflections__ferry-route {
+    animation: harbour-ferry-crossing var(--harbour-ferry-duration) linear
+        var(--harbour-ferry-delay) infinite;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .harbour-reflections__bonfire {
+    animation: harbour-bonfire-reflection 3.73s ease-in-out -1.82s infinite
+        alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'][data-contact-active]
+    .harbour-reflections__ferry-route,
+.contact-footer[data-contact-motion='full'][data-contact-active]
+    .harbour-reflections__bonfire {
+    animation-play-state: running;
+    will-change: transform, opacity;
+}
+
+@keyframes harbour-bonfire-reflection {
+    from {
+        transform: scale(0.985, 0.97);
+        opacity: 0.78;
+    }
+
+    to {
+        transform: scale(1.015, 1.03);
+        opacity: 0.94;
+    }
+}
+
+@media (max-width: 45rem) {
+    .harbour-reflections__celestial {
+        transform: translateX(-180px);
+    }
+
+    .harbour-reflections__ferry-scale {
+        transform: translateY(158px) scale(0.4);
+    }
+
+    .harbour-reflections__bonfire {
+        translate: -90px 0;
+    }
+
+    .harbour-reflections__city-lights path {
+        opacity: 0.32;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .harbour-reflections,
+    .harbour-reflections * {
+        animation: none !important;
+        transition: none !important;
+        will-change: auto !important;
+    }
+}

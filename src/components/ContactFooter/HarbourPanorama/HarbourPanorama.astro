@@ -1,6 +1,7 @@
 ---
 import DistantTorontoSkyline from '../DistantTorontoSkyline/DistantTorontoSkyline.astro';
 import HarbourFerry from '../HarbourFerry/HarbourFerry.astro';
+import HarbourReflections from '../HarbourReflections/HarbourReflections.astro';
 import IslandBonfire from '../IslandBonfire/IslandBonfire.astro';
 import './HarbourPanorama.scss';
 ---
@@ -35,6 +36,13 @@ import './HarbourPanorama.scss';
             class="harbour-panorama__sky-disc-group"
             data-footer-sky-object
         >
+            <circle
+                class="harbour-panorama__reflection-anchor"
+                data-footer-reflection-source-anchor="footer-celestial"
+                cx="1168"
+                cy="92"
+                r="1"
+            ></circle>
             <circle
                 class="harbour-panorama__sky-disc-halo"
                 cx="1168"
@@ -104,6 +112,7 @@ import './HarbourPanorama.scss';
             class="harbour-panorama__water-base harbour-panorama__water-base--near"
             d="M0 355C190 339 371 370 570 354C769 338 950 372 1148 353C1301 340 1387 344 1440 339V520H0Z"
         ></path>
+        <HarbourReflections />
         <path
             class="harbour-panorama__wave harbour-panorama__wave--far"
             d="M-90 322C79 304 222 331 381 315C552 298 700 330 868 312C1038 294 1195 329 1530 301"

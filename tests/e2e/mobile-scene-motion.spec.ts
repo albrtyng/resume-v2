@@ -110,9 +110,15 @@ test('keeps compact footer ferry, water, and bonfire motion visibility-aware', a
     const footer = page.locator('[data-contact-footer]');
     const panorama = footer.locator('[data-contact-panorama]');
     const ferry = panorama.locator('[data-harbour-ferry-route]');
+    const ferryReflection = panorama.locator(
+        '[data-footer-ferry-reflection-route]',
+    );
     const farWave = panorama.locator('.harbour-panorama__wave--far');
     const nearWave = panorama.locator('.harbour-panorama__wave--near');
     const flame = panorama.locator('[data-bonfire-flame="outer"]');
+    const bonfireReflection = panorama.locator(
+        '[data-footer-reflection-for="footer-bonfire"]',
+    );
     const usesCompactFerry = (page.viewportSize()?.width ?? 0) <= 45 * 16;
     const ferryAnimationName = usesCompactFerry
         ? 'harbour-ferry-crossing-compact'
@@ -123,6 +129,14 @@ test('keeps compact footer ferry, water, and bonfire motion visibility-aware', a
     await expect(footer).toHaveAttribute('data-contact-active', '');
     await expect(ferry).toHaveCSS('animation-name', ferryAnimationName);
     await expect(ferry).toHaveCSS('animation-play-state', 'running');
+    await expect(ferryReflection).toHaveCSS(
+        'animation-name',
+        ferryAnimationName,
+    );
+    await expect(ferryReflection).toHaveCSS(
+        'animation-play-state',
+        'running',
+    );
     await expect(farWave).toHaveCSS('animation-play-state', 'running');
     await expect(nearWave).toHaveCSS('animation-play-state', 'running');
     await expect(flame).toHaveCSS(
@@ -130,8 +144,16 @@ test('keeps compact footer ferry, water, and bonfire motion visibility-aware', a
         'island-bonfire-flame-outer',
     );
     await expect(flame).toHaveCSS('animation-play-state', 'running');
+    await expect(bonfireReflection).toHaveCSS(
+        'animation-play-state',
+        'running',
+    );
 
     const firstFerryTime = await readAnimationTime(ferry, ferryAnimationName);
+    const firstFerryReflectionTime = await readAnimationTime(
+        ferryReflection,
+        ferryAnimationName,
+    );
     const firstWaveTime = await readAnimationTime(farWave, 'harbour-wave-far');
     const firstFlameTime = await readAnimationTime(
         flame,
@@ -144,6 +166,9 @@ test('keeps compact footer ferry, water, and bonfire motion visibility-aware', a
         firstFerryTime + 20,
     );
     expect(
+        await readAnimationTime(ferryReflection, ferryAnimationName),
+    ).toBeGreaterThan(firstFerryReflectionTime + 20);
+    expect(
         await readAnimationTime(farWave, 'harbour-wave-far'),
     ).toBeGreaterThan(firstWaveTime + 20);
     expect(
@@ -153,9 +178,17 @@ test('keeps compact footer ferry, water, and bonfire motion visibility-aware', a
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(footer).not.toHaveAttribute('data-contact-active', '');
     await expect(ferry).toHaveCSS('animation-play-state', 'paused');
+    await expect(ferryReflection).toHaveCSS(
+        'animation-play-state',
+        'paused',
+    );
     await expect(farWave).toHaveCSS('animation-play-state', 'paused');
     await expect(nearWave).toHaveCSS('animation-play-state', 'paused');
     await expect(flame).toHaveCSS('animation-play-state', 'paused');
+    await expect(bonfireReflection).toHaveCSS(
+        'animation-play-state',
+        'paused',
+    );
 });
 
 test('does not treat slow-update mobile as a static-motion preference', async ({

@@ -1,0 +1,253 @@
+---
+import './LakeOntario.scss';
+---
+
+<g class="lake-ontario" data-water-layer aria-hidden="true">
+    <defs>
+        <clipPath id="lake-ontario-surface-clip">
+            <path
+                d="M0 655C184 636 373 672 589 651C801 630 1002 661 1209 640C1373 627 1488 651 1600 633V820H0Z"
+            ></path>
+        </clipPath>
+    </defs>
+
+    <path
+        class="lake-ontario__base skyline__water-base"
+        d="M0 655C184 636 373 672 589 651C801 630 1002 661 1209 640C1373 627 1488 651 1600 633V820H0Z"
+    ></path>
+    <path
+        class="lake-ontario__horizon-wash"
+        d="M0 655C184 636 373 672 589 651C801 630 1002 661 1209 640C1373 627 1488 651 1600 633V687C1440 704 1321 679 1189 692C992 712 808 682 598 704C381 727 187 691 0 710Z"
+    ></path>
+    <g
+        class="lake-ontario__depth-patches"
+        clip-path="url(#lake-ontario-surface-clip)"
+    >
+        <path
+            d="M-50 706C172 676 326 727 531 697C734 667 922 717 1114 688C1311 658 1451 693 1650 664V699C1457 728 1302 699 1117 727C922 756 736 709 530 739C326 769 153 718-50 749Z"
+        ></path>
+        <path
+            d="M-70 757C109 734 280 778 461 752C667 723 838 773 1046 744C1263 714 1428 759 1670 721V753C1435 789 1261 748 1052 779C845 809 663 760 461 790C276 817 106 775-70 800Z"
+        ></path>
+    </g>
+
+    <g
+        class="lake-reflections lake-reflections--celestial"
+        data-reflection-for="celestial"
+        data-reflection-x="1190"
+        clip-path="url(#lake-ontario-surface-clip)"
+    >
+        <circle
+            class="skyline__reflection-anchor"
+            data-reflection-water-anchor="celestial"
+            cx="1190"
+            cy="655"
+            r="1"></circle>
+        <path
+            class="lake-reflections__celestial-soft"
+            d="M1168 649L1212 649L1222 657L1205 663L1161 662L1150 657ZM1142 671L1236 669L1253 676L1228 683L1154 681L1129 676ZM1121 690L1263 688L1285 696L1250 704L1147 702L1103 697ZM1095 712L1288 709L1315 718L1270 727L1131 724L1068 719ZM1072 737L1311 733L1342 743L1282 754L1115 750L1038 744ZM1047 766L1334 761L1368 773L1300 784L1092 781L1008 774ZM1018 797L1362 791L1394 803L1319 817L1067 813L976 805Z"
+        ></path>
+        <path
+            class="lake-reflections__celestial-core"
+            d="M1176 652H1203L1212 657L1197 661L1170 660L1161 657ZM1159 675L1220 673L1233 678L1212 683L1167 681L1147 678ZM1143 696L1239 693L1252 699L1227 706L1159 703L1129 699ZM1123 719L1260 716L1274 722L1242 730L1149 727L1104 723ZM1102 745L1281 741L1298 748L1257 757L1135 754L1080 749ZM1079 774L1304 769L1321 777L1271 787L1117 784L1053 778ZM1054 806L1329 800L1348 808L1301 818H1085L1027 812Z"
+        ></path>
+    </g>
+
+    <g
+        class="lake-reflections lake-reflections--landmarks"
+        clip-path="url(#lake-ontario-surface-clip)"
+    >
+        <g
+            class="lake-reflections__landmark lake-reflections__landmark--stadium"
+            data-reflection-for="rogers-centre"
+            data-reflection-x="941"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="rogers-centre"
+                cx="941"
+                cy="655"
+                r="1"></circle>
+            <path
+                class="lake-reflections__glow"
+                d="M878 655L1005 655L1025 660L996 666L890 664L858 660ZM867 674L1018 672L1041 678L1006 685L885 682L845 678ZM854 695L1032 692L1054 699L1015 706L879 704L831 700ZM845 718L1041 714L1062 721L1018 729L875 726L824 722ZM857 742L1028 738L1048 746L1009 753L883 751L840 747ZM876 766L1009 763L1024 770L994 777L898 775L861 771Z"
+            ></path>
+            <path
+                class="lake-reflections__highlight"
+                d="M900 657H982L994 661L975 664H906L889 661ZM888 678L996 676L1009 680L985 684L901 682L875 680ZM878 699L1006 697L1017 701L990 705L897 703L865 701ZM871 721L1012 719L1021 723L991 728L898 726L861 723ZM885 745L998 742L1007 747L982 751L906 750L876 747ZM902 768L981 766L990 770L972 774L916 773L894 770Z"
+            ></path>
+        </g>
+
+        <g
+            class="lake-reflections__landmark lake-reflections__landmark--cn-tower"
+            data-reflection-for="cn-tower"
+            data-reflection-x="1119"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="cn-tower"
+                cx="1119"
+                cy="650"
+                r="1"></circle>
+            <path
+                class="lake-reflections__glow"
+                d="M1107 650H1131L1137 654L1127 658H1110L1101 654ZM1103 665L1135 663L1143 668L1130 672L1108 671L1096 668ZM1099 681L1139 679L1149 684L1133 689L1105 687L1091 684ZM1095 700L1143 697L1154 702L1136 708L1102 706L1086 703ZM1091 721L1147 718L1160 723L1139 730L1099 728L1080 724ZM1086 745L1152 741L1165 747L1142 754L1095 752L1074 748ZM1080 771L1158 767L1171 774L1145 781L1091 779L1067 774ZM1073 800L1165 795L1179 802L1148 813L1085 810L1059 804Z"
+            ></path>
+            <path
+                class="lake-reflections__highlight"
+                d="M1113 651H1125L1128 654L1123 657H1114L1109 654ZM1111 666L1127 665L1131 668L1125 671H1113L1107 668ZM1109 682L1129 681L1134 684L1126 687H1112L1105 684ZM1107 701L1131 699L1136 702L1128 706H1111L1103 703ZM1105 722L1133 720L1139 724L1130 728H1110L1101 724ZM1102 746L1136 744L1142 748L1131 752H1108L1098 748ZM1099 772L1139 770L1145 774L1133 779H1106L1094 775ZM1095 801L1143 798L1149 803L1134 809H1104L1090 804Z"
+            ></path>
+        </g>
+    </g>
+
+    <g
+        class="lake-reflections lake-reflections--city-hall"
+        data-reflection-for="city-hall"
+        data-reflection-x="1366"
+        clip-path="url(#lake-ontario-surface-clip)"
+    >
+        <circle
+            class="skyline__reflection-anchor"
+            data-reflection-water-anchor="city-hall"
+            cx="1366"
+            cy="651"
+            r="1"></circle>
+        <path
+            class="lake-reflections__glow"
+            d="M1267 651L1348 651L1360 655L1342 660L1277 659L1256 655ZM1380 650L1470 649L1484 654L1465 660L1392 658L1368 654ZM1256 667L1355 665L1370 670L1348 676L1270 674L1243 670ZM1371 665L1481 663L1498 668L1474 675L1388 673L1358 669ZM1244 685L1364 682L1380 688L1355 694L1261 692L1229 688ZM1360 683L1493 680L1510 686L1482 693L1379 691L1345 687ZM1234 706L1372 702L1389 708L1360 715L1253 713L1217 708ZM1350 703L1502 699L1521 705L1489 713L1372 711L1334 706ZM1225 729L1380 725L1398 731L1364 739L1247 736L1207 732ZM1340 727L1511 722L1531 729L1494 737L1364 735L1323 730ZM1220 754L1385 750L1404 756L1367 764L1243 762L1202 757ZM1333 752L1518 747L1537 754L1497 763L1358 760L1316 756ZM1231 781L1377 777L1395 783L1362 791L1252 789L1215 784ZM1343 779L1508 774L1525 781L1490 789L1365 787L1327 783ZM1250 808L1360 805L1375 810L1353 816H1265L1237 812ZM1361 806L1490 802L1506 808L1480 816H1376L1348 811Z"
+        ></path>
+        <path
+            class="lake-reflections__highlight"
+            d="M1282 653H1336L1344 656L1332 659H1288L1275 656ZM1395 652H1456L1465 655L1452 658H1402L1388 655ZM1274 669L1341 668L1350 671L1336 674L1282 673L1267 671ZM1387 668L1465 666L1474 669L1457 673L1397 672L1379 669ZM1264 687L1348 685L1357 688L1340 692L1275 691L1255 688ZM1379 686L1474 683L1484 687L1464 691L1391 690L1369 687ZM1255 708L1356 705L1367 709L1346 713L1267 712L1244 709ZM1371 706L1482 702L1493 706L1470 711L1384 709L1359 706ZM1248 731L1363 728L1375 732L1350 737L1263 735L1236 732ZM1363 730L1489 725L1501 730L1475 735L1378 734L1350 730ZM1244 756L1368 753L1380 757L1354 762L1260 760L1232 757ZM1358 755L1494 750L1506 755L1478 760L1373 759L1345 755Z"
+        ></path>
+    </g>
+
+    <g
+        class="lake-reflections lake-reflections--foreground"
+        clip-path="url(#lake-ontario-surface-clip)"
+    >
+        <g
+            class="lake-reflections__foreground-building"
+            data-reflection-for="foreground-west-workshop"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="foreground-west-workshop"
+                cx="76"
+                cy="655"
+                r="1"
+            ></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M20 653H132L143 658L124 663H31L9 658ZM29 670L124 668L137 673L115 679L43 677L17 673ZM17 689L137 686L151 692L125 699L35 697L3 692ZM26 711L128 708L140 714L118 721L43 718L14 714ZM39 735L115 732L126 737L109 743L51 741L29 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building"
+            data-reflection-for="foreground-west-row"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="foreground-west-row"
+                cx="380"
+                cy="655"
+                r="1"
+            ></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M331 653H429L440 658L422 663H341L321 658ZM340 670L421 668L434 673L414 679L352 677L328 673ZM328 689L433 686L446 692L421 699L345 697L315 692ZM339 711L422 708L434 714L413 720L353 718L327 714ZM350 734L411 732L421 737L405 742L361 740L340 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building"
+            data-reflection-for="foreground-corner-store"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="foreground-corner-store"
+                cx="708"
+                cy="655"
+                r="1"
+            ></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M649 653H767L779 658L758 663H661L637 658ZM659 670L758 668L772 673L749 679L674 677L646 673ZM646 689L771 686L786 692L759 699L665 697L632 692ZM658 711L759 708L772 714L749 721L675 718L645 714ZM672 735L746 732L757 737L740 743L683 741L661 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building"
+            data-reflection-for="foreground-east-loft"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="foreground-east-loft"
+                cx="1036"
+                cy="655"
+                r="1"
+            ></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M976 653H1096L1109 658L1087 663H988L964 658ZM986 670L1087 668L1101 673L1078 679L1001 677L973 673ZM973 689L1100 686L1115 692L1087 699L992 697L959 692ZM986 711L1087 708L1101 714L1078 721L1002 718L972 714ZM999 735L1074 732L1085 737L1068 743L1011 741L988 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building"
+            data-reflection-for="foreground-east-terrace"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="foreground-east-terrace"
+                cx="1395"
+                cy="655"
+                r="1"
+            ></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M1333 653H1457L1470 658L1448 663H1345L1320 658ZM1344 670L1447 668L1462 673L1438 679L1359 677L1330 673ZM1330 689L1461 686L1476 692L1448 699L1349 697L1316 692ZM1344 711L1447 708L1461 714L1438 721L1359 718L1330 714ZM1357 735L1434 732L1446 737L1428 743L1369 741L1346 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building"
+            data-reflection-for="foreground-east-workshop"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="foreground-east-workshop"
+                cx="1583"
+                cy="655"
+                r="1"
+            ></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M1544 653H1622L1632 658L1616 663H1553L1534 658ZM1551 670L1615 668L1626 673L1609 679L1561 677L1541 673ZM1541 689L1625 686L1636 692L1615 699L1555 697L1530 692ZM1551 711L1615 708L1625 714L1608 720L1561 718L1541 714ZM1561 734L1605 732L1613 737L1601 742L1569 740L1553 737Z"
+            ></path>
+        </g>
+
+    </g>
+
+    <g
+        class="lake-ontario__surface-lines"
+        clip-path="url(#lake-ontario-surface-clip)"
+    >
+        <path
+            class="skyline__wave skyline__wave--one"
+            d="M-100 674C98 645 278 690 470 663C667 635 826 683 1021 655C1216 628 1408 670 1700 637"
+        ></path>
+        <path
+            class="skyline__wave skyline__wave--two"
+            d="M-80 713C118 678 276 731 470 696C667 660 818 722 1017 688C1209 655 1408 710 1680 673"
+        ></path>
+        <path
+            class="skyline__wave skyline__wave--three"
+            d="M-120 762C87 733 263 781 463 755C672 727 846 779 1054 750C1246 724 1413 769 1720 734"
+        ></path>
+        <path
+            class="skyline__wave skyline__wave--four"
+            d="M-140 807C75 784 271 821 476 801C684 780 875 817 1080 795C1283 774 1466 808 1740 778"
+        ></path>
+        <path
+            class="lake-ontario__water-brush skyline__water-brush"
+            d="M27 666H168M210 679H354M397 663H508M557 687H728M755 669H884M931 681H1057M1160 661H1277M1440 653H1560M72 704H228M284 718H409M493 704H617M685 728H843M884 712H1018M1191 705H1329M1410 720H1585M18 748H159M218 765H374M428 748H572M635 776H812M854 758H1002M1121 771H1268M1372 752H1546M54 794H244M315 808H480M557 793H726M805 812H973M1180 801H1359M1432 789H1604"
+        ></path>
+    </g>
+</g>

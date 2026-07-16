@@ -453,7 +453,6 @@ test('renders the main resume journey and accessible navigation', async ({
     );
     await expect(footerFerry.locator('.harbour-ferry__mast')).toHaveCount(2);
 });
-
 test('keeps the hero header translucent and the local-light note safely in view', async ({
     page,
 }) => {
@@ -1661,6 +1660,228 @@ test.describe('skyline time states', () => {
     });
 });
 
+test('keeps night reflections aligned with their sources at every responsive crop', async ({
+    page,
+}) => {
+    await gotoAtLocalHour(page, 2);
+    await waitForLayout(page);
+
+    const scene = page.locator('[data-skyline-scene]');
+    const alignment = await scene.evaluate((element) =>
+        [
+            'celestial',
+            'rogers-centre',
+            'cn-tower',
+            'city-hall',
+            'foreground-west-workshop',
+            'foreground-west-row',
+            'foreground-corner-store',
+            'foreground-east-loft',
+            'foreground-east-terrace',
+            'foreground-east-workshop',
+        ].map((name) => {
+            const source = element.querySelector<SVGCircleElement>(
+                `[data-reflection-source-anchor="${name}"]`,
+            );
+            const reflection = element.querySelector<SVGCircleElement>(
+                `[data-reflection-water-anchor="${name}"]`,
+            );
+
+            if (!source || !reflection) {
+                return { name, missing: true };
+            }
+
+            const sourceBounds = source.getBoundingClientRect();
+            const reflectionBounds = reflection.getBoundingClientRect();
+            const sourceScreenX = sourceBounds.left + sourceBounds.width / 2;
+            const reflectionScreenX =
+                reflectionBounds.left + reflectionBounds.width / 2;
+
+            return {
+                name,
+                missing: false,
+                delta: Math.abs(sourceScreenX - reflectionScreenX),
+            };
+        }),
+    );
+
+    expect(alignment).toHaveLength(10);
+    for (const result of alignment) {
+        expect(result.missing, result.name).toBe(false);
+        expect(result.delta, result.name).toBeLessThan(0.75);
+    }
+
+    await expect(
+        scene.locator(
+            '[data-reflection-for="cn-tower"] .lake-reflections__highlight',
+        ),
+    ).toHaveCSS('opacity', '0.78');
+    await expect(
+        scene.locator(
+            '[data-reflection-for="rogers-centre"] .lake-reflections__highlight',
+        ),
+    ).toHaveCSS('opacity', '0.66');
+    await expect(
+        scene.locator(
+            '[data-reflection-for="city-hall"] .lake-reflections__highlight',
+        ),
+    ).toHaveCSS('opacity', '0.62');
+    expect(
+        Number(
+            await scene
+                .locator(
+                    '[data-reflection-for="celestial"] .lake-reflections__celestial-core',
+                )
+                .evaluate((element) => getComputedStyle(element).opacity),
+        ),
+    ).toBeGreaterThan(0.65);
+    await expect(
+        scene.locator('[data-reflection-for="foreground-east-loft"]'),
+    ).toHaveCSS('opacity', '1');
+    await expect(
+        scene.locator(
+            '[data-reflection-for="streetcar"], [data-reflection-source-anchor="streetcar"], [data-reflection-water-anchor="streetcar"]',
+        ),
+    ).toHaveCount(0);
+});
+
+test('keeps footer harbour reflections aligned at every responsive crop', async ({
+    page,
+}) => {
+    await gotoAtLocalHour(page, 2);
+
+    const panorama = page.locator('[data-contact-panorama]');
+    await panorama.scrollIntoViewIfNeeded();
+    await waitForLayout(page);
+
+    const alignment = await panorama.evaluate((element) =>
+        [
+            'footer-celestial',
+            'footer-rogers-centre',
+            'footer-cn-tower',
+            'footer-city-hall',
+            'footer-city-lights',
+            'footer-bonfire',
+        ].map((name) => {
+            const source = element.querySelector<SVGCircleElement>(
+                `[data-footer-reflection-source-anchor="${name}"]`,
+            );
+            const reflection = element.querySelector<SVGCircleElement>(
+                `[data-footer-reflection-water-anchor="${name}"]`,
+            );
+
+            if (!source || !reflection) {
+                return { name, missing: true };
+            }
+
+            const sourceBounds = source.getBoundingClientRect();
+            const reflectionBounds = reflection.getBoundingClientRect();
+            const sourceScreenX = sourceBounds.left + sourceBounds.width / 2;
+            const reflectionScreenX =
+                reflectionBounds.left + reflectionBounds.width / 2;
+
+            return {
+                name,
+                missing: false,
+                delta: Math.abs(sourceScreenX - reflectionScreenX),
+            };
+        }),
+    );
+
+    expect(alignment).toHaveLength(6);
+    for (const result of alignment) {
+        expect(result.missing, result.name).toBe(false);
+        expect(result.delta, result.name).toBeLessThan(0.75);
+    }
+
+    await expect(
+        panorama.locator(
+            '[data-footer-reflection-for="footer-cn-tower"]',
+        ),
+    ).toHaveCSS('opacity', '0.9');
+    await expect(
+        panorama.locator(
+            '[data-footer-reflection-for="footer-rogers-centre"]',
+        ),
+    ).toHaveCSS('opacity', '0.76');
+    await expect(
+        panorama.locator(
+            '[data-footer-reflection-for="footer-city-hall"]',
+        ),
+    ).toHaveCSS('opacity', '0.9');
+});
+
+test('keeps the lit footer ferry reflection synchronized across the harbour', async ({
+    page,
+}) => {
+    await gotoAtLocalHour(page, 2);
+
+    const panorama = page.locator('[data-contact-panorama]');
+    await panorama.scrollIntoViewIfNeeded();
+    await waitForLayout(page);
+
+    const readFerryAlignment = () =>
+        panorama.evaluate((element) => {
+            const sourceAnchor = element.querySelector<SVGCircleElement>(
+                '[data-footer-reflection-source-anchor="footer-ferry"]',
+            );
+            const reflectionAnchor = element.querySelector<SVGCircleElement>(
+                '[data-footer-reflection-water-anchor="footer-ferry"]',
+            );
+            const source = element.querySelector<SVGGElement>(
+                '[data-harbour-ferry-route]',
+            );
+            const reflection = element.querySelector<SVGGElement>(
+                '[data-footer-ferry-reflection-route]',
+            );
+
+            if (!sourceAnchor || !reflectionAnchor || !source || !reflection) {
+                return null;
+            }
+
+            const sourceBounds = sourceAnchor.getBoundingClientRect();
+            const reflectionBounds = reflectionAnchor.getBoundingClientRect();
+            const sourceX = sourceBounds.left + sourceBounds.width / 2;
+            const reflectionX =
+                reflectionBounds.left + reflectionBounds.width / 2;
+            const sourceAnimation = source.getAnimations().find(
+                (animation) => animation instanceof CSSAnimation,
+            );
+            const reflectionAnimation = reflection.getAnimations().find(
+                (animation) => animation instanceof CSSAnimation,
+            );
+
+            return {
+                delta: Math.abs(sourceX - reflectionX),
+                reflectionX,
+                sourceX,
+                timelineDelta: Math.abs(
+                    Number(sourceAnimation?.currentTime ?? 0) -
+                        Number(reflectionAnimation?.currentTime ?? 0),
+                ),
+            };
+        });
+
+    const first = await readFerryAlignment();
+    expect(first).not.toBeNull();
+    expect(first!.delta).toBeLessThan(1);
+    expect(first!.timelineDelta).toBeLessThan(20);
+
+    await page.waitForTimeout(300);
+
+    const second = await readFerryAlignment();
+    expect(second).not.toBeNull();
+    expect(second!.delta).toBeLessThan(1);
+    expect(second!.timelineDelta).toBeLessThan(20);
+    expect(Math.abs(second!.sourceX - first!.sourceX)).toBeGreaterThan(3);
+    expect(Math.abs(second!.reflectionX - first!.reflectionX)).toBeGreaterThan(
+        3,
+    );
+    await expect(
+        panorama.locator('.harbour-reflections__ferry-lights'),
+    ).toHaveCSS('opacity', '0.72');
+});
+
 test.describe('with reduced motion', () => {
     test('renders a complete static skyline and readable content', async ({
         page,
@@ -1764,6 +1985,14 @@ test.describe('with reduced motion', () => {
             'animation-name',
             'none',
         );
+        await expect(
+            panorama.locator('[data-footer-ferry-reflection-route]'),
+        ).toHaveCSS('animation-name', 'none');
+        await expect(
+            panorama.locator(
+                '[data-footer-reflection-for="footer-bonfire"]',
+            ),
+        ).toHaveCSS('animation-name', 'none');
         await expect(bonfire.locator('[data-bonfire-flame="outer"]')).toHaveCSS(
             'animation-name',
             'none',
@@ -1833,6 +2062,9 @@ test.describe('without JavaScript', () => {
             'animation-name',
             'none',
         );
+        await expect(
+            panorama.locator('[data-footer-ferry-reflection-route]'),
+        ).toHaveCSS('animation-name', 'none');
         await expect(
             panorama.locator('[data-bonfire-flame="outer"]'),
         ).toHaveCSS('animation-name', 'none');

@@ -23,7 +23,8 @@
     transform: translateX(520px);
     transform-box: view-box;
     transform-origin: 0 0;
-    animation: ttc-streetcar-journey 52s linear -15s infinite;
+    animation: ttc-streetcar-journey var(--streetcar-route-duration) linear
+        var(--streetcar-route-delay) infinite;
     pointer-events: none;
 }
 
@@ -353,7 +354,7 @@ html[data-time-state='night'] .ttc-streetcar__door-glass {
 @media (max-width: 48rem) {
     .ttc-streetcar {
         transform: translate(720px, -70px);
-        animation: ttc-streetcar-journey-compact 32s linear -16s infinite;
+        animation-name: ttc-streetcar-journey-compact;
     }
 
     .ttc-streetcar__window-glint,
