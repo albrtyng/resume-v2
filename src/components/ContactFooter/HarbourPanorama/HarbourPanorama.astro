@@ -1,0 +1,206 @@
+---
+import DistantTorontoSkyline from '../DistantTorontoSkyline/DistantTorontoSkyline.astro';
+import HarbourFerry from '../HarbourFerry/HarbourFerry.astro';
+import IslandBonfire from '../IslandBonfire/IslandBonfire.astro';
+import './HarbourPanorama.scss';
+---
+
+<svg
+    class="harbour-panorama"
+    data-harbour-panorama
+    viewBox="0 -80 1440 600"
+    preserveAspectRatio="xMidYMax slice"
+    aria-hidden="true"
+    focusable="false"
+>
+    <defs>
+        <pattern
+            id="harbour-paint-fleck"
+            width="58"
+            height="49"
+            patternUnits="userSpaceOnUse"
+        >
+            <circle class="harbour-panorama__fleck" cx="9" cy="12" r="1.7"
+            ></circle>
+            <circle class="harbour-panorama__fleck" cx="43" cy="34" r="1.1"
+            ></circle>
+            <path class="harbour-panorama__fleck-line" d="M21 39L31 34"></path>
+        </pattern>
+    </defs>
+
+    <g class="harbour-panorama__atmosphere" data-depth="0.06">
+        <path class="harbour-panorama__sky-wash" d="M0 -80H1440V322H0Z"
+        ></path>
+        <g
+            class="harbour-panorama__sky-disc-group"
+            data-footer-sky-object
+        >
+            <circle
+                class="harbour-panorama__sky-disc-halo"
+                cx="1168"
+                cy="92"
+                r="68"></circle>
+            <circle
+                class="harbour-panorama__sky-disc"
+                cx="1168"
+                cy="92"
+                r="30"></circle>
+        </g>
+        <g class="harbour-panorama__stars">
+            <circle cx="134" cy="86" r="2.2"></circle>
+            <circle cx="251" cy="48" r="1.5"></circle>
+            <circle cx="411" cy="109" r="1.8"></circle>
+            <circle cx="542" cy="53" r="1.2"></circle>
+            <circle cx="733" cy="92" r="2"></circle>
+            <circle cx="879" cy="42" r="1.4"></circle>
+            <circle cx="1016" cy="126" r="1.7"></circle>
+            <circle cx="1302" cy="66" r="1.8"></circle>
+            <circle cx="1381" cy="142" r="1.3"></circle>
+        </g>
+        <path
+            class="harbour-panorama__haze harbour-panorama__haze--high"
+            d="M-60 188C135 162 303 180 477 165C674 149 857 177 1042 158C1204 141 1340 151 1500 137V273H-60Z"
+        ></path>
+        <path
+            class="harbour-panorama__haze harbour-panorama__haze--low"
+            d="M-60 244C154 218 330 243 524 226C735 207 915 240 1125 221C1274 207 1389 214 1500 201V303H-60Z"
+        ></path>
+        <g class="harbour-panorama__clouds">
+            <path
+                d="M62 150C95 123 138 128 159 154C188 138 228 148 241 174H45C47 163 53 155 62 150Z"
+            ></path>
+            <path
+                d="M837 154C865 130 901 135 919 158C944 143 980 151 991 176H819C821 166 827 159 837 154Z"
+            ></path>
+            <path
+                d="M1270 190C1295 169 1327 174 1343 194C1365 181 1398 189 1408 211H1254C1256 202 1261 195 1270 190Z"
+            ></path>
+        </g>
+        <path
+            class="harbour-panorama__sky-brush"
+            d="M71 215C225 194 381 212 532 197M848 184C974 169 1090 181 1215 165M1264 239C1322 229 1381 232 1434 222"
+        ></path>
+    </g>
+
+    <DistantTorontoSkyline class="harbour-panorama__distant-city" />
+
+    <g class="harbour-panorama__far-shore" data-depth="0.32">
+        <path
+            class="harbour-panorama__shore-bank"
+            d="M0 286C184 277 356 291 526 282C710 273 879 291 1057 280C1212 272 1340 279 1440 270V307H0Z"
+        ></path>
+        <path
+            class="harbour-panorama__shoreline-light"
+            d="M0 295C191 288 356 300 531 291C708 282 875 300 1050 290C1203 281 1333 286 1440 279"
+        ></path>
+    </g>
+
+    <g class="harbour-panorama__water" data-depth="0.5">
+        <path
+            class="harbour-panorama__water-base harbour-panorama__water-base--far"
+            d="M0 292C204 281 377 305 570 292C775 278 953 307 1145 291C1308 279 1392 285 1440 281V520H0Z"
+        ></path>
+        <path
+            class="harbour-panorama__water-base harbour-panorama__water-base--near"
+            d="M0 355C190 339 371 370 570 354C769 338 950 372 1148 353C1301 340 1387 344 1440 339V520H0Z"
+        ></path>
+        <path
+            class="harbour-panorama__wave harbour-panorama__wave--far"
+            d="M-90 322C79 304 222 331 381 315C552 298 700 330 868 312C1038 294 1195 329 1530 301"
+        ></path>
+        <path
+            class="harbour-panorama__water-brush harbour-panorama__water-brush--far"
+            d="M48 342C144 331 238 339 328 328M486 319C598 307 704 317 810 306M937 342C1036 331 1137 338 1230 326M1292 309C1344 302 1395 304 1445 298"
+        ></path>
+    </g>
+
+    <g
+        class="harbour-panorama__ferry-route"
+        data-harbour-ferry-route
+        data-depth="0.62"
+    >
+        <g class="harbour-panorama__ferry-scale">
+            <HarbourFerry class="harbour-panorama__ferry" />
+        </g>
+    </g>
+
+    <g class="harbour-panorama__surface" data-depth="0.72">
+        <path
+            class="harbour-panorama__wave harbour-panorama__wave--middle"
+            d="M-110 369C77 346 236 382 418 361C603 339 765 379 949 357C1135 335 1302 373 1540 348"
+        ></path>
+        <path
+            class="harbour-panorama__wave harbour-panorama__wave--near"
+            d="M-120 411C72 387 248 425 440 403C632 380 807 420 1000 397C1189 375 1361 411 1560 390"
+        ></path>
+        <path
+            class="harbour-panorama__water-brush harbour-panorama__water-brush--near"
+            d="M42 386C135 376 229 382 319 371M462 416C572 403 683 412 797 400M888 378C1006 365 1116 374 1225 362M1221 429C1302 420 1378 423 1449 414"
+        ></path>
+        <path class="harbour-panorama__water-flecks" d="M0 294H1440V444H0Z"
+        ></path>
+    </g>
+
+    <g class="harbour-panorama__beach" data-depth="0.9">
+        <path
+            class="harbour-panorama__beach-back"
+            d="M0 416C117 398 228 407 337 421C461 437 579 425 694 409C817 391 926 403 1040 421C1161 441 1280 414 1440 402V520H0Z"
+        ></path>
+        <path
+            class="harbour-panorama__beach-mid"
+            d="M0 451C127 432 257 445 371 459C495 475 624 451 739 440C861 429 978 447 1088 459C1214 473 1324 449 1440 438V520H0Z"
+        ></path>
+        <path
+            class="harbour-panorama__beach-front"
+            d="M0 486C152 468 282 481 423 493C570 505 708 486 842 478C1003 468 1140 491 1274 494C1340 496 1396 488 1440 482V520H0Z"
+        ></path>
+        <path
+            class="harbour-panorama__sand-brush harbour-panorama__sand-brush--back"
+            d="M37 441C125 428 211 435 296 444M405 460C490 447 575 449 660 441M776 423C862 414 948 420 1033 432M1196 430C1271 420 1346 422 1420 414"
+        ></path>
+        <path
+            class="harbour-panorama__sand-brush harbour-panorama__sand-brush--front"
+            d="M61 492C159 482 255 489 352 499M476 481C564 471 653 477 740 486M876 499C984 486 1094 491 1203 501M1290 474C1344 467 1395 470 1445 465"
+        ></path>
+        <g class="harbour-panorama__stones">
+            <path d="M733 457C748 442 772 442 786 458L779 468H739Z"></path>
+            <path d="M822 477C834 464 855 465 866 480L861 489H828Z"></path>
+            <path d="M1233 455C1246 442 1267 443 1279 458L1274 467H1239Z"
+            ></path>
+            <path d="M1319 484C1330 472 1348 473 1359 486L1354 494H1325Z"
+            ></path>
+        </g>
+        <g class="harbour-panorama__driftwood">
+            <path
+                d="M214 467C278 455 333 454 392 461L387 475C324 469 273 472 216 481Z"
+            ></path>
+            <path d="M254 465L236 443M347 461L370 440"></path>
+            <path d="M221 470C270 463 328 463 382 468"></path>
+        </g>
+        <path class="harbour-panorama__beach-flecks" d="M0 406H1440V520H0Z"
+        ></path>
+    </g>
+
+    <g
+        class="harbour-panorama__bonfire-stage"
+        data-depth="0.96"
+        transform="translate(1010 294) scale(.92)"
+    >
+        <IslandBonfire class="harbour-panorama__bonfire" />
+    </g>
+
+    <g class="harbour-panorama__reeds" data-depth="1">
+        <path
+            class="harbour-panorama__reed-stems"
+            d="M16 520C17 475 15 444 7 415M35 520C37 469 43 433 55 402M58 520C59 480 65 451 77 426M84 520C82 475 88 442 101 416M111 520C110 486 114 457 125 438M136 520C134 473 142 436 157 410M1407 520C1407 478 1402 447 1391 421M1386 520C1384 467 1377 431 1364 399M1361 520C1358 482 1351 453 1338 429M1334 520C1334 474 1327 441 1314 414M1308 520C1305 486 1300 461 1290 440"
+        ></path>
+        <path
+            class="harbour-panorama__reed-heads"
+            d="M3 410C8 401 15 400 20 411C15 420 8 420 3 410ZM50 397C56 387 63 388 67 399C62 408 55 408 50 397ZM96 411C102 401 109 402 113 413C108 422 101 422 96 411ZM152 405C158 395 165 396 169 407C164 416 157 416 152 405ZM1383 415C1389 405 1396 406 1400 417C1395 426 1388 426 1383 415ZM1356 393C1362 383 1369 384 1373 395C1368 404 1361 404 1356 393ZM1308 408C1314 398 1321 399 1325 410C1320 419 1313 419 1308 408Z"
+        ></path>
+        <path
+            class="harbour-panorama__grass-blades"
+            d="M174 520L191 478M188 520L220 489M203 520L206 481M1228 520L1214 481M1243 520L1264 477M1260 520L1261 486"
+        ></path>
+    </g>
+</svg>

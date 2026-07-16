@@ -1,0 +1,35 @@
+---
+import MarkerOutline from '../MarkerOutline/MarkerOutline.astro';
+import './Header.scss';
+---
+
+<header class="site-header" data-site-header data-header-surface="hero">
+    <a
+        class="site-header__brand"
+        href="#hero"
+        aria-label="AY Albert Yang, back to top"
+    >
+        <span class="site-header__monogram" aria-hidden="true">AY</span>
+        <span class="site-header__name">Albert Yang</span>
+    </a>
+
+    <p
+        class="site-header__place"
+        aria-label="Toronto · CA — based in Canada"
+    >
+        Toronto <span aria-hidden="true">·</span> CA
+    </p>
+
+    <nav class="site-header__nav" aria-label="Primary navigation">
+        <a href="#experience">Work</a>
+        <a href="#capabilities">Toolkit</a>
+        <a class="site-header__contact marker-outline-control" href="#contact">
+            Say hello
+            <MarkerOutline />
+        </a>
+    </nav>
+</header>
+
+<script>
+    import '../../scripts/navigation-motion';
+</script>

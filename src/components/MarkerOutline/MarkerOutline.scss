@@ -1,0 +1,46 @@
+.marker-outline-control {
+    position: relative;
+    isolation: isolate;
+}
+
+.marker-outline {
+    position: absolute;
+    z-index: 2;
+    inset: -0.38rem -0.5rem;
+    width: calc(100% + 1rem);
+    height: calc(100% + 0.76rem);
+    overflow: visible;
+    pointer-events: none;
+}
+
+.marker-outline__stroke {
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    transition:
+        stroke-dashoffset 460ms var(--ease-out),
+        opacity 80ms ease;
+    fill: none;
+    stroke: var(--marker-outline-color, currentColor);
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.45;
+}
+
+.marker-outline-control:hover .marker-outline__stroke,
+.marker-outline-control:focus-visible .marker-outline__stroke {
+    opacity: 1;
+    stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .marker-outline__stroke {
+        transition: none !important;
+    }
+
+    .marker-outline-control:hover .marker-outline__stroke,
+    .marker-outline-control:focus-visible .marker-outline__stroke {
+        stroke-dashoffset: 0;
+    }
+}

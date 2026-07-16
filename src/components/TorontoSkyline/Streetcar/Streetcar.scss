@@ -1,0 +1,395 @@
+.ttc-streetcar {
+    --streetcar-red: var(--red);
+    --streetcar-red-deep: var(--red-dark);
+    --streetcar-cream: var(--paper-light);
+    --streetcar-glass: color-mix(
+        in srgb,
+        var(--skyline-near) 76%,
+        var(--sky-base)
+    );
+    --streetcar-glass-glint: color-mix(
+        in srgb,
+        var(--water-light) 54%,
+        transparent
+    );
+    --streetcar-metal: color-mix(
+        in srgb,
+        var(--skyline-near) 72%,
+        var(--paper-light)
+    );
+    --streetcar-light-alpha: 0.68;
+    --streetcar-headlight-alpha: 0.86;
+
+    transform: translateX(520px);
+    transform-box: view-box;
+    transform-origin: 0 0;
+    animation: ttc-streetcar-journey 52s linear -15s infinite;
+    pointer-events: none;
+}
+
+.ttc-streetcar__track-shadow {
+    opacity: 0.38;
+    fill: var(--spruce-deep);
+}
+
+.ttc-streetcar__night-light-pool {
+    opacity: 0;
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.ttc-streetcar__underframe-beam,
+.ttc-streetcar__bogie {
+    fill: color-mix(in srgb, var(--spruce-deep) 84%, var(--skyline-near));
+}
+
+.ttc-streetcar__bogie {
+    opacity: 0.88;
+}
+
+.ttc-streetcar__wheel {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.ttc-streetcar__wheel-tire {
+    fill: var(--spruce-deep);
+}
+
+.ttc-streetcar__wheel-rim {
+    fill: var(--streetcar-metal);
+}
+
+.ttc-streetcar__wheel-spokes {
+    fill: none;
+    stroke: color-mix(in srgb, var(--paper-light) 54%, var(--skyline-near));
+    stroke-linecap: round;
+    stroke-width: 1.6;
+}
+
+.ttc-streetcar__body-stack {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+}
+
+.ttc-streetcar__body-shell {
+    transition: fill var(--motion-state) ease;
+    fill: var(--streetcar-red);
+}
+
+.ttc-streetcar__lower-skirt {
+    fill: var(--streetcar-red-deep);
+}
+
+.ttc-streetcar__belt {
+    transition: fill var(--motion-state) ease;
+    fill: var(--streetcar-cream);
+}
+
+.ttc-streetcar__cab-window,
+.ttc-streetcar__window-band,
+.ttc-streetcar__door-glass {
+    transition: fill var(--motion-state) ease;
+    fill: var(--streetcar-glass);
+}
+
+.ttc-streetcar__cab-window--rear {
+    opacity: 0.94;
+}
+
+.ttc-streetcar__cab-window--front {
+    fill: color-mix(in srgb, var(--streetcar-glass) 78%, var(--sky-base));
+}
+
+.ttc-streetcar__interior-light {
+    opacity: var(--streetcar-light-alpha);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.ttc-streetcar__window-glint {
+    opacity: 0.46;
+    fill: none;
+    stroke: var(--streetcar-glass-glint);
+    stroke-linecap: round;
+    stroke-width: 2;
+}
+
+.ttc-streetcar__mullions,
+.ttc-streetcar__door-frame {
+    fill: var(--streetcar-red-deep);
+}
+
+.ttc-streetcar__door-frame {
+    opacity: 0.9;
+    fill-rule: evenodd;
+}
+
+.ttc-streetcar__door-seams {
+    opacity: 0.7;
+    fill: none;
+    stroke: var(--streetcar-red-deep);
+    stroke-width: 2;
+}
+
+.ttc-streetcar__door-buttons {
+    fill: var(--window);
+}
+
+.ttc-streetcar__bellows-body {
+    fill: color-mix(in srgb, var(--spruce-deep) 88%, var(--skyline-near));
+}
+
+.ttc-streetcar__bellows-folds {
+    opacity: 0.44;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-width: 1.3;
+}
+
+.ttc-streetcar__roof-edge {
+    opacity: 0.75;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+.ttc-streetcar__roof-box {
+    fill: var(--streetcar-metal);
+}
+
+.ttc-streetcar__roof-vents,
+.ttc-streetcar__roof-conduit {
+    opacity: 0.7;
+    fill: none;
+    stroke: var(--spruce-deep);
+    stroke-linecap: round;
+    stroke-width: 2;
+}
+
+.ttc-streetcar__front-mask {
+    opacity: 0.24;
+    fill: var(--spruce-deep);
+}
+
+.ttc-streetcar__bumper {
+    fill: var(--spruce-deep);
+}
+
+.ttc-streetcar__lights {
+    opacity: var(--streetcar-headlight-alpha);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.ttc-streetcar__marker-lights {
+    fill: color-mix(in srgb, var(--window) 54%, var(--streetcar-red));
+}
+
+.ttc-streetcar__paint-texture {
+    pointer-events: none;
+}
+
+.ttc-streetcar__paint-wash {
+    opacity: 0.2;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 2.4;
+}
+
+.ttc-streetcar__belt-wash {
+    opacity: 0.22;
+    fill: none;
+    stroke: var(--paper-deep);
+    stroke-linecap: round;
+    stroke-width: 2;
+}
+
+.ttc-streetcar__road-grime {
+    opacity: 0.24;
+    fill: none;
+    stroke: var(--spruce-deep);
+    stroke-linecap: round;
+    stroke-width: 2.2;
+}
+
+html[data-time-state='dawn'] .ttc-streetcar {
+    --streetcar-light-alpha: 0.47;
+    --streetcar-headlight-alpha: 0.71;
+    --streetcar-glass: color-mix(
+        in srgb,
+        var(--skyline-near) 64%,
+        var(--sky-base)
+    );
+    --streetcar-glass-glint: color-mix(
+        in srgb,
+        var(--paper-light) 48%,
+        transparent
+    );
+}
+
+html[data-time-state='midday'] .ttc-streetcar {
+    --streetcar-light-alpha: 0.24;
+    --streetcar-headlight-alpha: 0.54;
+    --streetcar-glass: color-mix(
+        in srgb,
+        var(--skyline-near) 60%,
+        var(--sky-base)
+    );
+    --streetcar-glass-glint: color-mix(
+        in srgb,
+        var(--paper-light) 66%,
+        transparent
+    );
+}
+
+html[data-time-state='dusk'] .ttc-streetcar {
+    --streetcar-light-alpha: 0.68;
+    --streetcar-headlight-alpha: 0.86;
+    --streetcar-glass: color-mix(
+        in srgb,
+        var(--skyline-near) 76%,
+        var(--sky-base)
+    );
+}
+
+html[data-time-state='night'] .ttc-streetcar {
+    --streetcar-red: color-mix(in srgb, var(--red) 58%, var(--skyline-near));
+    --streetcar-red-deep: color-mix(
+        in srgb,
+        var(--red-dark) 52%,
+        var(--spruce-deep)
+    );
+    --streetcar-cream: color-mix(
+        in srgb,
+        var(--paper-light) 48%,
+        var(--skyline-mid)
+    );
+    --streetcar-light-alpha: 0.88;
+    --streetcar-headlight-alpha: 1;
+    --streetcar-glass: color-mix(
+        in srgb,
+        var(--skyline-near) 84%,
+        var(--window)
+    );
+    --streetcar-glass-glint: color-mix(in srgb, var(--window) 58%, transparent);
+}
+
+html[data-time-state='night'] .ttc-streetcar__night-light-pool {
+    opacity: 0.26;
+}
+
+html[data-time-state='night'] .ttc-streetcar__lights,
+html[data-time-state='night'] .ttc-streetcar__marker-lights,
+html[data-time-state='night'] .ttc-streetcar__interior-light {
+    filter: drop-shadow(0 0 4px rgba(255, 214, 132, 0.72));
+}
+
+html[data-time-state='night'] .ttc-streetcar__window-band,
+html[data-time-state='night'] .ttc-streetcar__cab-window,
+html[data-time-state='night'] .ttc-streetcar__door-glass {
+    filter: drop-shadow(0 0 3px rgba(255, 214, 132, 0.38));
+    fill: color-mix(in srgb, var(--streetcar-glass) 58%, var(--window));
+}
+
+.skyline-scene[data-motion='active'] .ttc-streetcar__body-stack {
+    animation: ttc-streetcar-suspension 2.8s ease-in-out infinite alternate;
+}
+
+.skyline-scene[data-motion='active'] .ttc-streetcar__wheel {
+    animation: ttc-streetcar-wheel-turn 1.8s linear infinite;
+}
+
+.skyline-scene[data-motion='paused'] .ttc-streetcar *,
+.skyline-scene[data-motion='reduced'] .ttc-streetcar * {
+    animation-play-state: paused;
+}
+
+.skyline-scene[data-motion='paused'] .ttc-streetcar,
+.skyline-scene[data-motion='reduced'] .ttc-streetcar {
+    animation-play-state: paused;
+}
+
+@keyframes ttc-streetcar-suspension {
+    from {
+        transform: translateY(-0.5px);
+    }
+
+    to {
+        transform: translateY(1.1px);
+    }
+}
+
+@keyframes ttc-streetcar-wheel-turn {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ttc-streetcar-journey {
+    0%,
+    6% {
+        transform: translateX(-520px);
+    }
+
+    94%,
+    100% {
+        transform: translateX(1710px);
+    }
+}
+
+@keyframes ttc-streetcar-journey-compact {
+    from {
+        transform: translate(220px, -70px);
+    }
+
+    to {
+        transform: translate(1120px, -70px);
+    }
+}
+
+@media (max-width: 48rem) {
+    .ttc-streetcar {
+        transform: translate(720px, -70px);
+        animation: ttc-streetcar-journey-compact 32s linear -16s infinite;
+    }
+
+    .ttc-streetcar__window-glint,
+    .ttc-streetcar__road-grime,
+    .ttc-streetcar__roof-vents {
+        display: none;
+    }
+}
+
+@media (update: slow) {
+    .ttc-streetcar__window-glint,
+    .ttc-streetcar__road-grime,
+    .ttc-streetcar__roof-vents {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ttc-streetcar {
+        transform: translateX(520px);
+        animation: none !important;
+    }
+
+    .ttc-streetcar * {
+        animation: none !important;
+        transition-duration: 0.01ms;
+    }
+
+    .ttc-streetcar__body-stack,
+    .ttc-streetcar__wheel {
+        transform: none;
+    }
+}
+
+@media (max-width: 48rem) and (prefers-reduced-motion: reduce) {
+    .ttc-streetcar {
+        transform: translate(720px, -70px);
+    }
+}

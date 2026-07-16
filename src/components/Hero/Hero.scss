@@ -1,0 +1,502 @@
+.hero {
+    position: relative;
+    transition:
+        color var(--motion-state) ease,
+        background-color var(--motion-state) ease;
+    background: var(--sky-base);
+    isolation: isolate;
+    min-height: max(50rem, 100svh);
+    overflow: hidden;
+    color: var(--hero-ink);
+}
+
+.hero::before {
+    position: absolute;
+    opacity: 0.18;
+    z-index: 0;
+    clip-path: polygon(0 58%, 100% 44%, 100% 78%, 0 82%);
+    transition: background-color var(--motion-state) ease;
+    inset: 0;
+    background: var(--sky-horizon);
+    content: '';
+}
+
+.hero__copy {
+    position: relative;
+    z-index: 6;
+    padding-top: clamp(8.5rem, 17vh, 12rem);
+    pointer-events: none;
+}
+
+.hero__copy-surface {
+    --copy-panel-padding: clamp(0.7rem, 1.2vw, 1.15rem);
+
+    position: relative;
+    isolation: isolate;
+    width: min(
+        38rem,
+        calc(100vw - min(25rem, 30vw) - var(--gutter) - var(--gutter) - 3rem)
+    );
+    min-width: 0;
+    color: var(--hero-surface-ink);
+}
+
+.hero__copy-panel,
+.hero__scene-note::before {
+    position: absolute;
+    z-index: -1;
+    transition:
+        border-color var(--motion-state) ease,
+        background-color var(--motion-state) ease;
+    pointer-events: none;
+    content: '';
+}
+
+.hero__copy-panel {
+    inset: calc(-1 * var(--copy-panel-padding));
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--paper-light) 24%, transparent),
+        0 1.25rem 3rem color-mix(in srgb, var(--skyline-near) 14%, transparent);
+    border: 1px solid var(--hero-surface-border);
+    border-radius: clamp(0.85rem, 1.2vw, 1.35rem);
+    background-color: var(--hero-copy-surface-strong);
+}
+
+.hero__eyebrow,
+.hero__statement,
+.hero__actions {
+    pointer-events: auto;
+}
+
+.hero :focus-visible {
+    outline-color: var(--hero-focus-ring);
+}
+
+.hero__title {
+    margin-bottom: 1.25rem;
+    max-width: 7ch;
+    font-size: var(--text-title);
+    line-height: 0.79;
+}
+
+.hero__title em {
+    display: block;
+    padding-left: clamp(2rem, 7vw, 8rem);
+    color: inherit;
+    font-weight: 400;
+}
+
+.hero__statement {
+    margin: 0 0 1.85rem;
+    max-width: 100%;
+    font-size: var(--text-lead);
+    line-height: 1.38;
+    overflow-wrap: anywhere;
+    text-wrap: pretty;
+}
+
+.hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    width: fit-content;
+}
+
+.hero__primary-link,
+.hero__text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: inherit;
+    font-weight: 500;
+    font-size: var(--text-small);
+    text-decoration: none;
+}
+
+.hero__primary-link {
+    --marker-outline-color: var(--hero-focus-ring);
+
+    transition:
+        color var(--motion-fast) ease,
+        background-color var(--motion-fast) ease;
+    border: 1px solid currentColor;
+    border-radius: var(--radius-organic);
+    padding: 0.8rem 1.25rem 0.85rem;
+    min-height: 3.2rem;
+}
+
+.hero__primary-link:hover,
+.hero__primary-link:focus-visible {
+    background: var(--spruce-deep);
+    color: var(--paper-light);
+}
+
+.hero__text-link {
+    border-bottom: 1px solid currentColor;
+    padding-block: 0.45rem;
+}
+
+.hero__primary-link span,
+.hero__text-link span {
+    transition: transform var(--motion-fast) ease;
+}
+
+.hero__primary-link:hover span,
+.hero__primary-link:focus-visible span {
+    transform: translateY(0.2rem);
+}
+
+.hero__text-link:hover span,
+.hero__text-link:focus-visible span {
+    transform: translate(0.18rem, -0.18rem);
+}
+
+.hero__facts-shell {
+    position: absolute;
+    top: clamp(9rem, 17vh, 12rem);
+    right: var(--gutter);
+    z-index: 6;
+    isolation: isolate;
+    width: min(25rem, 30vw);
+    color: var(--hero-facts-ink, var(--hero-surface-ink));
+}
+
+.hero__scene-note::before {
+    border: 1px solid var(--hero-surface-border);
+}
+
+.hero__facts-cloud,
+.hero__facts-ground {
+    position: absolute;
+    z-index: -1;
+    animation: none;
+    max-width: none;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.hero__facts-cloud {
+    inset: -3.25rem -5rem -2.55rem -2.6rem;
+    width: calc(100% + 7.6rem);
+    height: calc(100% + 5.8rem);
+}
+
+.hero__facts-cloud-body,
+.hero__facts-ground-body {
+    transition:
+        fill var(--motion-state) ease,
+        stroke var(--motion-state) ease;
+    fill: var(--hero-facts-surface);
+    stroke: var(--hero-surface-border);
+    stroke-width: 1.5;
+}
+
+.hero__facts-ground-brush {
+    opacity: 0.2;
+    fill: none;
+    stroke: var(--hero-facts-ink, var(--hero-surface-ink));
+    stroke-linecap: round;
+    stroke-width: 2;
+}
+
+.hero__facts-ground {
+    display: none;
+    inset: -0.9rem -1.05rem -1rem;
+    width: calc(100% + 2.1rem);
+    height: calc(100% + 1.9rem);
+}
+
+.hero__facts {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+.hero__scene-note::before {
+    background-color: var(--hero-note-surface);
+}
+
+.hero__scene-note::after {
+    position: absolute;
+    inset: -2px;
+    z-index: -2;
+    clip-path: polygon(3% 15%, 96% 0, 100% 78%, 88% 100%, 0 88%);
+    background: transparent;
+    content: '';
+}
+
+.hero__facts div {
+    display: grid;
+    position: relative;
+    grid-template-columns: 5.25rem 1fr;
+    gap: 0.75rem;
+    overflow: hidden;
+    padding-top: 0.65rem;
+}
+
+.hero__facts div::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: color-mix(in srgb, currentColor 42%, transparent);
+    width: 100%;
+    height: 1px;
+    content: '';
+}
+
+.hero__facts div:first-child::before {
+    clip-path: inset(0 16% 0 0);
+}
+
+.hero__facts dt,
+.hero__facts dd,
+.hero__scene-note {
+    margin: 0;
+    font-size: var(--text-small);
+    line-height: 1.4;
+}
+
+.hero__facts dt {
+    font-weight: 500;
+}
+
+.hero__facts dd {
+    opacity: 0.9;
+}
+
+.hero__scene-note {
+    display: flex;
+    position: absolute;
+    top: calc(min(100svh, 100%) - 4.25rem);
+    right: var(--gutter);
+    align-items: center;
+    gap: 0.55rem;
+    z-index: 8;
+    isolation: isolate;
+    appearance: none;
+    transition:
+        transform var(--motion-fast) ease,
+        color var(--motion-state) ease;
+    cursor: pointer;
+    border: 0;
+    background: transparent;
+    padding: 0.5rem 0.7rem 0.55rem;
+    min-height: 2.75rem;
+    color: var(--scene-note-ink);
+    font-family: inherit;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+.hero__scene-note::before {
+    clip-path: polygon(3% 15%, 96% 0, 100% 78%, 88% 100%, 0 88%);
+    inset: 0;
+    border-radius: 10% 4% 12% 6% / 22% 9% 18% 11%;
+    background-color: var(--hero-note-surface);
+}
+
+.hero__scene-note:hover,
+.hero__scene-note:focus-visible {
+    transform: translateY(-0.14rem) rotate(-0.5deg);
+}
+
+.hero__scene-note:focus-visible {
+    outline: none;
+}
+
+.hero__scene-note:focus-visible::after {
+    background: currentColor;
+}
+
+.hero__scene-note:active {
+    transform: translateY(0.08rem) rotate(0.35deg);
+}
+
+.hero__scene-note:disabled {
+    transform: none;
+    cursor: default;
+}
+
+.hero__time-label {
+    display: none;
+}
+
+html[data-time-state='dawn'] .hero__time-label--dawn,
+html[data-time-state='midday'] .hero__time-label--midday,
+html[data-time-state='dusk'] .hero__time-label--dusk,
+html[data-time-state='night'] .hero__time-label--night {
+    display: inline;
+}
+
+.hero__scene-mark {
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: var(--red);
+    width: 0.55rem;
+    height: 0.55rem;
+}
+
+@supports (
+    (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
+) {
+    .hero__copy-panel {
+        -webkit-backdrop-filter: blur(4px) saturate(1);
+        backdrop-filter: blur(4px) saturate(1);
+    }
+
+    .hero__scene-note::before {
+        -webkit-backdrop-filter: blur(1px) saturate(0.99);
+        backdrop-filter: blur(1px) saturate(0.99);
+    }
+}
+
+@media (max-width: 72rem) {
+    .hero__copy-surface {
+        width: min(30rem, calc(100vw - var(--gutter) - var(--gutter)));
+    }
+
+    .hero__facts-shell {
+        top: auto;
+        right: var(--gutter);
+        bottom: calc(6.5rem + 100% - 100svh);
+        width: min(28rem, 42vw);
+    }
+
+    .hero__facts-cloud {
+        display: none;
+    }
+
+    .hero__facts-ground {
+        display: block;
+    }
+}
+
+@media (max-width: 48rem) {
+    .hero {
+        min-height: max(50rem, 100svh);
+    }
+
+    .hero::before {
+        clip-path: polygon(0 52%, 100% 44%, 100% 70%, 0 76%);
+    }
+
+    .hero__copy {
+        padding-top: 7.2rem;
+    }
+
+    .hero__copy-surface {
+        width: min(100%, 30rem);
+    }
+
+    .hero__copy-panel {
+        inset: calc(-1 * var(--copy-panel-padding));
+    }
+
+    .hero__title {
+        margin-bottom: 1rem;
+        max-width: none;
+        font-size: clamp(4.7rem, 23vw, 7.3rem);
+    }
+
+    .hero__title em {
+        padding-left: 18vw;
+    }
+
+    .hero__statement {
+        margin-bottom: 1.35rem;
+        max-width: 29rem;
+        font-size: clamp(1.05rem, 4.8vw, 1.3rem);
+    }
+
+    .hero__actions {
+        gap: 1rem;
+    }
+
+    .hero__primary-link {
+        padding-inline: 1rem;
+        min-height: 2.9rem;
+    }
+
+    .hero__facts-shell {
+        right: var(--gutter);
+        bottom: calc(5.75rem + 100% - 100svh);
+        left: var(--gutter);
+        gap: 0.55rem;
+        width: auto;
+    }
+
+    .hero__facts div {
+        grid-template-columns: 4.5rem 1fr;
+        padding-top: 0.45rem;
+    }
+
+    .hero__scene-note {
+        top: calc(min(100svh, 100%) - 4.25rem);
+        right: auto;
+        left: var(--gutter);
+    }
+}
+
+@media (min-width: 40rem) and (max-width: 72rem) and (min-height: 50rem) {
+    .hero__copy-panel {
+        display: none;
+    }
+}
+
+@media (min-width: 72.001rem) and (min-height: 50rem) {
+    .hero__copy-panel {
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        box-shadow: none;
+        border-color: transparent;
+        background-color: transparent;
+        background-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            transparent 38%,
+            var(--hero-copy-surface-strong) 62%,
+            var(--hero-copy-surface-strong) 100%
+        );
+    }
+}
+
+@media (max-width: 25rem) {
+    .hero__actions {
+        gap: 0.7rem;
+    }
+
+    .hero__primary-link {
+        padding-inline: 0.85rem;
+    }
+
+    .hero__primary-link,
+    .hero__text-link {
+        font-size: 0.73rem;
+    }
+}
+
+@media (max-width: 48rem) and (max-height: 41rem) {
+    .hero__facts-shell {
+        bottom: 6rem;
+    }
+
+    .hero__scene-note {
+        top: auto;
+        bottom: 2.25rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero,
+    .hero::before,
+    .hero__copy-panel,
+    .hero__facts-cloud-body,
+    .hero__facts-ground-body,
+    .hero__scene-note::before,
+    .hero__primary-link,
+    .hero__primary-link span,
+    .hero__text-link span {
+        transition-duration: 0.01ms;
+    }
+}

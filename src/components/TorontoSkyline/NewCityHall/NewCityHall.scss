@@ -1,0 +1,189 @@
+.new-city-hall {
+    --city-hall-concrete: color-mix(
+        in srgb,
+        var(--skyline-mid) 55%,
+        var(--paper-light)
+    );
+    --city-hall-concrete-shadow: color-mix(
+        in srgb,
+        var(--skyline-mid) 78%,
+        var(--skyline-near)
+    );
+    --city-hall-glass: color-mix(
+        in srgb,
+        var(--skyline-mid) 66%,
+        var(--sky-base)
+    );
+    --city-hall-rib: color-mix(
+        in srgb,
+        var(--skyline-mid) 68%,
+        var(--paper-light)
+    );
+    fill: var(--skyline-mid);
+}
+
+html[data-time-state='dawn'] .new-city-hall {
+    --city-hall-concrete: color-mix(
+        in srgb,
+        var(--skyline-mid) 48%,
+        var(--sky-horizon)
+    );
+    --city-hall-glass: color-mix(
+        in srgb,
+        var(--skyline-mid) 72%,
+        var(--sky-base)
+    );
+}
+
+html[data-time-state='midday'] .new-city-hall {
+    --city-hall-concrete: color-mix(
+        in srgb,
+        var(--skyline-mid) 42%,
+        var(--paper-light)
+    );
+    --city-hall-glass: color-mix(in srgb, var(--skyline-mid) 70%, var(--water));
+}
+
+html[data-time-state='dusk'] .new-city-hall {
+    --city-hall-concrete: color-mix(
+        in srgb,
+        var(--skyline-mid) 56%,
+        var(--sky-horizon)
+    );
+    --city-hall-glass: color-mix(
+        in srgb,
+        var(--skyline-mid) 74%,
+        var(--sky-base)
+    );
+}
+
+html[data-time-state='night'] .new-city-hall {
+    --city-hall-concrete: color-mix(
+        in srgb,
+        var(--skyline-mid) 72%,
+        var(--paper-light)
+    );
+    --city-hall-concrete-shadow: color-mix(
+        in srgb,
+        var(--skyline-mid) 70%,
+        var(--skyline-near)
+    );
+    --city-hall-glass: color-mix(
+        in srgb,
+        var(--skyline-mid) 80%,
+        var(--sky-base)
+    );
+    --city-hall-rib: color-mix(
+        in srgb,
+        var(--skyline-mid) 72%,
+        var(--paper-light)
+    );
+}
+
+.new-city-hall__tower-shell,
+.new-city-hall__outer-fin,
+.new-city-hall__inner-rib,
+.new-city-hall__roof-cap,
+.new-city-hall__tower-face,
+.new-city-hall__council-chamber,
+.new-city-hall__podium {
+    transition:
+        fill var(--motion-state) ease,
+        stroke var(--motion-state) ease;
+}
+
+.new-city-hall__tower-shell {
+    fill: var(--city-hall-concrete);
+}
+
+.new-city-hall__tower-face {
+    fill: var(--city-hall-glass);
+}
+
+.new-city-hall__outer-fin {
+    fill: color-mix(in srgb, var(--city-hall-concrete) 82%, var(--paper-light));
+}
+
+.new-city-hall__inner-rib {
+    fill: var(--city-hall-rib);
+}
+
+.new-city-hall__roof-cap {
+    opacity: 0.74;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 4;
+}
+
+.new-city-hall__panel-seams {
+    opacity: 0.24;
+    fill: none;
+    stroke: var(--city-hall-rib);
+    stroke-linecap: round;
+    stroke-width: 2;
+}
+
+.new-city-hall__window-bands {
+    opacity: calc(0.18 + var(--window-alpha) * 0.76);
+    transition:
+        opacity var(--motion-state) ease,
+        stroke var(--motion-state) ease;
+    fill: none;
+    stroke: var(--window);
+    stroke-linecap: round;
+    stroke-width: 4;
+}
+
+.new-city-hall__window-bands--west path:nth-child(2n),
+.new-city-hall__window-bands--east path:nth-child(2n + 1) {
+    opacity: 0.64;
+    stroke-dasharray: 18 6 10 5;
+}
+
+.new-city-hall__paint-highlight {
+    opacity: 0.22;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+.new-city-hall__chamber-shadow {
+    fill: var(--city-hall-concrete-shadow);
+}
+
+.new-city-hall__chamber-saucer {
+    fill: color-mix(in srgb, var(--city-hall-concrete) 74%, var(--paper-light));
+}
+
+.new-city-hall__chamber-rim {
+    opacity: 0.64;
+    fill: none;
+    stroke: var(--city-hall-rib);
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+.new-city-hall__chamber-window {
+    opacity: calc(0.24 + var(--window-alpha) * 0.62);
+    transition:
+        opacity var(--motion-state) ease,
+        fill var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.new-city-hall__chamber-base,
+.new-city-hall__podium {
+    fill: var(--city-hall-concrete-shadow);
+}
+
+.new-city-hall__chamber-supports {
+    fill: var(--city-hall-rib);
+}
+
+.new-city-hall__podium-windows {
+    opacity: var(--window-alpha);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}

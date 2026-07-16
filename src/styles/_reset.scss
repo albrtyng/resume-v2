@@ -1,0 +1,214 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    background: var(--paper);
+    min-width: 20rem;
+    overflow-x: clip;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-color: color-mix(in srgb, var(--scrollbar-thumb) 68%, transparent)
+        transparent;
+    scrollbar-width: thin;
+}
+
+body {
+    margin: 0;
+    background: var(--paper);
+    min-width: 20rem;
+    overflow-x: clip;
+    color: var(--ink);
+    font-size: var(--text-body);
+    line-height: 1.55;
+    font-family: var(--font-body);
+}
+
+body::after {
+    position: fixed;
+    opacity: 0.035;
+    z-index: var(--layer-texture);
+    mix-blend-mode: multiply;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E");
+    pointer-events: none;
+    content: '';
+}
+
+main {
+    position: relative;
+    isolation: isolate;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin-block-start: 0;
+}
+
+h1,
+h2,
+h3 {
+    font-weight: 400;
+    line-height: 0.94;
+    font-family: var(--font-display);
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+}
+
+a {
+    color: inherit;
+    text-underline-offset: 0.2em;
+}
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+::selection {
+    background: var(--red-dark);
+    color: var(--paper-light);
+}
+
+:focus-visible {
+    outline: 3px solid var(--red-dark);
+    outline-offset: 4px;
+}
+
+.skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    transform: translateY(-150%);
+    z-index: calc(var(--layer-texture) + 1);
+    background: var(--spruce-deep);
+    padding: 0.7rem 1rem;
+    color: var(--paper-light);
+    font-size: 0.9rem;
+    text-decoration: none;
+
+    &:focus {
+        transform: translateY(0);
+    }
+}
+
+.section-shell {
+    margin-inline: auto;
+    width: min(100% - (2 * var(--gutter)), var(--content-width));
+}
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+    font-size: var(--text-small);
+    line-height: 1.2;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    &::before {
+        opacity: 0.6;
+        background: currentColor;
+        width: 1.6rem;
+        height: 1px;
+        content: '';
+    }
+}
+
+.sr-only {
+    position: absolute;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    width: 1px;
+    height: 1px;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+[data-reveal] {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+html[data-motion-ready='true'] [data-reveal]:not(.is-revealed) {
+    transform: translateY(0.8rem);
+    opacity: 0.72;
+}
+
+html[data-motion-ready='true'] [data-reveal] {
+    transition:
+        opacity var(--motion-medium) ease,
+        transform var(--motion-medium) var(--ease-out);
+}
+
+html[data-motion-ready='true'] [data-reveal].is-revealed {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+@supports selector(::-webkit-scrollbar) {
+    ::-webkit-scrollbar {
+        background: transparent;
+        width: 0.72rem;
+    }
+
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-track-piece,
+    ::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border: 3px solid transparent;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--scrollbar-thumb) 70%, transparent);
+        background-clip: padding-box;
+        min-height: 3.5rem;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: color-mix(in srgb, var(--scrollbar-thumb) 88%, transparent);
+        background-clip: padding-box;
+    }
+}
+
+@media (max-width: 40rem) {
+    body::after {
+        opacity: 0.025;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    html[data-motion-ready='true'] [data-reveal]:not(.is-revealed) {
+        transform: none;
+        opacity: 1;
+    }
+}

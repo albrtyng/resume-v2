@@ -1,0 +1,54 @@
+---
+import { capabilityGroups } from '../../data/capabilities';
+import './Capabilities.scss';
+---
+
+<section
+    id="capabilities"
+    class="capabilities"
+    aria-labelledby="capabilities-title"
+>
+    <div class="capabilities__inner">
+        <header class="capabilities__header" data-reveal="copy">
+            <p class="capabilities__eyebrow">Field notes / Toolkit</p>
+            <div class="capabilities__heading-group">
+                <h2 id="capabilities-title">Ways of building</h2>
+                <p>
+                    From the interface to the systems underneath, the work stays
+                    grounded in clear outcomes and close collaboration.
+                </p>
+            </div>
+        </header>
+
+        <ol class="capabilities__list">
+            {
+                capabilityGroups.map((group) => (
+                    <li class="capabilities__item" data-reveal="row">
+                        <span class="capabilities__number" aria-hidden="true">
+                            {group.number}
+                        </span>
+                        <div class="capabilities__name">
+                            <p>{group.eyebrow}</p>
+                            <h3>{group.title}</h3>
+                        </div>
+                        <p class="capabilities__description">
+                            {group.description}
+                        </p>
+                        <ul
+                            class="capabilities__tools"
+                            aria-label={`${group.title} capabilities`}
+                        >
+                            {group.tools.map((tool) => (
+                                <li>{tool}</li>
+                            ))}
+                        </ul>
+                    </li>
+                ))
+            }
+        </ol>
+    </div>
+</section>
+
+<script>
+    import '../../scripts/reveal-motion';
+</script>

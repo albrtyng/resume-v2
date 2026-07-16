@@ -1,0 +1,321 @@
+.distant-toronto-skyline {
+    --distant-city-back: color-mix(
+        in srgb,
+        var(--spruce-deep) 64%,
+        var(--skyline-far)
+    );
+    --distant-city-front: color-mix(
+        in srgb,
+        var(--spruce-deep) 76%,
+        var(--skyline-mid)
+    );
+    --distant-mainland: color-mix(
+        in srgb,
+        var(--spruce-deep) 88%,
+        var(--paper-deep)
+    );
+    --distant-haze: color-mix(
+        in srgb,
+        var(--sky-horizon) 54%,
+        var(--paper-light)
+    );
+    --distant-light: color-mix(
+        in srgb,
+        var(--window) 58%,
+        var(--distant-city-front)
+    );
+    --footer-cn-glow: rgba(73, 155, 255, 0.82);
+    --footer-cn-core: rgba(91, 211, 255, 0.68);
+    --footer-dome-glow: rgba(173, 125, 255, 0.76);
+    --footer-city-hall-glow: rgba(255, 207, 112, 0.7);
+    --footer-city-hall-light: #ffe0a0;
+
+    isolation: isolate;
+}
+
+.distant-toronto-skyline__haze {
+    transition: fill var(--motion-state) ease;
+    fill: var(--distant-haze);
+    pointer-events: none;
+}
+
+.distant-toronto-skyline__haze--rear {
+    opacity: 0.075;
+}
+
+.distant-toronto-skyline__haze--veil {
+    opacity: 0.085;
+}
+
+.distant-toronto-skyline__back-massing {
+    opacity: 0.66;
+    fill: var(--distant-city-back);
+}
+
+.distant-toronto-skyline__back-massing path:nth-child(4n + 1) {
+    opacity: 0.72;
+    fill: color-mix(in srgb, var(--distant-city-back) 78%, var(--paper-deep));
+}
+
+.distant-toronto-skyline__back-massing path:nth-child(5n + 2) {
+    opacity: 0.82;
+    fill: color-mix(in srgb, var(--distant-city-back) 84%, var(--sky-base));
+}
+
+.distant-toronto-skyline__rear-rooftops,
+.distant-toronto-skyline__front-rooftops,
+.distant-toronto-skyline__facade-lines {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.distant-toronto-skyline__rear-rooftops {
+    opacity: 0.38;
+    stroke: var(--distant-city-back);
+    stroke-width: 2;
+}
+
+.distant-toronto-skyline__back-windows {
+    opacity: calc(var(--window-alpha) * 0.36);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--distant-light);
+}
+
+.distant-toronto-skyline__landmark {
+    --skyline-far: color-mix(in srgb, var(--spruce-deep) 60%, var(--sky-base));
+    --skyline-mid: color-mix(
+        in srgb,
+        var(--spruce-deep) 72%,
+        var(--paper-deep)
+    );
+    --skyline-near: color-mix(
+        in srgb,
+        var(--spruce-deep) 84%,
+        var(--paper-deep)
+    );
+    --window: color-mix(in srgb, var(--paper-light) 64%, var(--sky-horizon));
+
+    opacity: 0.72;
+}
+
+.distant-toronto-skyline__landmark--cn {
+    opacity: 0.84;
+}
+
+.distant-toronto-skyline__landmark--cn .cn-tower__sky-pod-rim,
+.distant-toronto-skyline__landmark--cn .cn-tower__pod-rims {
+    opacity: 0.74;
+    stroke-width: 4;
+}
+
+.distant-toronto-skyline__landmark--cn .cn-tower__upper-shaft-ribs,
+.distant-toronto-skyline__landmark--cn .cn-tower__shaft-ribs {
+    opacity: 0.42;
+    stroke-width: 3;
+}
+
+.distant-toronto-skyline__landmark .cn-tower__beacon {
+    animation: none;
+}
+
+.distant-toronto-skyline__front-massing {
+    opacity: 0.88;
+    fill: var(--distant-city-front);
+}
+
+.distant-toronto-skyline__front-massing path:nth-child(3n + 1) {
+    fill: color-mix(in srgb, var(--distant-city-front) 84%, var(--paper-deep));
+}
+
+.distant-toronto-skyline__front-massing path:nth-child(4n + 2) {
+    fill: color-mix(in srgb, var(--distant-city-front) 82%, var(--skyline-mid));
+}
+
+.distant-toronto-skyline__setbacks {
+    opacity: 0.36;
+    fill: var(--spruce-deep);
+}
+
+.distant-toronto-skyline__front-rooftops {
+    opacity: 0.54;
+    stroke: color-mix(
+        in srgb,
+        var(--distant-city-front) 74%,
+        var(--paper-deep)
+    );
+    stroke-width: 2.2;
+}
+
+.distant-toronto-skyline__lit-windows {
+    opacity: calc(var(--window-alpha) * 0.56);
+    transition:
+        opacity var(--motion-state) ease,
+        fill var(--motion-state) ease;
+    fill: var(--distant-light);
+}
+
+.distant-toronto-skyline__facade-lines {
+    opacity: 0.18;
+    stroke: var(--paper-deep);
+    stroke-width: 2;
+}
+
+.distant-toronto-skyline__mainland {
+    opacity: 0.94;
+    fill: var(--distant-mainland);
+}
+
+.distant-toronto-skyline__shore-lights {
+    opacity: calc(var(--window-alpha) * 0.72);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--distant-light);
+}
+
+html[data-time-state='night'] .distant-toronto-skyline {
+    --distant-city-back: color-mix(
+        in srgb,
+        var(--spruce-deep) 82%,
+        var(--sky-base)
+    );
+    --distant-city-front: color-mix(
+        in srgb,
+        var(--spruce-deep) 88%,
+        var(--skyline-mid)
+    );
+    --distant-haze: color-mix(in srgb, var(--sky-base) 82%, var(--paper-light));
+}
+
+html[data-time-state='night'] .distant-toronto-skyline__landmark--rogers {
+    opacity: 0.9;
+}
+
+html[data-time-state='night'] .distant-toronto-skyline__landmark--cn {
+    opacity: 0.96;
+}
+
+html[data-time-state='night'] .distant-toronto-skyline__landmark--city-hall {
+    opacity: 0.92;
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--cn
+    .cn-tower__night-aura {
+    opacity: 0.46;
+    filter: drop-shadow(0 0 7px var(--footer-cn-glow));
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--rogers
+    .rogers-centre__night-aura {
+    opacity: 0.46;
+    filter: drop-shadow(0 0 9px var(--footer-dome-glow));
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--cn
+    .cn-tower__shaft-light-strip {
+    opacity: 0.78;
+    filter: drop-shadow(0 0 4px var(--footer-cn-glow));
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--cn
+    .cn-tower__main-pod,
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--cn
+    .cn-tower__sky-pod {
+    filter: drop-shadow(0 0 6px var(--footer-cn-core));
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--rogers
+    .rogers-centre__dome {
+    filter: drop-shadow(0 0 7px var(--footer-dome-glow));
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--city-hall
+    .new-city-hall__tower,
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--city-hall
+    .new-city-hall__council-chamber {
+    filter: drop-shadow(0 0 6px rgba(255, 207, 112, 0.42));
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--city-hall
+    .new-city-hall__window-bands {
+    opacity: 0.96;
+    filter: drop-shadow(0 0 5px var(--footer-city-hall-glow));
+    stroke: var(--footer-city-hall-light);
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--city-hall
+    .new-city-hall__chamber-window,
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--city-hall
+    .new-city-hall__podium-windows {
+    opacity: 0.96;
+    filter: drop-shadow(0 0 5px var(--footer-city-hall-glow));
+    fill: var(--footer-city-hall-light);
+}
+
+html[data-time-state='night']
+    .distant-toronto-skyline__landmark--cn
+    .cn-tower__beacon {
+    opacity: 0.72;
+    filter: drop-shadow(0 0 3px rgba(255, 113, 102, 0.72));
+    animation: none;
+}
+
+@media (max-width: 64rem) {
+    .distant-toronto-skyline__landmark {
+        opacity: 0.68;
+    }
+
+    .distant-toronto-skyline__landmark--cn {
+        opacity: 0.82;
+    }
+
+    .distant-toronto-skyline__minor-detail {
+        opacity: 0.16;
+    }
+}
+
+@media (max-width: 45rem) {
+    .distant-toronto-skyline__back-windows,
+    .distant-toronto-skyline__facade-lines,
+    .distant-toronto-skyline__rear-rooftops {
+        display: none;
+    }
+
+    .distant-toronto-skyline__front-rooftops {
+        opacity: 0.34;
+    }
+
+    .distant-toronto-skyline__lit-windows,
+    .distant-toronto-skyline__shore-lights {
+        opacity: calc(var(--window-alpha) * 0.42);
+    }
+
+    .distant-toronto-skyline__landmark .cn-tower__antenna-bands,
+    .distant-toronto-skyline__landmark .cn-tower__pod-mullions,
+    .distant-toronto-skyline__landmark .rogers-centre__dome-ribs,
+    .distant-toronto-skyline__landmark .rogers-centre__facade-seams,
+    .distant-toronto-skyline__landmark .rogers-centre__paint-brush,
+    .distant-toronto-skyline__landmark .new-city-hall__paint-highlight,
+    .distant-toronto-skyline__landmark .new-city-hall__panel-seams {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .distant-toronto-skyline *,
+    .distant-toronto-skyline *::before,
+    .distant-toronto-skyline *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+    }
+}

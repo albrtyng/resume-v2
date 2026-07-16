@@ -2,13 +2,31 @@
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:react/recommended",
-        "plugin:prettier/recommended"
+        "plugin:astro/recommended"
     ],
-    "plugins": ["@typescript-eslint", "react"],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": ["@typescript-eslint"],
     "env": {
         "browser": true
     },
+    "globals": {
+        "RequestInit": "readonly"
+    },
+    "ignorePatterns": ["dist/", "public/", "node_modules/", "*.d.ts"],
+    "overrides": [
+        {
+            "files": ["*.astro"],
+            "parser": "astro-eslint-parser",
+            "parserOptions": {
+                "parser": "@typescript-eslint/parser",
+                "extraFileExtensions": [".astro"]
+            }
+        }
+    ],
     "rules": {
         "react/react-in-jsx-scope": "off",
         "prefer-const": [
@@ -17,7 +35,14 @@
                 "ignoreReadBeforeAssign": true
             }
         ],
-        "no-unused-vars": "error",
-        "no-unused-imports": "error"
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "argsIgnorePattern": "^(index|total)$"
+            }
+        ],
+        "@typescript-eslint/no-explicit-any": "off",
+        "no-inner-declarations": "off"
     }
 }

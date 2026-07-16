@@ -1,0 +1,174 @@
+---
+import './IslandBonfire.scss';
+
+interface Props {
+    class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<g
+    class:list={['island-bonfire', className]}
+    data-island-bonfire
+    aria-hidden="true"
+>
+    <g class="island-bonfire__glow" data-bonfire-glow>
+        <ellipse
+            class="island-bonfire__glow-wash"
+            cx="121"
+            cy="159"
+            rx="105"
+            ry="57"></ellipse>
+        <ellipse
+            class="island-bonfire__glow-core"
+            cx="121"
+            cy="158"
+            rx="67"
+            ry="42"></ellipse>
+        <path
+            class="island-bonfire__ground-light"
+            d="M21 194C62 181 98 187 127 181C157 175 188 180 221 194C182 203 61 205 21 194Z"
+        ></path>
+    </g>
+
+    <g class="island-bonfire__smoke" data-bonfire-smoke>
+        <path
+            class="island-bonfire__smoke-wisp island-bonfire__smoke-wisp--far"
+            d="M129 91C143 78 129 68 138 54C145 43 158 39 160 25"></path>
+        <path
+            class="island-bonfire__smoke-wisp island-bonfire__smoke-wisp--near"
+            d="M113 98C99 84 111 73 104 62C97 51 86 48 87 36"></path>
+        <path
+            class="island-bonfire__smoke-brush"
+            d="M147 67C153 60 157 53 155 47M101 76C96 68 95 61 98 55"></path>
+    </g>
+
+    <g class="island-bonfire__embers" data-bonfire-embers>
+        <circle
+            class="island-bonfire__ember island-bonfire__ember--one"
+            cx="92"
+            cy="118"
+            r="2.3"></circle>
+        <circle
+            class="island-bonfire__ember island-bonfire__ember--two"
+            cx="147"
+            cy="106"
+            r="1.8"></circle>
+        <circle class="island-bonfire__ember-speck" cx="104" cy="104" r="1.4"
+        ></circle>
+        <circle class="island-bonfire__ember-speck" cx="137" cy="122" r="1.1"
+        ></circle>
+    </g>
+
+    <g class="island-bonfire__ember-bed" data-bonfire-ember-bed>
+        <path
+            class="island-bonfire__ash-bed"
+            d="M52 184C75 170 101 171 121 176C145 168 177 173 192 187C177 203 77 202 52 184Z"
+        ></path>
+        <path
+            class="island-bonfire__coal island-bonfire__coal--left"
+            d="M68 182L84 173L102 178L97 190L77 192Z"></path>
+        <path
+            class="island-bonfire__coal island-bonfire__coal--middle"
+            d="M102 180L120 170L139 179L134 193L110 194Z"></path>
+        <path
+            class="island-bonfire__coal island-bonfire__coal--right"
+            d="M137 181L157 172L176 181L169 193L147 194Z"></path>
+        <path
+            class="island-bonfire__coal-seams"
+            d="M76 184L90 179M111 186L124 178M147 186L162 180"></path>
+        <path
+            class="island-bonfire__ember-line"
+            d="M63 190C82 184 94 190 110 186C127 182 143 190 161 185C172 182 180 185 188 189"
+        ></path>
+        <circle class="island-bonfire__ember-dot" cx="85" cy="188" r="3.1"
+        ></circle>
+        <circle class="island-bonfire__ember-dot" cx="119" cy="187" r="2.5"
+        ></circle>
+        <circle class="island-bonfire__ember-dot" cx="154" cy="187" r="3.4"
+        ></circle>
+    </g>
+
+    <g class="island-bonfire__flames" data-bonfire-flames>
+        <path
+            class="island-bonfire__flame island-bonfire__flame--outer"
+            data-bonfire-flame="outer"
+            d="M72 180C66 164 75 148 87 139C78 123 91 108 106 103C102 88 111 72 126 61C126 79 140 88 137 105C151 97 165 84 163 69C179 91 177 111 166 126C179 130 187 145 183 159C180 172 168 183 155 188L91 188C82 186 76 183 72 180Z"
+        ></path>
+        <path
+            class="island-bonfire__flame-brush island-bonfire__flame-brush--outer"
+            d="M81 168C76 151 89 142 101 134C94 121 101 109 115 99M157 177C174 163 174 146 159 137"
+        ></path>
+        <path
+            class="island-bonfire__flame island-bonfire__flame--left"
+            data-bonfire-flame="left"
+            d="M81 181C74 169 82 154 94 147C89 137 94 126 106 120C103 136 117 143 111 156C105 169 108 178 116 188H92Z"
+        ></path>
+        <path
+            class="island-bonfire__flame island-bonfire__flame--right"
+            data-bonfire-flame="right"
+            d="M132 188C139 176 135 165 142 156C150 146 159 141 157 127C171 142 174 157 166 170C161 179 157 184 153 188Z"
+        ></path>
+        <path
+            class="island-bonfire__flame island-bonfire__flame--middle"
+            data-bonfire-flame="middle"
+            d="M99 188C91 175 101 162 111 154C105 143 112 130 124 122C122 139 138 145 137 160C137 172 129 181 122 188Z"
+        ></path>
+        <path
+            class="island-bonfire__flame island-bonfire__flame--inner"
+            data-bonfire-flame="inner"
+            d="M108 188C103 178 112 169 119 162C124 156 127 150 125 142C137 154 145 166 138 176C135 182 131 185 127 188Z"
+        ></path>
+        <path
+            class="island-bonfire__flame-highlight"
+            d="M116 183C112 175 120 169 126 163C130 170 134 177 129 184Z"
+        ></path>
+    </g>
+
+    <g class="island-bonfire__logs" data-bonfire-logs>
+        <g class="island-bonfire__log island-bonfire__log--back">
+            <path
+                class="island-bonfire__log-body"
+                d="M61 167L72 153L181 191L174 207Z"></path>
+            <path
+                class="island-bonfire__log-shadow"
+                d="M66 173L174 202L181 191L174 207L69 180Z"></path>
+            <path
+                class="island-bonfire__log-end"
+                d="M61 167L72 153L82 157L71 174Z"></path>
+            <path
+                class="island-bonfire__log-ring"
+                d="M66 165C69 162 72 160 76 159M68 170C72 166 76 163 80 162"
+            ></path>
+            <path
+                class="island-bonfire__bark"
+                d="M89 163L107 170M119 173L139 180M148 185L165 191"></path>
+        </g>
+        <g class="island-bonfire__log island-bonfire__log--front">
+            <path
+                class="island-bonfire__log-body"
+                d="M55 195L63 178L174 150L188 161L179 178L69 207Z"></path>
+            <path
+                class="island-bonfire__log-shadow"
+                d="M60 198L177 169L188 161L179 178L69 207Z"></path>
+            <path
+                class="island-bonfire__log-end"
+                d="M174 150L188 161L179 178L166 167Z"></path>
+            <path
+                class="island-bonfire__log-ring"
+                d="M175 155C179 158 181 162 182 166M171 159C175 162 177 166 178 172"
+            ></path>
+            <path
+                class="island-bonfire__bark"
+                d="M72 190L92 185M103 180L122 175M133 171L151 166"></path>
+            <path
+                class="island-bonfire__char"
+                d="M96 184L111 180M139 170L151 167"></path>
+        </g>
+    </g>
+
+    <path
+        class="island-bonfire__beach-brush"
+        d="M25 208C68 202 95 208 128 203C160 198 194 203 218 210"></path>
+</g>

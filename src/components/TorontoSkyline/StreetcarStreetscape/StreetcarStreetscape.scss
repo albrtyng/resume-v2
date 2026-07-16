@@ -1,0 +1,236 @@
+.streetcar-streetscape {
+    --streetscape-ground: color-mix(
+        in srgb,
+        var(--skyline-near) 74%,
+        var(--paper-deep)
+    );
+    --streetscape-backdrop: color-mix(
+        in srgb,
+        var(--skyline-near) 84%,
+        var(--skyline-mid)
+    );
+    --streetscape-brick: color-mix(
+        in srgb,
+        var(--skyline-near) 76%,
+        var(--red-dark)
+    );
+    --streetscape-stone: color-mix(
+        in srgb,
+        var(--skyline-near) 72%,
+        var(--paper-deep)
+    );
+    --streetscape-roof: color-mix(
+        in srgb,
+        var(--spruce-deep) 78%,
+        var(--paper-deep)
+    );
+    transform: translate(
+        calc(var(--scene-x) * -0.58),
+        calc(var(--scene-y) * -0.42)
+    );
+    transition: transform 120ms linear;
+}
+
+.streetcar-streetscape__city-ground {
+    transition: fill var(--motion-state) ease;
+    fill: var(--streetscape-ground);
+}
+
+.streetcar-streetscape__background-city {
+    transform: translateY(-47px);
+}
+
+.streetcar-streetscape__background-buildings {
+    transition: fill var(--motion-state) ease;
+    fill: var(--streetscape-backdrop);
+}
+
+.streetcar-streetscape__background-buildings path:nth-child(3n + 1) {
+    fill: color-mix(
+        in srgb,
+        var(--streetscape-backdrop) 84%,
+        var(--paper-deep)
+    );
+}
+
+.streetcar-streetscape__background-buildings path:nth-child(4n + 2) {
+    fill: color-mix(in srgb, var(--streetscape-backdrop) 82%, var(--red-dark));
+}
+
+.streetcar-streetscape__background-roofs {
+    opacity: 0.58;
+    fill: none;
+    stroke: color-mix(in srgb, var(--streetscape-roof) 86%, var(--paper-deep));
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 5;
+}
+
+.streetcar-streetscape__background-windows {
+    opacity: calc(0.12 + var(--window-alpha) * 0.5);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.streetcar-streetscape__foreground {
+    isolation: isolate;
+}
+
+.streetcar-streetscape__building {
+    transition: fill var(--motion-state) ease;
+}
+
+.streetcar-streetscape__facade {
+    fill: var(--streetscape-brick);
+}
+
+.streetcar-streetscape__building--west-row .streetcar-streetscape__facade,
+.streetcar-streetscape__building--east-terrace .streetcar-streetscape__facade {
+    fill: color-mix(in srgb, var(--streetscape-brick) 76%, var(--paper-deep));
+}
+
+.streetcar-streetscape__building--corner-store .streetcar-streetscape__facade {
+    fill: color-mix(in srgb, var(--streetscape-stone) 84%, var(--skyline-near));
+}
+
+.streetcar-streetscape__building--east-loft .streetcar-streetscape__facade {
+    fill: color-mix(in srgb, var(--streetscape-brick) 86%, var(--spruce-deep));
+}
+
+.streetcar-streetscape__roof,
+.streetcar-streetscape__parapet {
+    fill: var(--streetscape-roof);
+}
+
+.streetcar-streetscape__parapet {
+    opacity: 0.92;
+}
+
+.streetcar-streetscape__windows,
+.streetcar-streetscape__upper-windows {
+    opacity: calc(0.18 + var(--window-alpha) * 0.66);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.streetcar-streetscape__storefront {
+    opacity: calc(0.46 + var(--window-alpha) * 0.42);
+    transition:
+        fill var(--motion-state) ease,
+        opacity var(--motion-state) ease;
+    fill: color-mix(in srgb, var(--skyline-mid) 74%, var(--sky-base));
+    stroke: color-mix(in srgb, var(--streetscape-roof) 82%, var(--paper-deep));
+    stroke-width: 4;
+}
+
+.streetcar-streetscape__lintel {
+    opacity: 0.86;
+    fill: color-mix(in srgb, var(--red-dark) 54%, var(--streetscape-roof));
+}
+
+.streetcar-streetscape__masonry {
+    opacity: 0.22;
+    fill: none;
+    stroke: var(--paper-deep);
+    stroke-dasharray: 19 8;
+    stroke-linecap: round;
+    stroke-width: 2.6;
+}
+
+.streetcar-streetscape__rooftop-detail {
+    opacity: 0.76;
+    fill: none;
+    stroke: var(--streetscape-roof);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 6;
+}
+
+.streetcar-streetscape__foreground-foundation {
+    fill: color-mix(in srgb, var(--spruce-deep) 86%, var(--skyline-near));
+}
+
+.streetcar-streetscape__road-surface {
+    transition: fill var(--motion-state) ease;
+    fill: color-mix(in srgb, var(--spruce-deep) 94%, var(--skyline-near));
+}
+
+.streetcar-streetscape__road-edge {
+    opacity: 0.42;
+    fill: none;
+    stroke: color-mix(in srgb, var(--paper-deep) 42%, var(--skyline-near));
+    stroke-width: 4;
+}
+
+.streetcar-streetscape__road-markers {
+    opacity: 0.92;
+    fill: none;
+    stroke: var(--sun);
+    stroke-dasharray: 72 44;
+    stroke-linecap: butt;
+    stroke-width: 7;
+}
+
+.streetcar-streetscape__right-lane {
+    transform: translateY(20px);
+}
+
+html[data-time-state='dawn'] .streetcar-streetscape {
+    --streetscape-ground: color-mix(
+        in srgb,
+        var(--skyline-near) 68%,
+        var(--paper-deep)
+    );
+}
+
+html[data-time-state='midday'] .streetcar-streetscape {
+    --streetscape-ground: color-mix(
+        in srgb,
+        var(--skyline-near) 62%,
+        var(--paper-deep)
+    );
+}
+
+html[data-time-state='night'] .streetcar-streetscape {
+    --streetscape-ground: color-mix(
+        in srgb,
+        var(--skyline-near) 90%,
+        var(--skyline-mid)
+    );
+    --streetscape-backdrop: color-mix(
+        in srgb,
+        var(--skyline-near) 90%,
+        var(--skyline-mid)
+    );
+    --streetscape-brick: color-mix(
+        in srgb,
+        var(--skyline-near) 88%,
+        var(--red-dark)
+    );
+}
+
+@media (max-width: 48rem) {
+    .streetcar-streetscape__background-city {
+        transform: translateY(-117px);
+    }
+
+    .streetcar-streetscape__road {
+        transform: translateY(-70px);
+    }
+
+    .streetcar-streetscape__masonry {
+        display: none;
+    }
+
+    .streetcar-streetscape__building--west-workshop,
+    .streetcar-streetscape__building--east-workshop {
+        opacity: 0.9;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .streetcar-streetscape {
+        transform: none;
+        transition-duration: 0.01ms;
+    }
+}

@@ -1,0 +1,105 @@
+---
+import MarkerOutline from '../MarkerOutline/MarkerOutline.astro';
+import TorontoSkyline from '../TorontoSkyline/TorontoSkyline.astro';
+import './Hero.scss';
+---
+
+<section id="hero" class="hero" aria-labelledby="hero-title">
+    <div class="hero__copy section-shell">
+        <div class="hero__copy-surface">
+            <span
+                class="hero__copy-panel"
+                data-hero-copy-panel
+                aria-hidden="true"></span>
+            <p class="hero__eyebrow eyebrow">Toronto · Software Engineer</p>
+            <h1 id="hero-title" class="hero__title">
+                Albert <em>Yang</em>
+            </h1>
+            <p class="hero__statement">
+                I build dependable product systems that turn complex migrations,
+                data workflows, and customer journeys into clear, reliable
+                experiences.
+            </p>
+            <div class="hero__actions" aria-label="Primary actions">
+                <a
+                    class="hero__primary-link marker-outline-control"
+                    href="#experience"
+                >
+                    Explore my work <span aria-hidden="true">↓</span>
+                    <MarkerOutline />
+                </a>
+                <a class="hero__text-link" href="mailto:albertesyang@gmail.com">
+                    Get in touch <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero__facts-shell" data-profile-shape>
+        <svg
+            class="hero__facts-cloud"
+            data-profile-cloud
+            viewBox="0 0 500 190"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+        >
+            <path
+                class="hero__facts-cloud-body"
+                d="M48 177C21 172 9 149 20 126C1 105 12 72 42 63C41 34 74 13 105 25C129 1 171 2 193 29C222 8 267 15 285 46C319 29 362 44 369 78C405 76 436 97 438 126C466 137 470 163 448 177Z"
+            ></path>
+        </svg>
+
+        <svg
+            class="hero__facts-ground"
+            data-profile-ground
+            viewBox="0 0 500 160"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+        >
+            <path
+                class="hero__facts-ground-body"
+                d="M12 8L482 3L500 121L456 154L10 146L0 34Z"></path>
+            <path
+                class="hero__facts-ground-brush"
+                d="M26 134C131 126 215 139 311 130C377 124 429 130 468 122"
+            ></path>
+        </svg>
+
+        <dl class="hero__facts" aria-label="Current profile">
+            <div>
+                <dt>Now</dt>
+                <dd>Software Engineer II · Super.com</dd>
+            </div>
+            <div>
+                <dt>Perspective</dt>
+                <dd>6+ years · Canada-based, working globally</dd>
+            </div>
+        </dl>
+    </div>
+
+    <TorontoSkyline />
+
+    <button
+        class="hero__scene-note"
+        type="button"
+        data-time-control
+        disabled
+        aria-label="Current lighting: Dusk. Show Night."
+        title="Show Night lighting"
+    >
+        <span class="hero__scene-mark" aria-hidden="true"></span>
+        Local light ·
+        <span class="hero__time-label hero__time-label--dawn">Dawn</span>
+        <span class="hero__time-label hero__time-label--midday">Midday</span>
+        <span class="hero__time-label hero__time-label--dusk">Dusk</span>
+        <span class="hero__time-label hero__time-label--night">Night</span>
+    </button>
+</section>
+
+<script>
+    import { initSkylineMotion } from '../../scripts/skyline/skyline-motion';
+
+    initSkylineMotion();
+</script>

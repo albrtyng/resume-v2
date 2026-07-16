@@ -1,0 +1,289 @@
+---
+import CNTower from './CNTower/CNTower.astro';
+import NewCityHall from './NewCityHall/NewCityHall.astro';
+import RogersCentre from './RogersCentre/RogersCentre.astro';
+import StreetcarStreetscape from './StreetcarStreetscape/StreetcarStreetscape.astro';
+import './TorontoSkyline.scss';
+---
+
+<div
+    class="skyline-scene"
+    data-skyline-scene
+    data-time-state="dusk"
+    data-motion="paused"
+    role="img"
+    aria-label="An illustrated Toronto skyline with the CN Tower, Rogers Centre, New City Hall, and a red streetcar beside Lake Ontario at dusk"
+>
+    <svg
+        class="skyline-scene__art"
+        viewBox="0 0 1600 820"
+        preserveAspectRatio="xMidYMax slice"
+        aria-hidden="true"
+        focusable="false"
+    >
+        <defs>
+            <pattern
+                id="skyline-paint-fleck"
+                width="47"
+                height="41"
+                patternUnits="userSpaceOnUse"
+            >
+                <circle class="skyline__fleck-dot" cx="8" cy="10" r="1.7"
+                ></circle>
+                <circle class="skyline__fleck-dot" cx="34" cy="29" r="1.1"
+                ></circle>
+                <path class="skyline__fleck-line" d="M17 32L25 28"></path>
+            </pattern>
+        </defs>
+
+        <g class="skyline__stars" data-stars>
+            <circle cx="130" cy="90" r="2"></circle>
+            <circle cx="248" cy="145" r="1.5"></circle>
+            <circle cx="420" cy="74" r="2"></circle>
+            <circle cx="610" cy="128" r="1.5"></circle>
+            <circle cx="770" cy="65" r="1.8"></circle>
+            <circle cx="928" cy="134" r="2"></circle>
+            <circle cx="1128" cy="82" r="1.6"></circle>
+            <circle cx="1280" cy="126" r="2"></circle>
+            <circle cx="1472" cy="72" r="1.5"></circle>
+            <circle cx="335" cy="190" r="1.1"></circle>
+            <circle cx="1028" cy="183" r="1.3"></circle>
+            <circle cx="1380" cy="206" r="1.1"></circle>
+        </g>
+
+        <g class="skyline__celestial" data-sky-object>
+            <circle class="skyline__celestial-halo" cx="1190" cy="218" r="76"
+            ></circle>
+            <circle class="skyline__celestial-core" cx="1190" cy="218" r="45"
+            ></circle>
+            <g class="skyline__moon-marks">
+                <circle cx="1176" cy="205" r="6"></circle>
+                <circle cx="1205" cy="230" r="9"></circle>
+                <circle cx="1212" cy="195" r="4"></circle>
+            </g>
+        </g>
+
+        <g class="skyline__atmosphere">
+            <path
+                class="skyline__horizon-haze"
+                d="M0 374C220 338 390 390 585 362C790 333 964 286 1168 310C1352 332 1462 296 1600 274V510H0Z"
+            ></path>
+            <path
+                class="skyline__horizon-brush"
+                d="M-40 431C176 399 352 432 548 409C760 383 943 347 1164 365C1342 380 1484 351 1640 326"
+            ></path>
+        </g>
+        <g class="skyline__fog" aria-hidden="true">
+            <path
+                class="skyline__fog-band skyline__fog-band--back"
+                d="M-180 446C82 406 270 472 502 435C744 396 954 459 1187 420C1360 392 1512 415 1780 382V540H-180Z"
+            ></path>
+            <path
+                class="skyline__fog-band skyline__fog-band--middle"
+                d="M-140 484C104 451 299 506 538 469C776 432 963 499 1205 458C1398 425 1554 452 1740 421V565H-140Z"
+            ></path>
+            <path
+                class="skyline__fog-band skyline__fog-band--front"
+                d="M-220 529C38 496 230 549 472 516C702 485 901 544 1148 507C1373 473 1550 509 1810 476V595H-220Z"
+            ></path>
+        </g>
+
+        <g class="skyline__clouds skyline__clouds--far" data-depth="0.12">
+            <g class="skyline__cloud skyline__cloud--one">
+                <path
+                    d="M24 196C74 158 128 168 156 202C195 180 254 194 270 226C221 243 70 243 12 226C9 216 13 205 24 196Z"
+                ></path>
+            </g>
+            <g class="skyline__cloud skyline__cloud--two">
+                <path
+                    d="M39 142C85 112 129 121 154 151C190 133 245 145 262 177C216 192 72 193 20 177C20 164 27 152 39 142Z"
+                ></path>
+            </g>
+        </g>
+        <g class="skyline__clouds skyline__clouds--near" data-depth="0.22">
+            <g class="skyline__cloud skyline__cloud--three">
+                <path
+                    d="M48 264C99 222 158 232 185 271C228 243 291 257 308 297C253 315 79 316 20 297C21 284 30 273 48 264Z"
+                ></path>
+            </g>
+            <g class="skyline__cloud skyline__cloud--four">
+                <path
+                    d="M38 312C78 278 125 287 148 318C180 300 226 311 241 342C198 357 61 358 15 342C18 330 25 320 38 312Z"
+                ></path>
+            </g>
+        </g>
+
+        <g class="skyline__birds" data-depth="0.3">
+            <path d="M350 245C358 237 366 237 374 245C382 237 390 237 398 245"
+            ></path>
+            <path d="M405 214C411 208 417 208 423 214C429 208 435 208 441 214"
+            ></path>
+            <path
+                d="M1380 242C1387 235 1394 235 1401 242C1408 235 1415 235 1422 242"
+            ></path>
+        </g>
+
+        <g class="skyline__far" data-depth="0.35">
+            <path
+                class="skyline__layer-base"
+                d="M0 469C192 458 354 473 530 461C744 447 922 473 1112 457C1311 441 1450 460 1600 449V544H0Z"
+            ></path>
+            <g class="skyline__far-buildings">
+                <path d="M0 474V432H36V415H68V474Z"></path>
+                <path d="M58 474V398H102V388H118V474Z"></path>
+                <path d="M110 474V427H164V409H184V474Z"></path>
+                <path d="M179 474V443H226V414H250V474Z"></path>
+                <path d="M240 474V388H276V373H289V388H306V474Z"></path>
+                <path d="M302 474V425H344V397H374V474Z"></path>
+                <path d="M368 474V363H404V351H434V474Z"></path>
+                <path d="M424 474V421H472V404H493V474Z"></path>
+                <path d="M486 474V392H536V373H552V474Z"></path>
+                <path d="M545 474V429H588V402H620V474Z"></path>
+                <path d="M613 474V370H652V345H668V370H688V474Z"></path>
+                <path d="M682 474V407H730V390H750V474Z"></path>
+                <path d="M742 474V429H800V404H824V474Z"></path>
+                <path d="M813 474V377H850V356H882V474Z"></path>
+                <path d="M874 474V412H925V391H947V474Z"></path>
+                <path d="M940 474V358H978V339H1001V474Z"></path>
+                <path d="M994 474V426H1051V397H1076V474Z"></path>
+                <path d="M1068 474V384H1110V369H1136V474Z"></path>
+                <path d="M1129 474V427H1181V405H1203V474Z"></path>
+                <path d="M1197 474V364H1240V346H1268V474Z"></path>
+                <path d="M1261 474V417H1314V393H1337V474Z"></path>
+                <path d="M1330 474V381H1365V362H1398V474Z"></path>
+                <path d="M1391 474V424H1442V398H1466V474Z"></path>
+                <path d="M1458 474V372H1498V350H1528V474Z"></path>
+                <path d="M1518 474V417H1566V398H1600V474Z"></path>
+            </g>
+            <g class="skyline__far-rooftops">
+                <path
+                    data-rooftop-masts="far"
+                    d="M278 379V348M289 379V359M420 357V326M427 357V334M660 351V316M974 364V310M1252 352V320M1513 356V323"
+                ></path>
+                <path d="M379 363H423M620 370H688M941 358H1002M1198 364H1268"
+                ></path>
+            </g>
+            <g class="skyline__far-windows">
+                <path
+                    d="M72 414H85V422H72ZM91 414H104V422H91ZM255 405H268V413H255ZM278 405H291V413H278ZM383 385H396V393H383ZM405 385H418V393H405ZM628 394H641V402H628ZM650 394H663V402H650ZM828 401H841V409H828ZM850 401H863V409H850ZM951 383H964V391H951ZM974 383H987V391H974ZM1208 391H1221V399H1208ZM1230 391H1243V399H1230ZM1472 398H1485V406H1472ZM1494 398H1507V406H1494Z"
+                ></path>
+            </g>
+        </g>
+
+        <g class="skyline__mid" data-depth="0.52">
+            <path
+                class="skyline__layer-base"
+                d="M0 516C214 501 387 521 573 506C784 490 974 520 1171 502C1344 487 1470 502 1600 493V578H0Z"
+            ></path>
+            <g class="skyline__mid-buildings">
+                <path d="M0 520V459H62V435H85V520Z"></path>
+                <path d="M74 520V403H126V387H154V520Z"></path>
+                <path d="M146 520V450H211V423H239V520Z"></path>
+                <path d="M229 520V365H274V343H303V520Z"></path>
+                <path d="M293 520V438H353V410H381V520Z"></path>
+                <path d="M371 520V395H418V370H444V520Z"></path>
+                <path d="M433 520V447H499V418H526V520Z"></path>
+                <path d="M516 520V347H562V325H592V520Z"></path>
+                <path d="M581 520V420H637V389H665V520Z"></path>
+                <path d="M654 520V380H699V355H728V520Z"></path>
+                <path d="M717 520V451H781V421H809V520Z"></path>
+                <path d="M796 520V413H836V385H858V520Z"></path>
+                <path d="M1061 520V425H1101V398H1122V520Z"></path>
+                <path d="M1132 520V385H1177V359H1207V520Z"></path>
+                <path d="M1200 520V447H1254V420H1276V520Z"></path>
+                <path d="M1430 520V404H1474V378H1502V520Z"></path>
+                <path d="M1494 520V448H1551V421H1577V520Z"></path>
+                <path d="M1568 520V386H1600V520Z"></path>
+            </g>
+            <g class="skyline__setback-buildings">
+                <path d="M228 365H304V388H291V411H279V520H228Z"></path>
+                <path d="M516 347H592V372H580V395H568V520H516Z"></path>
+                <path d="M1132 385H1207V408H1194V430H1182V520H1132Z"></path>
+                <path d="M1430 404H1502V428H1489V451H1477V520H1430Z"></path>
+            </g>
+            <g class="skyline__rooftop-equipment">
+                <path
+                    d="M93 387H137V403H93ZM385 370H431V395H385ZM600 389H647V420H600ZM738 421H772V451H738ZM1072 398H1110V425H1072ZM1511 421H1551V448H1511Z"
+                ></path>
+                <path
+                    data-rooftop-masts="mid"
+                    d="M264 371V315M279 349V328M547 353V296M574 331V307M691 386V326M1169 391V329M1464 410V348M1585 392V356"
+                ></path>
+            </g>
+            <g class="skyline__mid-window-bands">
+                <path
+                    d="M88 426H143V435H88ZM88 446H143V455H88ZM243 397H290V406H243ZM243 420H290V429H243ZM386 420H431V429H386ZM386 443H431V452H386ZM530 380H578V389H530ZM530 404H578V413H530ZM668 405H715V414H668ZM668 429H715V438H668ZM1146 416H1194V425H1146ZM1146 440H1194V449H1146ZM1444 438H1489V447H1444ZM1444 462H1489V471H1444Z"
+                ></path>
+            </g>
+            <NewCityHall />
+        </g>
+
+        <g class="skyline__landmarks" data-depth="0.59">
+            <RogersCentre />
+            <CNTower />
+        </g>
+
+        <g class="skyline__near" data-depth="0.72">
+            <path
+                class="skyline__layer-base"
+                d="M0 566C216 551 392 574 590 559C792 544 979 573 1174 555C1361 539 1488 556 1600 546V623H0Z"
+            ></path>
+            <g class="skyline__near-buildings">
+                <path d="M0 568V493H82V476H113V568Z"></path>
+                <path d="M99 568V451H165V428H196V568Z"></path>
+                <path d="M184 568V510H262V486H295V568Z"></path>
+                <path d="M282 568V465H347V440H378V568Z"></path>
+                <path d="M365 568V515H452V490H486V568Z"></path>
+                <path d="M474 568V472H541V446H575V568Z"></path>
+                <path d="M562 568V521H645V493H677V568Z"></path>
+                <path d="M665 568V494H733V470H768V568Z"></path>
+                <path d="M756 568V527H838V502H870V568Z"></path>
+                <path d="M1056 568V526H1139V500H1172V568Z"></path>
+                <path d="M1160 568V489H1230V464H1262V568Z"></path>
+                <path d="M1249 568V516H1332V490H1366V568Z"></path>
+                <path d="M1353 568V469H1425V445H1457V568Z"></path>
+                <path d="M1444 568V510H1524V484H1557V568Z"></path>
+                <path d="M1545 568V477H1600V568Z"></path>
+            </g>
+            <g class="skyline__brick-course">
+                <path
+                    d="M191 530H285M191 547H285M373 532H476M373 549H476M572 536H666M572 553H666M1261 535H1355M1261 552H1355M1455 529H1545M1455 546H1545"
+                ></path>
+            </g>
+            <g class="skyline__near-window-lights" data-window-lights>
+                <path
+                    d="M24 518H43V533H24ZM54 518H73V533H54ZM122 473H142V488H122ZM153 473H173V488H153ZM305 489H325V504H305ZM336 489H356V504H336ZM497 496H517V511H497ZM528 496H548V511H528ZM690 516H710V531H690ZM721 516H741V531H721ZM1184 511H1204V526H1184ZM1215 511H1235V526H1215ZM1377 493H1397V508H1377ZM1408 493H1428V508H1408ZM1565 502H1585V517H1565Z"
+                ></path>
+            </g>
+            <path
+                class="skyline__paint-texture"
+                d="M0 486H196V566H0ZM282 442H575V566H282ZM665 471H870V566H665ZM1160 465H1457V566H1160ZM1444 485H1600V566H1444Z"
+            ></path>
+        </g>
+
+        <StreetcarStreetscape />
+
+        <g class="skyline__water" data-water-layer>
+            <path
+                class="skyline__water-base"
+                d="M0 650C218 636 390 668 600 649C823 629 997 666 1212 648C1378 634 1488 646 1600 638V820H0Z"
+            ></path>
+            <path
+                class="skyline__wave skyline__wave--one"
+                d="M-100 665C89 626 214 699 398 658C590 615 754 688 934 650C1113 612 1280 682 1700 631"
+            ></path>
+            <path
+                class="skyline__wave skyline__wave--two"
+                d="M-80 728C118 686 276 758 470 716C667 673 818 748 1017 708C1209 670 1408 738 1680 694"
+            ></path>
+            <path
+                class="skyline__wave skyline__wave--three"
+                d="M-120 785C87 750 263 807 463 776C672 743 846 803 1054 769C1246 738 1413 794 1720 752"
+            ></path>
+            <path
+                class="skyline__water-brush"
+                d="M79 690C210 676 346 692 474 680M566 748C731 731 876 750 1034 735M1140 676C1270 661 1402 674 1518 663"
+            ></path>
+        </g>
+    </svg>
+</div>

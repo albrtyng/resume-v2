@@ -1,0 +1,107 @@
+---
+import { jobs, type Bullet } from '../../data/experience';
+import './Experience.scss';
+
+interface Segment {
+    text: string;
+    highlighted: boolean;
+}
+
+function splitBullet(bullet: Bullet): Segment[] {
+    const segments: Segment[] = [];
+    let cursor = 0;
+
+    for (const highlight of bullet.highlights) {
+        const start = bullet.text.indexOf(highlight, cursor);
+        if (start === -1) continue;
+
+        if (start > cursor) {
+            segments.push({
+                text: bullet.text.slice(cursor, start),
+                highlighted: false,
+            });
+        }
+
+        segments.push({ text: highlight, highlighted: true });
+        cursor = start + highlight.length;
+    }
+
+    if (cursor < bullet.text.length) {
+        segments.push({
+            text: bullet.text.slice(cursor),
+            highlighted: false,
+        });
+    }
+
+    return segments.length > 0
+        ? segments
+        : [{ text: bullet.text, highlighted: false }];
+}
+---
+
+<section id="experience" class="experience" aria-labelledby="experience-title">
+    <div class="experience__shell section-shell">
+        <header class="experience__intro" data-reveal>
+            <div>
+                <p class="eyebrow">Selected experience</p>
+                <h2 id="experience-title">Work with a measurable wake.</h2>
+            </div>
+            <p>
+                Product engineering across fintech, digital platforms, and
+                forensic software—grounded in reliable systems and outcomes
+                people can feel.
+            </p>
+        </header>
+
+        <ol class="experience__list">
+            {
+                jobs.map((job, index) => (
+                    <li class="experience__item" data-reveal>
+                        <article class="experience__entry">
+                            <div class="experience__rail" aria-hidden="true">
+                                <span>
+                                    {String(index + 1).padStart(2, '0')}
+                                </span>
+                                <span class="experience__rail-line" />
+                            </div>
+
+                            <header class="experience__entry-header">
+                                <p class="experience__dates">{job.duration}</p>
+                                <h3>{job.company}</h3>
+                                <p class="experience__role">{job.role}</p>
+                            </header>
+
+                            <ul class="experience__outcomes">
+                                {job.bullets.map((bullet) => (
+                                    <li>
+                                        {splitBullet(bullet).map((segment) =>
+                                            segment.highlighted ? (
+                                                <strong>{segment.text}</strong>
+                                            ) : (
+                                                segment.text
+                                            ),
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </article>
+                    </li>
+                ))
+            }
+        </ol>
+
+        <a
+            class="experience__profile-link"
+            href={jobs[0].url}
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            View Albert's full profile
+            <span aria-hidden="true">↗</span>
+        </a>
+    </div>
+</section>
+
+<script>
+    import '../../scripts/reveal-motion';
+</script>
