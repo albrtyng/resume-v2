@@ -1,8 +1,8 @@
+import { getPageThemeColor, type PageSurface } from '../page-theme';
 import {
     getMillisecondsUntilNextSkylineBoundary,
     getNextSkylineState,
     getSkylineState,
-    SKYLINE_THEME_COLORS,
     type SkylineState,
 } from './time-state';
 
@@ -179,7 +179,14 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
     function applyTimeState(state: SkylineState) {
         sceneElement.dataset.timeState = state;
         rootElement.dataset.timeState = state;
-        themeColor?.setAttribute('content', SKYLINE_THEME_COLORS[state]);
+        themeColor?.setAttribute(
+            'content',
+            getPageThemeColor(
+                state,
+                (rootElement.dataset.pageSurface as PageSurface | undefined) ??
+                    'hero',
+            ),
+        );
         if (accessibleTimeLabel) {
             accessibleTimeLabel.textContent = TIME_LABELS[state];
         }
@@ -204,8 +211,7 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
     }
 
     const handleTimeControlClick = () => {
-        const currentState =
-            selectedTimeState ?? getSkylineState(new Date());
+        const currentState = selectedTimeState ?? getSkylineState(new Date());
         selectedTimeState = getNextSkylineState(currentState);
         window.clearTimeout(boundaryTimer);
         applyTimeState(selectedTimeState);

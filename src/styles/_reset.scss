@@ -16,6 +16,14 @@ html {
     scrollbar-width: thin;
 }
 
+html[data-page-surface='hero'] {
+    background: var(--sky-base);
+}
+
+html[data-page-surface='contact'] {
+    background: var(--footer-sky);
+}
+
 body {
     margin: 0;
     background: var(--paper);
@@ -106,6 +114,10 @@ svg {
 .section-shell {
     margin-inline: auto;
     width: min(100% - (2 * var(--gutter)), var(--content-width));
+}
+
+:where(#experience-title, #capabilities-title, #contact-title) {
+    scroll-margin-top: 7rem;
 }
 
 .eyebrow {

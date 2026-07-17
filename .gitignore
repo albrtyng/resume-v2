@@ -13,6 +13,8 @@ dist
 dist-ssr
 test-results
 playwright-report
+.worktrees/
+lighthouse-*.report.*
 references/visual/
 docs/plans/
 *.local

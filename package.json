@@ -13,7 +13,9 @@
         "test:e2e:headed": "playwright test --headed",
         "test:e2e:ui": "playwright test --ui",
         "capture:skyline": "node scripts/capture-skyline.mjs",
-        "audit:lighthouse": "lighthouse http://127.0.0.1:4321 --chrome-flags=\"--headless\"",
+        "audit:lighthouse": "pnpm audit:lighthouse:mobile && pnpm audit:lighthouse:desktop && node scripts/check-lighthouse-budget.mjs",
+        "audit:lighthouse:mobile": "lighthouse \"${LIGHTHOUSE_URL:-http://127.0.0.1:4321}\" --only-categories=performance,seo --output=html --output=json --output-path=./lighthouse-mobile --chrome-flags=\"--headless\" --quiet",
+        "audit:lighthouse:desktop": "lighthouse \"${LIGHTHOUSE_URL:-http://127.0.0.1:4321}\" --preset=desktop --only-categories=performance,seo --output=html --output=json --output-path=./lighthouse-desktop --chrome-flags=\"--headless\" --quiet",
         "format": "prettier --ignore-path .gitignore --write \"**/*.+(css|scss|js|mjs|ts|astro|json)\""
     },
     "dependencies": {

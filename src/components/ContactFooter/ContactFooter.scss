@@ -25,6 +25,11 @@
     pointer-events: none;
 }
 
+html[data-js='true'] .contact-footer__panorama {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 100svh;
+}
+
 .contact-footer__sky-field {
     z-index: 2;
     pointer-events: none;
@@ -80,8 +85,10 @@
 
 .contact-footer__links {
     display: grid;
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 1.25rem;
+    row-gap: 0.3rem;
     justify-items: start;
-    gap: 0.35rem;
     margin-top: clamp(0.9rem, 2.3vh, 1.25rem);
     border-top: 1px solid
         color-mix(in srgb, var(--footer-ink, var(--paper)) 28%, transparent);
@@ -117,6 +124,7 @@
 }
 
 .contact-footer__email {
+    grid-column: 1 / -1;
     max-width: 100%;
     font-size: clamp(1.8rem, 3.2vw, 3rem);
     line-height: 1;
@@ -125,7 +133,7 @@
     overflow-wrap: anywhere;
 }
 
-.contact-footer__linkedin {
+.contact-footer__profile-link {
     font-weight: 500;
     font-size: clamp(0.95rem, 1.35vw, 1.1rem);
 }

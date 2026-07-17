@@ -1,3 +1,4 @@
+import { getPageThemeColor } from '../../src/scripts/page-theme';
 import {
     getNextSkylineState,
     getSkylineStateForHour,
@@ -25,6 +26,14 @@ const themeColors = {
     night: '#152941',
 } as const;
 
+const paperThemeColor = '#f2e7d2';
+const footerThemeColors = {
+    dawn: '#315b57',
+    midday: '#3c6660',
+    dusk: '#1d4540',
+    night: '#122f38',
+} as const;
+
 const skylineBoundaryScenarios = [
     { hour: 4, state: 'night' },
     { hour: 5, state: 'dawn' },
@@ -39,6 +48,7 @@ const skylineBoundaryScenarios = [
 const contactLinks = {
     email: 'a[href="mailto:albertesyang@gmail.com"]',
     linkedin: 'a[href*="linkedin.com/in/albrtyng"]',
+    github: 'a[href="https://github.com/albrtyng"]',
 } as const;
 
 const primaryLandmarks = ['cn-tower', 'rogers-centre'] as const;
@@ -362,8 +372,15 @@ test('renders the main resume journey and accessible navigation', async ({
 
     await expect(contact.locator(contactLinks.email)).toBeVisible();
     await expect(contact.locator(contactLinks.linkedin)).toBeVisible();
+    await expect(contact.locator(contactLinks.github)).toBeVisible();
 
     const panorama = contact.locator('[data-contact-panorama]');
+    await expect(panorama).toHaveCSS('content-visibility', 'auto');
+    expect(
+        await panorama.evaluate(
+            (element) => getComputedStyle(element).containIntrinsicSize,
+        ),
+    ).toContain('auto');
     await expect(contact).toHaveAccessibleName(/let’s make something useful/i);
     await expect(panorama).toHaveAttribute('aria-hidden', 'true');
     await expect(panorama.locator('[data-harbour-panorama]')).toBeAttached();
@@ -428,6 +445,59 @@ test('publishes a large social sharing preview', async ({ page }) => {
     );
 });
 
+test('publishes broad, truthful search metadata and availability', async ({
+    page,
+}) => {
+    await page.goto('/');
+
+    const title = 'Albert Yang | Software Engineer';
+    const description =
+        'Albert Yang is a Toronto-based Software Engineer II at Super.com with 6+ years of experience, open to remote roles and US relocation with visa sponsorship.';
+    const canonicalURL = 'https://albertyang.ca/';
+
+    await expect(page).toHaveTitle(title);
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+        'content',
+        description,
+    );
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+        'content',
+        'max-image-preview:large',
+    );
+    await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute(
+        'content',
+        'Albert Yang',
+    );
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+        'href',
+        canonicalURL,
+    );
+    for (const property of ['og:title', 'twitter:title']) {
+        await expect(
+            page.locator(
+                `meta[property="${property}"], meta[name="${property}"]`,
+            ),
+        ).toHaveAttribute('content', title);
+    }
+    for (const property of ['og:description', 'twitter:description']) {
+        await expect(
+            page.locator(
+                `meta[property="${property}"], meta[name="${property}"]`,
+            ),
+        ).toHaveAttribute('content', description);
+    }
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute(
+        'content',
+        canonicalURL,
+    );
+    await expect(
+        page.getByText(
+            'Toronto-based · Open to remote roles and US relocation with visa sponsorship',
+            { exact: true },
+        ),
+    ).toBeVisible();
+});
+
 test('publishes truthful profile structured data', async ({ page }) => {
     await page.goto('/');
 
@@ -436,31 +506,56 @@ test('publishes truthful profile structured data', async ({ page }) => {
         .textContent();
     expect(structuredData).not.toBeNull();
 
-    const profilePage = JSON.parse(structuredData ?? 'null');
-    expect(profilePage).toMatchObject({
+    const structuredDataGraph = JSON.parse(structuredData ?? 'null');
+    expect(structuredDataGraph).toMatchObject({
         '@context': 'https://schema.org',
-        '@type': 'ProfilePage',
-        '@id': 'https://albertyang.ca/',
-        url: 'https://albertyang.ca/',
-        mainEntity: {
-            '@type': 'Person',
-            '@id': 'https://albertyang.ca/#albert-yang',
-            name: 'Albert Yang',
-            jobTitle: 'Software Engineer II',
-            worksFor: {
-                '@type': 'Organization',
-                name: 'Super.com',
-            },
-            homeLocation: {
-                '@type': 'Place',
-                name: 'Toronto, Ontario, Canada',
-            },
-            sameAs: [
-                'https://www.linkedin.com/in/albrtyng/',
-                'https://github.com/albrtyng',
-            ],
-        },
+        '@graph': expect.arrayContaining([
+            expect.objectContaining({
+                '@type': 'WebSite',
+                '@id': 'https://albertyang.ca/#website',
+                url: 'https://albertyang.ca/',
+                name: 'Albert Yang',
+                publisher: {
+                    '@id': 'https://albertyang.ca/#albert-yang',
+                },
+            }),
+            expect.objectContaining({
+                '@type': 'ProfilePage',
+                '@id': 'https://albertyang.ca/#profile-page',
+                url: 'https://albertyang.ca/',
+                isPartOf: {
+                    '@id': 'https://albertyang.ca/#website',
+                },
+                mainEntity: {
+                    '@id': 'https://albertyang.ca/#albert-yang',
+                },
+            }),
+            expect.objectContaining({
+                '@type': 'Person',
+                '@id': 'https://albertyang.ca/#albert-yang',
+                name: 'Albert Yang',
+                jobTitle: 'Software Engineer II',
+                worksFor: {
+                    '@type': 'Organization',
+                    name: 'Super.com',
+                },
+                homeLocation: {
+                    '@type': 'Place',
+                    name: 'Toronto, Ontario, Canada',
+                },
+                sameAs: [
+                    'https://www.linkedin.com/in/albrtyng/',
+                    'https://github.com/albrtyng',
+                ],
+            }),
+        ]),
     });
+
+    for (const entity of structuredDataGraph['@graph']) {
+        expect(entity.description).toBe(
+            'Albert Yang is a Toronto-based Software Engineer II at Super.com with 6+ years of experience, open to remote roles and US relocation with visa sponsorship.',
+        );
+    }
 });
 
 test('switches the header to the contact surface after Say hello scrolls', async ({
@@ -497,14 +592,28 @@ test('switches the header to the contact surface after Say hello scrolls', async
 test('paints the collapsed section header before navigation enhancement on direct hash visits', async ({
     page,
 }) => {
-    for (const { hash, surface } of [
-        { hash: '#experience', surface: 'paper' },
-        { hash: '#capabilities', surface: 'paper' },
-        { hash: '#contact', surface: 'contact' },
+    await page.clock.setFixedTime(new Date(2026, 6, 14, 12, 0, 0));
+
+    for (const { hash, surface, color } of [
+        { hash: '#experience', surface: 'paper', color: paperThemeColor },
+        { hash: '#capabilities', surface: 'paper', color: paperThemeColor },
+        {
+            hash: '#contact',
+            surface: 'contact',
+            color: footerThemeColors.midday,
+        },
     ] as const) {
         await page.goto(`/?initial=${hash.slice(1)}${hash}`);
 
         const header = page.locator('[data-site-header]');
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-page-surface',
+            surface,
+        );
+        await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+            'content',
+            color,
+        );
         await expect(header).toHaveAttribute('data-header-surface', surface);
         await expect(header).toHaveAttribute('data-navigation-ready', '');
         expect(await page.evaluate(() => window.scrollY), hash).toBeGreaterThan(
@@ -538,9 +647,8 @@ test('paints the collapsed section header before navigation enhancement on direc
                 };
             };
 
-            const enhanced = readState();
-
             (element as HTMLElement).style.transition = 'none';
+            const enhanced = readState();
             document.documentElement.dataset.initialHeaderSurface =
                 initialSurface;
             document.documentElement.toggleAttribute(
@@ -561,10 +669,70 @@ test('paints the collapsed section header before navigation enhancement on direc
     }
 });
 
+test('selects descendant anchor surfaces before deferred scripts load', async ({
+    page,
+}) => {
+    await page.clock.setFixedTime(new Date(2026, 6, 14, 12, 0, 0));
+    await page.route('**/*', async (route) => {
+        if (route.request().resourceType() === 'script') {
+            await route.abort();
+            return;
+        }
+
+        await route.continue();
+    });
+
+    for (const { hash, surface, color } of [
+        {
+            hash: '#experience-title',
+            surface: 'paper',
+            color: paperThemeColor,
+        },
+        {
+            hash: '#capabilities-title',
+            surface: 'paper',
+            color: paperThemeColor,
+        },
+        {
+            hash: '#contact-title',
+            surface: 'contact',
+            color: footerThemeColors.midday,
+        },
+    ] as const) {
+        await page.goto(`/?anchor=${hash.slice(1)}${hash}`);
+
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-page-surface',
+            surface,
+        );
+        await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+            'content',
+            color,
+        );
+        await expect(page.locator('[data-site-header]')).not.toHaveAttribute(
+            'data-navigation-ready',
+        );
+        const spacing = await page.locator(hash).evaluate((target) => {
+            const header =
+                document.querySelector<HTMLElement>('[data-site-header]');
+            if (!header) return null;
+            return (
+                target.getBoundingClientRect().top -
+                header.getBoundingClientRect().bottom
+            );
+        });
+        expect(spacing).not.toBeNull();
+        expect(spacing!).toBeGreaterThanOrEqual(16);
+    }
+});
+
 test('persists the header and exact scroll position across reloads', async ({
     page,
 }) => {
     await page.goto('/');
+    await page.evaluate(() => {
+        history.scrollRestoration = 'manual';
+    });
 
     const header = page.locator('[data-site-header]');
     await scrollSectionUnderHeader(page, '#capabilities');
@@ -585,9 +753,42 @@ test('persists the header and exact scroll position across reloads', async ({
 
     await expect(header).toHaveAttribute('data-header-surface', 'paper');
     await expect(header).toHaveAttribute('data-scrolled', '');
+    await expect(page.locator('html')).toHaveAttribute(
+        'data-page-surface',
+        'paper',
+    );
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+        'content',
+        paperThemeColor,
+    );
     expect(await page.evaluate(() => window.scrollY)).toBeCloseTo(
         restoredScrollY,
         0,
+    );
+});
+
+test('clears restored hero hints after measuring the page', async ({
+    page,
+}) => {
+    await page.goto('/');
+    await page.evaluate(() => {
+        history.scrollRestoration = 'manual';
+        window.scrollTo(0, 100);
+    });
+    await expect(page.locator('[data-site-header]')).toHaveAttribute(
+        'data-scrolled',
+        '',
+    );
+
+    await page.reload();
+
+    const root = page.locator('html');
+    await expect(root).not.toHaveAttribute('data-initial-header-surface');
+    await expect(root).not.toHaveAttribute('data-initial-header-scroll-y');
+    await expect(root).not.toHaveAttribute('data-initial-header-collapsed');
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(page.locator('[data-site-header]')).not.toHaveAttribute(
+        'data-scrolled',
     );
 });
 
@@ -623,8 +824,9 @@ test('keeps the useful footer content fully visible in the sky at the true page 
             return {
                 elements: {
                     email: readBounds('.contact-footer__email'),
+                    github: readBounds('a[href="https://github.com/albrtyng"]'),
                     heading: readBounds('#contact-title'),
-                    linkedin: readBounds('.contact-footer__linkedin'),
+                    linkedin: readBounds('a[href*="linkedin.com/in/albrtyng"]'),
                     supportingCopy: readBounds('.contact-footer__invitation p'),
                 },
                 headerBottom: siteHeader.getBoundingClientRect().bottom,
@@ -696,6 +898,9 @@ test('keeps the useful footer content fully visible in the sky at the true page 
         layout.viewport.width - 12,
     );
     expect(layout.meta.location.right).toBeLessThan(layout.meta.copyright.left);
+    expect(layout.elements.linkedin.right).toBeLessThan(
+        layout.elements.github.left,
+    );
 });
 
 test('keeps a resting gap below the compact header on short phones', async ({
@@ -737,12 +942,27 @@ test('keeps a resting gap below the compact header on short phones', async ({
                 headerBottom: headerBounds.bottom,
                 headerShadow: getComputedStyle(header).boxShadow,
                 skylineTop: skylineBounds.top,
+                profileLinkGap: (() => {
+                    const linkedin = footer.querySelector<HTMLElement>(
+                        'a[href*="linkedin.com/in/albrtyng"]',
+                    );
+                    const github = footer.querySelector<HTMLElement>(
+                        'a[href="https://github.com/albrtyng"]',
+                    );
+                    if (!linkedin || !github) return null;
+                    return (
+                        github.getBoundingClientRect().left -
+                        linkedin.getBoundingClientRect().right
+                    );
+                })(),
             };
         });
 
     expect(layout).not.toBeNull();
     expect(layout!.copyTop - layout!.headerBottom).toBeGreaterThanOrEqual(28);
     expect(layout!.skylineTop - layout!.copyBottom).toBeGreaterThanOrEqual(12);
+    expect(layout!.profileLinkGap).not.toBeNull();
+    expect(layout!.profileLinkGap!).toBeGreaterThan(0);
     expect(layout!.headerShadow).toBe('none');
 });
 
@@ -770,7 +990,7 @@ test('uses a panel-free contact stack with AA contrast in every sky state', asyn
                 const heading =
                     footer.querySelector<HTMLElement>('#contact-title');
                 const linkedin = footer.querySelector<HTMLElement>(
-                    '.contact-footer__linkedin',
+                    'a[href*="linkedin.com/in/albrtyng"]',
                 );
 
                 if (!copy || !email || !heading || !linkedin) {
@@ -2098,6 +2318,48 @@ test.describe('skyline time states', () => {
         expect(getNextSkylineState('night')).toBe('dawn');
     });
 
+    test('resolves browser colors from time and page surface', () => {
+        for (const { state } of localTimeScenarios) {
+            expect(getPageThemeColor(state, 'hero')).toBe(themeColors[state]);
+            expect(getPageThemeColor(state, 'paper')).toBe(paperThemeColor);
+            expect(getPageThemeColor(state, 'contact')).toBe(
+                footerThemeColors[state],
+            );
+        }
+    });
+
+    test('keeps browser chrome aligned with the visible surface', async ({
+        page,
+    }) => {
+        await gotoAtLocalHour(page, 12);
+
+        const root = page.locator('html');
+        const themeColor = page.locator('meta[name="theme-color"]');
+        await expect(root).toHaveAttribute('data-page-surface', 'hero');
+        await expect(themeColor).toHaveAttribute('content', themeColors.midday);
+
+        await scrollSectionUnderHeader(page, '#experience');
+        await expect(root).toHaveAttribute('data-page-surface', 'paper');
+        await expect(themeColor).toHaveAttribute('content', paperThemeColor);
+
+        await page.locator('[data-time-control]').evaluate((control) => {
+            (control as HTMLButtonElement).click();
+        });
+        await expect(root).toHaveAttribute('data-time-state', 'dusk');
+        await expect(themeColor).toHaveAttribute('content', paperThemeColor);
+
+        await scrollSectionUnderHeader(page, '#contact');
+        await expect(root).toHaveAttribute('data-page-surface', 'contact');
+        await expect(themeColor).toHaveAttribute(
+            'content',
+            footerThemeColors.dusk,
+        );
+
+        await scrollSectionUnderHeader(page, '#hero');
+        await expect(root).toHaveAttribute('data-page-surface', 'hero');
+        await expect(themeColor).toHaveAttribute('content', themeColors.dusk);
+    });
+
     test('sets local lighting before deferred page scripts load', async ({
         page,
     }) => {
@@ -2114,6 +2376,7 @@ test.describe('skyline time states', () => {
         await page.goto('/');
 
         const root = page.locator('html');
+        await expect(root).toHaveAttribute('data-js', 'true');
         await expect(root).toHaveAttribute('data-time-state', 'midday');
         await expect(root).toHaveCSS('--sky-base', '#7fc4d6');
         await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
@@ -2182,10 +2445,7 @@ test.describe('skyline time states', () => {
                 'backdrop-filter',
                 /blur\(20px\)/,
             );
-            await expect(hero, state).toHaveCSS(
-                'transition-duration',
-                /0\.9s/,
-            );
+            await expect(hero, state).toHaveCSS('transition-duration', /0\.9s/);
             await expect(scene).toHaveAttribute('data-time-state', state);
             await expect(page.locator('html')).toHaveAttribute(
                 'data-time-state',
@@ -2336,7 +2596,7 @@ test.describe('skyline time states', () => {
                     },
                     starsPaintBeforeMoon: Boolean(
                         stars.compareDocumentPosition(element) &
-                            Node.DOCUMENT_POSITION_FOLLOWING,
+                        Node.DOCUMENT_POSITION_FOLLOWING,
                     ),
                 };
             }, starsSelector);
@@ -2944,6 +3204,30 @@ test.describe('with reduced motion', () => {
 test.describe('without JavaScript', () => {
     test.use({ javaScriptEnabled: false });
 
+    test('keeps descendant anchor targets clear of the fixed header', async ({
+        page,
+    }) => {
+        for (const hash of [
+            '#experience-title',
+            '#capabilities-title',
+            '#contact-title',
+        ]) {
+            await page.goto(`/?no-js-anchor=${hash.slice(1)}${hash}`);
+
+            const spacing = await page.locator(hash).evaluate((target) => {
+                const header =
+                    document.querySelector<HTMLElement>('[data-site-header]');
+                if (!header) return null;
+                return (
+                    target.getBoundingClientRect().top -
+                    header.getBoundingClientRect().bottom
+                );
+            });
+            expect(spacing).not.toBeNull();
+            expect(spacing!).toBeGreaterThanOrEqual(16);
+        }
+    });
+
     test('keeps the deterministic dusk fallback and contact paths usable', async ({
         page,
     }) => {
@@ -2953,6 +3237,7 @@ test.describe('without JavaScript', () => {
         const scene = page.locator('[data-skyline-scene]');
         const contact = page.locator('#contact');
 
+        await expect(page.locator('html')).not.toHaveAttribute('data-js');
         await expect(hero).toBeVisible();
         await expect(hero).toContainText(/Albert Yang/i);
         await expect(scene).toBeVisible();
@@ -2974,11 +3259,13 @@ test.describe('without JavaScript', () => {
         await expect(contact).toBeVisible();
         await expect(contact.locator(contactLinks.email)).toBeVisible();
         await expect(contact.locator(contactLinks.linkedin)).toBeVisible();
+        await expect(contact.locator(contactLinks.github)).toBeVisible();
         await expect(
             contact.locator('[data-footer-sky-object]'),
         ).toBeAttached();
 
         const panorama = contact.locator('[data-contact-panorama]');
+        await expect(panorama).toHaveCSS('content-visibility', 'visible');
         const staticFerry = panorama.locator('[data-harbour-ferry]');
         await panorama.scrollIntoViewIfNeeded();
         await expect(panorama).toHaveAttribute('aria-hidden', 'true');

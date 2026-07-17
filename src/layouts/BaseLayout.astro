@@ -1,6 +1,7 @@
 ---
 import Header from '../components/Header/Header.astro';
 import { jobs } from '../data/experience';
+import { PAGE_SURFACE_BY_HASH, PAGE_THEME_COLORS } from '../scripts/page-theme';
 import {
     getSkylineStateBootstrapScript,
     SKYLINE_THEME_COLORS,
@@ -12,52 +13,72 @@ interface Props {
 }
 
 const {
-    title = 'Albert Yang | Toronto Software Engineer',
-    description = 'Albert Yang is a Toronto-based Software Engineer with 6+ years of experience building dependable products and systems used around the world.',
+    title = 'Albert Yang | Software Engineer',
+    description = 'Albert Yang is a Toronto-based Software Engineer II at Super.com with 6+ years of experience, open to remote roles and US relocation with visa sponsorship.',
 } = Astro.props;
 
-const canonicalURL = 'https://albertyang.ca/';
-const socialImageURL = `${canonicalURL}images/albert-yang-social-card.png`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+const socialImageURL = new URL(
+    '/images/albert-yang-social-card.png',
+    Astro.site,
+).toString();
 const socialImageAlt =
     'Albert Yang, Toronto Software Engineer, alongside an illustrated Toronto skyline at night.';
 const currentJob = jobs[0];
+const websiteId = `${canonicalURL}#website`;
+const profilePageId = `${canonicalURL}#profile-page`;
+const personId = `${canonicalURL}#albert-yang`;
 const profilePageStructuredData = JSON.stringify({
     '@context': 'https://schema.org',
-    '@type': 'ProfilePage',
-    '@id': canonicalURL,
-    url: canonicalURL,
-    name: title,
-    description,
-    mainEntity: {
-        '@type': 'Person',
-        '@id': `${canonicalURL}#albert-yang`,
-        name: 'Albert Yang',
-        url: canonicalURL,
-        description,
-        jobTitle: currentJob.role,
-        worksFor: {
-            '@type': 'Organization',
-            name: currentJob.company,
+    '@graph': [
+        {
+            '@type': 'WebSite',
+            '@id': websiteId,
+            url: canonicalURL,
+            name: 'Albert Yang',
+            description,
+            publisher: { '@id': personId },
         },
-        homeLocation: {
-            '@type': 'Place',
-            name: 'Toronto, Ontario, Canada',
+        {
+            '@type': 'ProfilePage',
+            '@id': profilePageId,
+            url: canonicalURL,
+            name: title,
+            description,
+            isPartOf: { '@id': websiteId },
+            mainEntity: { '@id': personId },
         },
-        sameAs: [
-            'https://www.linkedin.com/in/albrtyng/',
-            'https://github.com/albrtyng',
-        ],
-    },
+        {
+            '@type': 'Person',
+            '@id': personId,
+            name: 'Albert Yang',
+            url: canonicalURL,
+            description,
+            jobTitle: currentJob.role,
+            worksFor: {
+                '@type': 'Organization',
+                name: currentJob.company,
+            },
+            homeLocation: {
+                '@type': 'Place',
+                name: 'Toronto, Ontario, Canada',
+            },
+            sameAs: [
+                'https://www.linkedin.com/in/albrtyng/',
+                'https://github.com/albrtyng',
+            ],
+        },
+    ],
 });
 const skylineStateBootstrapScript = getSkylineStateBootstrapScript();
+const initialSurfaceThemeColors = JSON.stringify(PAGE_THEME_COLORS);
+const pageSurfaceByHash = JSON.stringify(PAGE_SURFACE_BY_HASH);
 const initialHeaderSurfaceBootstrapScript = `
     try {
+        const root = document.documentElement;
+        root.dataset.js = 'true';
         const savedHeader = history.state?.portfolioHeader;
-        const hashSurface = {
-            '#experience': 'paper',
-            '#capabilities': 'paper',
-            '#contact': 'contact',
-        }[window.location.hash];
+        const hashSurface = ${pageSurfaceByHash}[window.location.hash];
         const savedSurface = ['hero', 'paper', 'contact'].includes(
             savedHeader?.surface,
         )
@@ -66,7 +87,7 @@ const initialHeaderSurfaceBootstrapScript = `
         const savedScrollY = Number.isFinite(savedHeader?.scrollY)
             ? Math.max(savedHeader.scrollY, 0)
             : null;
-        const surface = hashSurface ?? savedSurface;
+        const surface = hashSurface ?? savedSurface ?? 'hero';
         const collapsed =
             hashSurface
                 ? true
@@ -74,19 +95,30 @@ const initialHeaderSurfaceBootstrapScript = `
                 ? savedHeader.collapsed
                 : false;
 
-        if (surface) {
-            document.documentElement.dataset.initialHeaderSurface = surface;
+        root.dataset.pageSurface = surface;
+
+        if (hashSurface || savedSurface) {
+            root.dataset.initialHeaderSurface = surface;
         }
 
         if (!hashSurface && savedScrollY) {
-            document.documentElement.dataset.initialHeaderScrollY =
-                String(savedScrollY);
+            root.dataset.initialHeaderScrollY = String(savedScrollY);
         }
 
-        document.documentElement.toggleAttribute(
+        root.toggleAttribute(
             'data-initial-header-collapsed',
             collapsed,
         );
+
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+        const state = root.dataset.timeState ?? 'dusk';
+        const colors = ${initialSurfaceThemeColors};
+        if (themeColor) {
+            themeColor.content =
+                surface === 'paper'
+                    ? colors.paper
+                    : colors[surface][state];
+        }
     } catch {
         // The semantic header remains a complete hero-state fallback.
     }
@@ -94,7 +126,7 @@ const initialHeaderSurfaceBootstrapScript = `
 ---
 
 <!doctype html>
-<html lang="en" data-time-state="dusk">
+<html lang="en" data-time-state="dusk" data-page-surface="hero">
     <head>
         <meta charset="UTF-8" />
         <meta name="theme-color" content={SKYLINE_THEME_COLORS.dusk} />
@@ -102,6 +134,7 @@ const initialHeaderSurfaceBootstrapScript = `
         <script is:inline set:html={initialHeaderSurfaceBootstrapScript} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={description} />
+        <meta name="robots" content="max-image-preview:large" />
         <meta name="color-scheme" content="light dark" />
         <title>{title}</title>
         <link rel="canonical" href={canonicalURL} />
@@ -111,6 +144,7 @@ const initialHeaderSurfaceBootstrapScript = `
         <meta property="og:description" content={description} />
         <meta property="og:url" content={canonicalURL} />
         <meta property="og:locale" content="en_CA" />
+        <meta property="og:site_name" content="Albert Yang" />
         <meta property="og:image" content={socialImageURL} />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
