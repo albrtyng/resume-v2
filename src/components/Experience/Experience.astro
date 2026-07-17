@@ -76,7 +76,12 @@ function splitBullet(bullet: Bullet): Segment[] {
                                     <li>
                                         {splitBullet(bullet).map((segment) =>
                                             segment.highlighted ? (
-                                                <strong>{segment.text}</strong>
+                                                <strong
+                                                    class="experience__highlight"
+                                                    data-experience-highlight
+                                                >
+                                                    {segment.text}
+                                                </strong>
                                             ) : (
                                                 segment.text
                                             ),
@@ -103,5 +108,6 @@ function splitBullet(bullet: Bullet): Segment[] {
 </section>
 
 <script>
+    import '../../scripts/experience-highlight-motion';
     import '../../scripts/reveal-motion';
 </script>

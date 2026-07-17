@@ -116,19 +116,10 @@
 .hero__primary-link {
     --marker-outline-color: var(--hero-focus-ring);
 
-    transition:
-        color var(--motion-fast) ease,
-        background-color var(--motion-fast) ease;
-    border: 1px solid currentColor;
-    border-radius: var(--radius-organic);
+    border: 0;
+    background: transparent;
     padding: 0.8rem 1.25rem 0.85rem;
     min-height: 3.2rem;
-}
-
-.hero__primary-link:hover,
-.hero__primary-link:focus-visible {
-    background: var(--spruce-deep);
-    color: var(--paper-light);
 }
 
 .hero__text-link {

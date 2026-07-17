@@ -77,24 +77,20 @@
 }
 
 .site-header__monogram {
+    --marker-outline-color: var(--header-surface-foreground);
+
     display: grid;
     place-items: center;
-    transition:
-        color var(--motion-fast) ease,
-        background-color var(--motion-fast) ease,
-        border-color 360ms ease;
-    border: 1px solid currentColor;
-    border-radius: 50% 47% 52% 46%;
     width: 2.2rem;
     height: 2.2rem;
     font-size: 0.72rem;
     letter-spacing: 0.04em;
 }
 
-.site-header__brand:hover .site-header__monogram,
-.site-header__brand:focus-visible .site-header__monogram {
-    background: var(--header-surface-foreground);
-    color: var(--header-surface-background);
+.site-header__monogram .marker-outline {
+    inset: -0.18rem;
+    width: calc(100% + 0.36rem);
+    height: calc(100% + 0.36rem);
 }
 
 .site-header__name,
@@ -145,19 +141,9 @@
 .site-header__contact {
     --marker-outline-color: var(--header-surface-foreground);
 
-    transition:
-        color var(--motion-fast) ease,
-        background-color var(--motion-fast) ease,
-        border-color 360ms ease;
-    border: 1px solid currentColor;
-    border-radius: 100%;
+    border: 0;
+    background: transparent;
     padding: 0.7rem 1rem 0.75rem;
-}
-
-.site-header__contact:hover,
-.site-header__contact:focus-visible {
-    background: var(--header-surface-foreground);
-    color: var(--header-surface-background);
 }
 
 @media (max-width: 48rem) {
@@ -185,7 +171,6 @@
 
 @media (prefers-reduced-motion: reduce) {
     .site-header,
-    .site-header__monogram,
     .site-header__nav a::after,
     .site-header__contact {
         transition-duration: 0.01ms;

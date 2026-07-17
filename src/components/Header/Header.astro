@@ -5,11 +5,17 @@ import './Header.scss';
 
 <header class="site-header" data-site-header data-header-surface="hero">
     <a
-        class="site-header__brand"
+        class="site-header__brand marker-outline-trigger"
         href="#hero"
         aria-label="AY Albert Yang, back to top"
     >
-        <span class="site-header__monogram" aria-hidden="true">AY</span>
+        <span
+            class="site-header__monogram marker-outline-control"
+            aria-hidden="true"
+        >
+            AY
+            <MarkerOutline />
+        </span>
         <span class="site-header__name">Albert Yang</span>
     </a>
 

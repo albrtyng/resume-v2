@@ -630,8 +630,8 @@ test('uses the hero contrast pane only when the skyline can rise behind the copy
     expect(pane!.actionSurface.clipPath).toBe('none');
     expect(pane!.actionSurface.backdropFilter).toBe('none');
 
-    expect(pane!.controls.primaryBorderStyle).toBe('solid');
-    expect(pane!.controls.primaryBorderWidth).toBeGreaterThanOrEqual(1);
+    expect(pane!.controls.primaryBorderStyle).toBe('none');
+    expect(pane!.controls.primaryBorderWidth).toBe(0);
     expect(pane!.controls.textBorderStyle).toBe('solid');
     expect(pane!.controls.textBorderWidth).toBeGreaterThanOrEqual(1);
     await expect(
@@ -1031,7 +1031,7 @@ test('separates narrow-phone profile and local-light surfaces at short heights',
     }
 });
 
-test('draws the irregular control outline for pointer and keyboard users', async ({
+test('draws the open chalk control outline for pointer and keyboard users', async ({
     page,
     isMobile,
 }) => {
@@ -1039,6 +1039,9 @@ test('draws the irregular control outline for pointer and keyboard users', async
 
     const explore = page.getByRole('link', { name: /explore my work/i });
     const sayHello = page.getByRole('link', { name: /say hello/i });
+    const brand = page.getByRole('link', {
+        name: /AY Albert Yang, back to top/i,
+    });
 
     const expectDrawn = async (control: typeof explore) => {
         const stroke = control.locator('.marker-outline__stroke');
@@ -1057,9 +1060,62 @@ test('draws the irregular control outline for pointer and keyboard users', async
     if (!isMobile) {
         await explore.hover();
         await expectDrawn(explore);
+
+        const exploreStroke = explore.locator('.marker-outline__stroke');
+        await page.mouse.move(1, 1);
+        await expect(exploreStroke).toHaveCSS('animation-name', 'none');
+        await expect
+            .poll(() =>
+                exploreStroke.evaluate((element) =>
+                    Number.parseFloat(
+                        getComputedStyle(element).strokeDashoffset,
+                    ),
+                ),
+            )
+            .toBeGreaterThanOrEqual(1.34);
+
+        await explore.hover();
+        await expect(exploreStroke).toHaveCSS(
+            'animation-name',
+            'marker-outline-draw',
+        );
+        await expect(exploreStroke).toHaveCSS('animation-fill-mode', 'both');
+        await expect
+            .poll(() =>
+                exploreStroke.evaluate((element) =>
+                    Number.parseFloat(
+                        getComputedStyle(element).strokeDasharray,
+                    ),
+                ),
+            )
+            .toBeGreaterThanOrEqual(1.34);
+        await expectDrawn(explore);
+
+        await page.mouse.down();
+        await expect
+            .poll(() =>
+                explore.evaluate(
+                    (element) => getComputedStyle(element).transform,
+                ),
+            )
+            .not.toBe('none');
+        await page.mouse.up();
     }
 
     await page.locator('body').click({ position: { x: 1, y: 1 } });
+    for (
+        let step = 0;
+        step < 4 &&
+        !(await brand.evaluate(
+            (element) => element === document.activeElement,
+        ));
+        step += 1
+    ) {
+        await page.keyboard.press('Tab');
+    }
+    await expect(brand).toBeFocused();
+    await expectDrawn(brand);
+
     for (
         let step = 0;
         step < 8 &&
@@ -1076,6 +1132,56 @@ test('draws the irregular control outline for pointer and keyboard users', async
     await page.keyboard.press('Tab');
     await expect(explore).toBeFocused();
     await expectDrawn(explore);
+
+    for (const control of [explore, sayHello]) {
+        await expect(control).toHaveCSS(
+            'background-color',
+            'rgba(0, 0, 0, 0)',
+        );
+        await expect(control).toHaveCSS('border-top-style', 'none');
+    }
+
+    const outlineGeometry = await explore
+        .locator('.marker-outline__stroke')
+        .evaluate((element) => {
+            const path = element as SVGPathElement;
+            const start = path.getPointAtLength(0);
+            const end = path.getPointAtLength(path.getTotalLength());
+
+            return {
+                endpointGap: Math.hypot(end.x - start.x, end.y - start.y),
+                end: { x: end.x, y: end.y },
+                start: { x: start.x, y: start.y },
+                strokeWidth: Number.parseFloat(
+                    getComputedStyle(path).strokeWidth,
+                ),
+            };
+        });
+    expect(outlineGeometry.endpointGap).toBeGreaterThan(15);
+    expect(outlineGeometry.start.x).toBeGreaterThan(95);
+    expect(outlineGeometry.start.y).toBeLessThan(10);
+    expect(outlineGeometry.end.x).toBeLessThan(outlineGeometry.start.x - 25);
+    expect(outlineGeometry.end.y).toBeGreaterThan(
+        outlineGeometry.start.y + 4,
+    );
+    expect(outlineGeometry.strokeWidth).toBeGreaterThanOrEqual(2);
+    await expect(explore.locator('.marker-outline__texture')).toHaveCount(0);
+
+    const outlineClearance = await explore.evaluate((element) => {
+        const outline = element.querySelector<SVGSVGElement>('.marker-outline');
+        if (!outline) return null;
+
+        const controlBounds = element.getBoundingClientRect();
+        const outlineBounds = outline.getBoundingClientRect();
+
+        return {
+            left: controlBounds.left - outlineBounds.left,
+            right: outlineBounds.right - controlBounds.right,
+        };
+    });
+    expect(outlineClearance).not.toBeNull();
+    expect(outlineClearance!.left).toBeGreaterThanOrEqual(7);
+    expect(outlineClearance!.right).toBeGreaterThanOrEqual(7);
 });
 
 test('keeps skyline depth tied to scrolling instead of pointer movement', async ({
@@ -1258,6 +1364,34 @@ test('matches the fixed header surface to the section beneath it', async ({
         await scrollSectionUnderHeader(page, selector);
         await expect(header).toHaveAttribute('data-header-surface', surface);
     }
+});
+
+test('draws each experience highlight when it enters the viewport', async ({
+    page,
+}) => {
+    await page.goto('/');
+
+    const experience = page.locator('#experience');
+    const highlights = experience.locator('[data-experience-highlight]');
+    const finalHighlight = highlights.last();
+
+    await expect(highlights).toHaveCount(12);
+    await expect(experience).toHaveAttribute(
+        'data-experience-highlight-motion',
+        'full',
+    );
+    await expect(finalHighlight).not.toHaveClass(/is-underlined/);
+
+    await finalHighlight.scrollIntoViewIfNeeded();
+
+    await expect(finalHighlight).toHaveClass(/is-underlined/);
+    await expect
+        .poll(() =>
+            finalHighlight.evaluate((element) =>
+                Number.parseFloat(getComputedStyle(element).backgroundSize),
+            ),
+        )
+        .toBe(100);
 });
 
 test('renders the island waterfront and applies responsive scene motion', async ({
@@ -1954,6 +2088,19 @@ test.describe('with reduced motion', () => {
         ).toBeLessThanOrEqual(0.01);
 
         await expect(page.locator('#experience')).toBeVisible();
+        const experience = page.locator('#experience');
+        const staticHighlights = experience.locator(
+            '[data-experience-highlight]',
+        );
+        await expect(experience).toHaveAttribute(
+            'data-experience-highlight-motion',
+            'static',
+        );
+        await expect(staticHighlights.first()).toHaveClass(/is-underlined/);
+        await expect(staticHighlights.first()).toHaveCSS(
+            'transition-duration',
+            '0s',
+        );
         await expect(page.locator('#capabilities')).toBeVisible();
         await expect(
             page.locator('#contact').locator(contactLinks.email),
