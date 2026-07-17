@@ -11,6 +11,10 @@ node_modules
 dist
 .astro
 dist-ssr
+test-results
+playwright-report
+references/visual/
+docs/plans/
 *.local
 
 # Editor directories and files

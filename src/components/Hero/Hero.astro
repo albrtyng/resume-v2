@@ -1,0 +1,74 @@
+---
+import MarkerOutline from '../MarkerOutline/MarkerOutline.astro';
+import TorontoSkyline from '../TorontoSkyline/TorontoSkyline.astro';
+import './Hero.scss';
+---
+
+<section id="hero" class="hero" aria-labelledby="hero-title">
+    <div class="hero__copy section-shell">
+        <div class="hero__copy-surface">
+            <span
+                class="hero__copy-panel"
+                data-hero-copy-panel
+                aria-hidden="true"></span>
+            <svg
+                class="hero__copy-panel-outline"
+                data-hero-copy-outline
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                focusable="false"
+            >
+                <path
+                    vector-effect="non-scaling-stroke"
+                    d="M3 0H97Q100 0 100 3V77Q100 80 97 80H73Q70 80 70 83V97Q70 100 67 100H3Q0 100 0 97V3Q0 0 3 0Z"
+                ></path>
+            </svg>
+            <p class="hero__eyebrow eyebrow">Toronto · Software Engineer</p>
+            <h1 id="hero-title" class="hero__title">
+                Albert <em>Yang</em>
+            </h1>
+            <p class="hero__statement">
+                I build dependable product systems that turn complex migrations,
+                data workflows, and customer journeys into clear, reliable
+                experiences.
+            </p>
+            <div class="hero__actions" aria-label="Primary actions">
+                <a
+                    class="hero__primary-link marker-outline-control"
+                    href="#experience"
+                >
+                    Explore my work <span aria-hidden="true">↓</span>
+                    <MarkerOutline />
+                </a>
+                <a class="hero__text-link" href="mailto:albertesyang@gmail.com">
+                    Get in touch <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <TorontoSkyline />
+
+    <button
+        class="hero__scene-note"
+        type="button"
+        data-time-control
+        disabled
+        aria-label="Current lighting: Dusk. Show Night."
+        title="Show Night lighting"
+    >
+        <span class="hero__scene-mark" aria-hidden="true"></span>
+        Local light ·
+        <span class="hero__time-label hero__time-label--dawn">Dawn</span>
+        <span class="hero__time-label hero__time-label--midday">Midday</span>
+        <span class="hero__time-label hero__time-label--dusk">Dusk</span>
+        <span class="hero__time-label hero__time-label--night">Night</span>
+    </button>
+</section>
+
+<script>
+    import { initSkylineMotion } from '../../scripts/skyline/skyline-motion';
+
+    initSkylineMotion();
+</script>

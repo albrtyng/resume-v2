@@ -1,0 +1,237 @@
+---
+import './Streetcar.scss';
+
+interface Props {
+    class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<g
+    class:list={['ttc-streetcar', className]}
+    data-landmark="streetcar"
+    data-streetcar
+    aria-hidden="true"
+>
+    <g class="ttc-streetcar__drawing" transform="matrix(0.87 0 0 1 -115 0)">
+        <path
+            class="ttc-streetcar__night-light-pool"
+            d="M146 571L82 611H190ZM529 571L593 611H487Z"
+        ></path>
+        <path
+            class="ttc-streetcar__track-shadow"
+            d="M132 605C218 600 457 600 545 605L536 611H142Z"></path>
+
+        <g class="ttc-streetcar__underframe">
+            <path
+                class="ttc-streetcar__underframe-beam"
+                d="M162 578H516L509 595H168Z"></path>
+            <path
+                class="ttc-streetcar__bogie"
+                d="M169 580H225L232 590H163ZM307 580H364L371 590H300ZM449 580H505L512 590H442Z"
+            ></path>
+
+            <g class="ttc-streetcar__wheel" data-streetcar-wheel>
+                <circle
+                    class="ttc-streetcar__wheel-tire"
+                    cx="183"
+                    cy="593"
+                    r="12"></circle>
+                <circle class="ttc-streetcar__wheel-rim" cx="183" cy="593" r="7"
+                ></circle>
+                <path
+                    class="ttc-streetcar__wheel-spokes"
+                    d="M183 587V599M177 593H189M179 589L187 597M187 589L179 597"
+                ></path>
+            </g>
+            <g class="ttc-streetcar__wheel" data-streetcar-wheel>
+                <circle
+                    class="ttc-streetcar__wheel-tire"
+                    cx="211"
+                    cy="593"
+                    r="12"></circle>
+                <circle class="ttc-streetcar__wheel-rim" cx="211" cy="593" r="7"
+                ></circle>
+                <path
+                    class="ttc-streetcar__wheel-spokes"
+                    d="M211 587V599M205 593H217M207 589L215 597M215 589L207 597"
+                ></path>
+            </g>
+            <g class="ttc-streetcar__wheel" data-streetcar-wheel>
+                <circle
+                    class="ttc-streetcar__wheel-tire"
+                    cx="321"
+                    cy="593"
+                    r="12"></circle>
+                <circle class="ttc-streetcar__wheel-rim" cx="321" cy="593" r="7"
+                ></circle>
+                <path
+                    class="ttc-streetcar__wheel-spokes"
+                    d="M321 587V599M315 593H327M317 589L325 597M325 589L317 597"
+                ></path>
+            </g>
+            <g class="ttc-streetcar__wheel" data-streetcar-wheel>
+                <circle
+                    class="ttc-streetcar__wheel-tire"
+                    cx="349"
+                    cy="593"
+                    r="12"></circle>
+                <circle class="ttc-streetcar__wheel-rim" cx="349" cy="593" r="7"
+                ></circle>
+                <path
+                    class="ttc-streetcar__wheel-spokes"
+                    d="M349 587V599M343 593H355M345 589L353 597M353 589L345 597"
+                ></path>
+            </g>
+            <g class="ttc-streetcar__wheel" data-streetcar-wheel>
+                <circle
+                    class="ttc-streetcar__wheel-tire"
+                    cx="463"
+                    cy="593"
+                    r="12"></circle>
+                <circle class="ttc-streetcar__wheel-rim" cx="463" cy="593" r="7"
+                ></circle>
+                <path
+                    class="ttc-streetcar__wheel-spokes"
+                    d="M463 587V599M457 593H469M459 589L467 597M467 589L459 597"
+                ></path>
+            </g>
+            <g class="ttc-streetcar__wheel" data-streetcar-wheel>
+                <circle
+                    class="ttc-streetcar__wheel-tire"
+                    cx="491"
+                    cy="593"
+                    r="12"></circle>
+                <circle class="ttc-streetcar__wheel-rim" cx="491" cy="593" r="7"
+                ></circle>
+                <path
+                    class="ttc-streetcar__wheel-spokes"
+                    d="M491 587V599M485 593H497M487 589L495 597M495 589L487 597"
+                ></path>
+            </g>
+        </g>
+
+        <g class="ttc-streetcar__body-stack">
+            <path
+                class="ttc-streetcar__body-shell"
+                d="M140 559C142 538 149 521 163 514C174 510 190 509 207 509H507C521 510 529 521 533 533C536 543 537 555 537 567V580C533 588 525 591 513 592H162C151 591 144 586 140 578Z"
+            ></path>
+            <path
+                class="ttc-streetcar__lower-skirt"
+                d="M141 574C212 571 453 572 536 575V582C531 588 524 591 513 592H162C151 591 144 586 141 578Z"
+            ></path>
+
+            <path
+                class="ttc-streetcar__belt ttc-streetcar__belt--rear"
+                d="M141 561H273V576H142Z"></path>
+            <path
+                class="ttc-streetcar__belt ttc-streetcar__belt--centre"
+                d="M289 561H391V576H289Z"></path>
+            <path
+                class="ttc-streetcar__belt ttc-streetcar__belt--front"
+                d="M407 561H536V576H407Z"></path>
+
+            <g class="ttc-streetcar__windows">
+                <path
+                    class="ttc-streetcar__cab-window ttc-streetcar__cab-window--rear"
+                    d="M151 558C153 540 158 527 168 520C173 517 178 516 184 516V558Z"
+                ></path>
+                <path
+                    class="ttc-streetcar__window-band"
+                    d="M189 516H272V558H189ZM290 516H390V558H290ZM408 516H499V558H408Z"
+                ></path>
+                <path
+                    class="ttc-streetcar__cab-window ttc-streetcar__cab-window--front"
+                    d="M503 516H508C519 518 526 532 528 558H503Z"></path>
+                <path
+                    class="ttc-streetcar__interior-light"
+                    d="M193 520H217V524H193ZM250 520H269V524H250ZM294 520H319V524H294ZM359 520H387V524H359ZM412 520H432V524H412ZM468 520H496V524H468Z"
+                ></path>
+                <path
+                    class="ttc-streetcar__window-glint"
+                    d="M194 520L183 554M212 519L198 558M301 519L289 554M373 519L359 558M415 519L403 554M484 519L470 558M516 523L505 555"
+                ></path>
+            </g>
+
+            <path
+                class="ttc-streetcar__mullions"
+                d="M184 515H190V560H184ZM217 515H223V560H217ZM246 515H252V560H246ZM267 515H273V560H267ZM289 515H295V560H289ZM319 515H325V560H319ZM353 515H359V560H353ZM386 515H392V560H386ZM407 515H413V560H407ZM432 515H438V560H432ZM463 515H469V560H463ZM497 515H504V560H497Z"
+            ></path>
+
+            <g class="ttc-streetcar__doors">
+                <path
+                    class="ttc-streetcar__door-frame"
+                    d="M220 516H250V582H220ZM322 516H357V582H322ZM435 516H467V582H435Z"
+                ></path>
+                <path
+                    class="ttc-streetcar__door-glass"
+                    d="M224 520H233V557H224ZM237 520H246V557H237ZM327 520H338V557H327ZM342 520H352V557H342ZM439 520H449V557H439ZM453 520H463V557H453Z"
+                ></path>
+                <path
+                    class="ttc-streetcar__door-seams"
+                    d="M235 517V581M340 517V581M451 517V581"></path>
+                <path
+                    class="ttc-streetcar__door-buttons"
+                    d="M244 565H247V568H244ZM350 565H353V568H350ZM460 565H463V568H460Z"
+                ></path>
+            </g>
+
+            <g class="ttc-streetcar__bellows">
+                <path
+                    class="ttc-streetcar__bellows-body"
+                    d="M272 510H290L288 585H274ZM390 510H408L406 585H392Z"
+                ></path>
+                <path
+                    class="ttc-streetcar__bellows-folds"
+                    d="M276 514V581M281 513V582M286 514V581M394 514V581M399 513V582M404 514V581"
+                ></path>
+            </g>
+
+            <path
+                class="ttc-streetcar__roof-edge"
+                d="M162 513C227 506 455 507 508 513"></path>
+            <g class="ttc-streetcar__roof-equipment">
+                <path
+                    class="ttc-streetcar__roof-box"
+                    d="M194 503H236L241 510H189ZM420 502H461L466 510H415Z"
+                ></path>
+                <path
+                    class="ttc-streetcar__roof-vents"
+                    d="M200 506H231M426 505H456"></path>
+                <path
+                    class="ttc-streetcar__roof-conduit"
+                    d="M240 507C268 501 306 502 329 508M366 508C384 503 400 503 418 507"
+                ></path>
+            </g>
+
+            <path
+                class="ttc-streetcar__front-mask"
+                d="M528 537C534 550 536 565 534 577L528 580Z"></path>
+            <path
+                class="ttc-streetcar__bumper"
+                d="M137 579H160V586H143ZM514 579H540L535 586H514Z"></path>
+            <path
+                class="ttc-streetcar__lights"
+                d="M145 563H153V569H145ZM524 563H533V569H524Z"></path>
+            <path
+                class="ttc-streetcar__marker-lights"
+                d="M153 529H158V534H153ZM522 529H527V534H522Z"></path>
+
+            <g class="ttc-streetcar__paint-texture">
+                <path
+                    class="ttc-streetcar__paint-wash"
+                    d="M159 518C223 512 433 513 505 517M151 584C233 579 453 581 523 584"
+                ></path>
+                <path
+                    class="ttc-streetcar__belt-wash"
+                    d="M149 567C184 565 226 569 269 566M296 568C326 565 357 569 386 567M414 567C452 564 492 569 528 566"
+                ></path>
+                <path
+                    class="ttc-streetcar__road-grime"
+                    d="M166 583C196 579 229 581 259 584M376 583C413 579 451 581 489 585"
+                ></path>
+            </g>
+        </g>
+    </g>
+</g>

@@ -1,5 +1,6 @@
 ---
-import Header from '../components/Header.astro';
+import Header from '../components/Header/Header.astro';
+import { getSkylineStateBootstrapScript } from '../scripts/skyline/time-state';
 
 interface Props {
     title?: string;
@@ -7,53 +8,78 @@ interface Props {
 }
 
 const {
-    title = 'Albert Yang | Software Engineer',
-    description = 'Portfolio of Albert Yang. 6+ years building products used by millions.',
+    title = 'Albert Yang | Toronto Software Engineer',
+    description = 'Albert Yang is a Toronto-based Software Engineer with 6+ years of experience building dependable products and systems used around the world.',
 } = Astro.props;
 
 const canonicalURL = 'https://albertyang.ca/';
+const skylineStateBootstrapScript = getSkylineStateBootstrapScript();
+const initialHeaderSurfaceBootstrapScript = `
+    try {
+        const savedHeader = history.state?.portfolioHeader;
+        const hashSurface = {
+            '#experience': 'paper',
+            '#capabilities': 'paper',
+            '#contact': 'contact',
+        }[window.location.hash];
+        const savedSurface = ['hero', 'paper', 'contact'].includes(
+            savedHeader?.surface,
+        )
+            ? savedHeader.surface
+            : null;
+        const savedScrollY = Number.isFinite(savedHeader?.scrollY)
+            ? Math.max(savedHeader.scrollY, 0)
+            : null;
+        const surface = hashSurface ?? savedSurface;
+        const collapsed =
+            hashSurface
+                ? true
+                : typeof savedHeader?.collapsed === 'boolean'
+                ? savedHeader.collapsed
+                : false;
+
+        if (surface) {
+            document.documentElement.dataset.initialHeaderSurface = surface;
+        }
+
+        if (!hashSurface && savedScrollY) {
+            document.documentElement.dataset.initialHeaderScrollY =
+                String(savedScrollY);
+        }
+
+        document.documentElement.toggleAttribute(
+            'data-initial-header-collapsed',
+            collapsed,
+        );
+    } catch {
+        // The semantic header remains a complete hero-state fallback.
+    }
+`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-time-state="dusk">
     <head>
         <meta charset="UTF-8" />
+        <script is:inline set:html={skylineStateBootstrapScript} />
+        <script is:inline set:html={initialHeaderSurfaceBootstrapScript} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={description} />
-        <meta name="theme-color" content="#4a5fc1" />
+        <meta name="theme-color" content="#668aa6" />
+        <meta name="color-scheme" content="light dark" />
         <title>{title}</title>
         <link rel="canonical" href={canonicalURL} />
-        <script is:inline>
-            history.scrollRestoration = 'manual';
-        </script>
 
-        <!-- Open Graph -->
         <meta property="og:type" content="website" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={canonicalURL} />
-        <meta property="og:locale" content="en_US" />
+        <meta property="og:locale" content="en_CA" />
 
-        <!-- Twitter Card -->
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
 
-        <!-- Preload critical fonts -->
-        <link
-            rel="preload"
-            href="/fonts/MangoGrotesque-Bold.woff2"
-            as="font"
-            type="font/woff2"
-            crossorigin
-        />
-        <link
-            rel="preload"
-            href="/fonts/RacingSansOne-Regular.woff2"
-            as="font"
-            type="font/woff2"
-            crossorigin
-        />
         <link
             rel="preload"
             href="/fonts/GeneralSans-Regular.woff2"
@@ -61,65 +87,18 @@ const canonicalURL = 'https://albertyang.ca/';
             type="font/woff2"
             crossorigin
         />
-        <!-- Preload 3D models -->
-        <link rel="preload" href="/models/ship.glb" as="fetch" crossorigin fetchpriority="high" />
-        <link rel="prefetch" href="/models/tech-stack.glb" as="fetch" crossorigin />
-        <link rel="prefetch" href="/models/contact-book.glb" as="fetch" crossorigin />
-
+        <link
+            rel="preload"
+            href="/fonts/GeneralSans-Medium.woff2"
+            as="font"
+            type="font/woff2"
+            crossorigin
+        />
         <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
     </head>
-    <body style="overflow: hidden;">
-        <a href="#experience" class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:bg-white focus:p-4 focus:text-black">Skip to content</a>
+    <body>
+        <a href="#experience" class="skip-link">Skip to experience</a>
         <Header />
         <slot />
-        <script is:inline>
-            // Handle prefers-reduced-motion immediately (no GSAP/Lenis needed)
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelectorAll('.gsap-animated').forEach(function(el) {
-                    el.style.opacity = '1';
-                    el.style.transform = 'none';
-                    el.style.clipPath = 'none';
-                });
-                var overlay = document.getElementById('hero-with-albert-overlay');
-                if (overlay) overlay.style.display = 'none';
-                var shutter = document.getElementById('hero-shutter');
-                if (shutter) shutter.remove();
-                var loader = document.getElementById('hero-loader');
-                if (loader) loader.remove();
-                document.body.style.overflow = '';
-            }
-        </script>
-        <script>
-            // Defer animations.ts (GSAP + Lenis) until hero model is ready
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                window.addEventListener('models:hero-ready', () => {
-                    import('../scripts/animations');
-
-                    // Cache-warm below-fold models during idle time
-                    const conn = (navigator as any).connection;
-                    if (conn?.saveData) return;
-
-                    const models = ['/models/tech-stack.glb', '/models/contact-book.glb', '/models/suitcase.glb'];
-                    let i = 0;
-                    function warmNext() {
-                        if (i >= models.length) return;
-                        fetch(models[i++], { priority: 'low' } as RequestInit)
-                            .catch(() => {})
-                            .finally(() => {
-                                if (typeof requestIdleCallback !== 'undefined') {
-                                    requestIdleCallback(warmNext);
-                                } else {
-                                    setTimeout(warmNext, 100);
-                                }
-                            });
-                    }
-                    if (typeof requestIdleCallback !== 'undefined') {
-                        requestIdleCallback(warmNext);
-                    } else {
-                        setTimeout(warmNext, 100);
-                    }
-                }, { once: true });
-            }
-        </script>
     </body>
 </html>

@@ -1,0 +1,86 @@
+.marker-outline-control {
+    position: relative;
+    isolation: isolate;
+    transition: transform 150ms var(--ease-out);
+}
+
+.marker-outline {
+    position: absolute;
+    z-index: 2;
+    inset: -0.38rem -0.5rem;
+    width: calc(100% + 1rem);
+    max-width: none;
+    height: calc(100% + 0.76rem);
+    overflow: visible;
+    pointer-events: none;
+}
+
+.marker-outline__stroke {
+    --marker-outline-dash-length: 1.35;
+
+    vector-effect: non-scaling-stroke;
+    opacity: 0;
+    transition: opacity 70ms ease;
+    fill: none;
+    stroke: var(--marker-outline-color, currentColor);
+    stroke-dasharray: var(--marker-outline-dash-length);
+    stroke-dashoffset: var(--marker-outline-dash-length);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2.45;
+}
+
+.marker-outline-control:hover .marker-outline__stroke,
+.marker-outline-control:focus-visible .marker-outline__stroke,
+.marker-outline-control:active .marker-outline__stroke,
+.marker-outline-trigger:hover .marker-outline__stroke,
+.marker-outline-trigger:focus-visible .marker-outline__stroke,
+.marker-outline-trigger:active .marker-outline__stroke {
+    animation: marker-outline-draw 560ms cubic-bezier(0.2, 0.78, 0.24, 1)
+        both;
+    opacity: 1;
+}
+
+.marker-outline-control:focus-visible,
+.marker-outline-trigger:focus-visible {
+    outline: none;
+}
+
+.marker-outline-control:active,
+.marker-outline-trigger:active .marker-outline-control {
+    transform: translateY(0.12rem) rotate(-0.35deg);
+}
+
+@keyframes marker-outline-draw {
+    from {
+        opacity: 1;
+        stroke-dashoffset: var(--marker-outline-dash-length);
+    }
+
+    to {
+        opacity: 1;
+        stroke-dashoffset: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .marker-outline-control,
+    .marker-outline__stroke {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .marker-outline-control:hover .marker-outline__stroke,
+    .marker-outline-control:focus-visible .marker-outline__stroke,
+    .marker-outline-control:active .marker-outline__stroke,
+    .marker-outline-trigger:hover .marker-outline__stroke,
+    .marker-outline-trigger:focus-visible .marker-outline__stroke,
+    .marker-outline-trigger:active .marker-outline__stroke {
+        stroke-dashoffset: 0;
+    }
+
+    .marker-outline-control:active,
+    .marker-outline-trigger:active .marker-outline-control {
+        transform: none;
+    }
+}

@@ -1,0 +1,197 @@
+@font-face {
+    font-style: normal;
+    font-weight: 400;
+    src: url('/fonts/GeneralSans-Regular.woff2') format('woff2');
+    font-family: 'General Sans';
+    font-display: optional;
+}
+
+@font-face {
+    font-style: normal;
+    font-weight: 500 700;
+    src: url('/fonts/GeneralSans-Medium.woff2') format('woff2');
+    font-family: 'General Sans';
+    font-display: optional;
+}
+
+:root {
+    --paper: #f2e7d2;
+    --paper-deep: #e5d3b6;
+    --paper-light: #fbf4e5;
+    --ink: #19352f;
+    --ink-soft: #496058;
+    --spruce: #173a34;
+    --spruce-deep: #0e2b29;
+    --red: #b94a3e;
+    --red-dark: #8f352f;
+    --sun: #f7bd6a;
+    --line: rgba(25, 53, 47, 0.25);
+
+    --font-display: 'Iowan Old Style', 'Baskerville', 'Times New Roman', serif;
+    --font-body: 'General Sans', 'Avenir Next', system-ui, sans-serif;
+    --text-small: clamp(0.76rem, 0.7rem + 0.16vw, 0.9rem);
+    --text-body: clamp(1rem, 0.94rem + 0.22vw, 1.14rem);
+    --text-lead: clamp(1.2rem, 1.02rem + 0.72vw, 1.72rem);
+    --text-title: clamp(4.25rem, 2rem + 9.5vw, 11rem);
+    --text-section: clamp(3.35rem, 2rem + 5.6vw, 7.25rem);
+
+    --gutter: clamp(1.15rem, 4.8vw, 5.75rem);
+    --section-space: clamp(6.5rem, 12vw, 11rem);
+    --content-width: 90rem;
+    --radius-organic: 52% 48% 49% 51%;
+    --layer-header: 100;
+    --layer-texture: 999;
+    --motion-fast: 180ms;
+    --motion-medium: 650ms;
+    --motion-state: 900ms;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+    --sky-base: #668aa6;
+    --sky-horizon: #e8a27f;
+    --sky-object: #ffd180;
+    --skyline-far: #677b82;
+    --skyline-mid: #35565a;
+    --skyline-near: #173c38;
+    --water: #3f7080;
+    --water-light: #91adac;
+    --seawall: #4c6359;
+    --window: #ffd483;
+    --window-alpha: 0.72;
+    --star-alpha: 0;
+    --hero-ink: #06201e;
+    --hero-focus-ring: #06201e;
+    --hero-surface-ink: #06201e;
+    --hero-copy-surface: rgba(247, 232, 208, 0.3);
+    --hero-copy-surface-strong: rgba(251, 244, 229, 0.3);
+    --hero-surface-border: rgba(6, 32, 30, 0.16);
+    --hero-note-surface: rgba(14, 43, 41, 0.64);
+    --header-hero-bg: var(--sky-base);
+    --header-hero-ink: var(--hero-ink);
+    --header-paper-bg: var(--paper);
+    --header-paper-ink: var(--ink);
+    --footer-sky: #1d4540;
+    --footer-sky-haze: #315e59;
+    --footer-sky-cloud: #5a7770;
+    --footer-ink: var(--paper);
+    --footer-ink-muted: var(--footer-ink);
+    --footer-ink-meta: var(--footer-ink);
+    --header-contact-bg: var(--footer-sky);
+    --header-contact-ink: var(--footer-ink);
+    --scrollbar-thumb: #ad5c59;
+    --scene-note-ink: var(--paper-light);
+}
+
+html[data-time-state='dawn'] {
+    --sky-base: #a7bdc8;
+    --sky-horizon: #efc0a4;
+    --sky-object: #ffe0a0;
+    --skyline-far: #7b9292;
+    --skyline-mid: #476767;
+    --skyline-near: #21453f;
+    --water: #709aa4;
+    --water-light: #b8cbc4;
+    --seawall: #6f8279;
+    --window-alpha: 0.42;
+    --star-alpha: 0;
+    --hero-ink: #15352f;
+    --hero-focus-ring: #15352f;
+    --hero-surface-ink: #15352f;
+    --hero-copy-surface: rgba(251, 244, 229, 0.24);
+    --hero-copy-surface-strong: rgba(251, 244, 229, 0.28);
+    --hero-surface-border: rgba(21, 53, 47, 0.14);
+    --hero-note-surface: rgba(251, 244, 229, 0.7);
+    --footer-sky: #315b57;
+    --footer-sky-haze: #4c716c;
+    --footer-sky-cloud: #78918a;
+    --header-contact-bg: var(--footer-sky);
+    --scrollbar-thumb: #b9786f;
+    --scene-note-ink: #06201e;
+}
+
+html[data-time-state='midday'] {
+    --sky-base: #7fc4d6;
+    --sky-horizon: #cce2d8;
+    --sky-object: #fff0ae;
+    --skyline-far: #769b98;
+    --skyline-mid: #3f6c67;
+    --skyline-near: #1c4b43;
+    --water: #4e91a2;
+    --water-light: #b8dbd4;
+    --seawall: #7e9187;
+    --window-alpha: 0.08;
+    --star-alpha: 0;
+    --hero-ink: #14372f;
+    --hero-focus-ring: #14372f;
+    --hero-surface-ink: #14372f;
+    --hero-copy-surface: rgba(251, 244, 229, 0.22);
+    --hero-copy-surface-strong: rgba(251, 244, 229, 0.26);
+    --hero-surface-border: rgba(20, 55, 47, 0.14);
+    --hero-note-surface: rgba(251, 244, 229, 0.7);
+    --footer-sky: #3c6660;
+    --footer-sky-haze: #5d7f78;
+    --footer-sky-cloud: #8ca19a;
+    --header-contact-bg: var(--footer-sky);
+    --scrollbar-thumb: #3e7d84;
+    --scene-note-ink: #06201e;
+}
+
+html[data-time-state='dusk'] {
+    --sky-base: #668aa6;
+    --sky-horizon: #e8a27f;
+    --sky-object: #ffd180;
+    --skyline-far: #677b82;
+    --skyline-mid: #35565a;
+    --skyline-near: #173c38;
+    --water: #3f7080;
+    --water-light: #91adac;
+    --seawall: #4c6359;
+    --window-alpha: 0.72;
+    --star-alpha: 0;
+    --hero-ink: #06201e;
+    --hero-focus-ring: #06201e;
+    --hero-surface-ink: #06201e;
+    --hero-copy-surface: rgba(247, 232, 208, 0.3);
+    --hero-copy-surface-strong: rgba(251, 244, 229, 0.3);
+    --hero-surface-border: rgba(6, 32, 30, 0.16);
+    --hero-note-surface: rgba(14, 43, 41, 0.64);
+    --footer-sky: #1d4540;
+    --footer-sky-haze: #315e59;
+    --footer-sky-cloud: #5a7770;
+    --header-contact-bg: var(--footer-sky);
+    --scrollbar-thumb: #ad5c59;
+    --scene-note-ink: var(--paper-light);
+}
+
+html[data-time-state='night'] {
+    --sky-base: #152941;
+    --sky-horizon: #3a5061;
+    --sky-object: #f3e7c5;
+    --skyline-far: #263d4a;
+    --skyline-mid: #17323d;
+    --skyline-near: #0c292b;
+    --water: #173f52;
+    --water-light: #557888;
+    --seawall: #233a3a;
+    --window-alpha: 1;
+    --star-alpha: 0.9;
+    --hero-ink: #f7edd9;
+    --hero-focus-ring: #f7edd9;
+    --hero-surface-ink: #f7edd9;
+    --hero-copy-surface: rgba(38, 61, 78, 0.16);
+    --hero-copy-surface-strong: rgba(31, 55, 72, 0.18);
+    --hero-surface-border: rgba(247, 237, 217, 0.2);
+    --hero-note-surface: rgba(7, 28, 38, 0.72);
+    --footer-sky: #122f38;
+    --footer-sky-haze: #23444a;
+    --footer-sky-cloud: #496269;
+    --header-contact-bg: var(--footer-sky);
+    --scrollbar-thumb: #7488bd;
+    --scene-note-ink: var(--paper-light);
+}
+
+@media (max-width: 40rem) {
+    :root {
+        --gutter: 1.15rem;
+        --section-space: 6rem;
+    }
+}

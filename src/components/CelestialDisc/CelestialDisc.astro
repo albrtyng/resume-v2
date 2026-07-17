@@ -1,0 +1,71 @@
+---
+import './CelestialDisc.scss';
+
+interface Props {
+    class?: string;
+    coreRadius: number;
+    cx: number;
+    cy: number;
+    haloRadius: number;
+    [attribute: string]: unknown;
+}
+
+const {
+    class: className,
+    coreRadius,
+    cx,
+    cy,
+    haloRadius,
+    ...attributes
+} = Astro.props;
+
+const moonMarks = [
+    {
+        cx: cx - coreRadius * (14 / 45),
+        cy: cy - coreRadius * (13 / 45),
+        radius: coreRadius * (6 / 45),
+    },
+    {
+        cx: cx + coreRadius * (15 / 45),
+        cy: cy + coreRadius * (12 / 45),
+        radius: coreRadius * (9 / 45),
+    },
+    {
+        cx: cx + coreRadius * (22 / 45),
+        cy: cy - coreRadius * (23 / 45),
+        radius: coreRadius * (4 / 45),
+    },
+];
+---
+
+<g
+    {...attributes}
+    class:list={['celestial-disc', className]}
+    data-celestial-disc="cratered"
+>
+    <slot />
+    <circle
+        class="celestial-disc__halo"
+        data-celestial-halo
+        cx={cx}
+        cy={cy}
+        r={haloRadius}></circle>
+    <circle
+        class="celestial-disc__core"
+        data-celestial-core
+        cx={cx}
+        cy={cy}
+        r={coreRadius}></circle>
+    <g class="celestial-disc__craters" data-moon-craters>
+        {
+            moonMarks.map((mark) => (
+                <circle
+                    data-moon-mark
+                    cx={mark.cx}
+                    cy={mark.cy}
+                    r={mark.radius}
+                />
+            ))
+        }
+    </g>
+</g>

@@ -1,0 +1,422 @@
+.skyline-scene {
+    --scene-x: 0px;
+    --scene-y: 0px;
+    --streetcar-route-delay: -15s;
+    --streetcar-route-duration: 52s;
+    position: absolute;
+    z-index: 2;
+    inset: auto 0 0;
+    height: 68%;
+    overflow-x: clip;
+    overflow-y: visible;
+    pointer-events: none;
+    color: var(--paper-light);
+}
+
+.skyline-scene__art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.skyline__illustration {
+    transform: translateY(-15px);
+}
+
+.skyline__reflection-anchor {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.skyline__fleck-dot {
+    opacity: 0.36;
+    fill: var(--paper-light);
+}
+
+.skyline__fleck-line {
+    opacity: 0.28;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 1.5;
+}
+
+.skyline__stars {
+    opacity: var(--star-alpha);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--paper-light);
+}
+
+.skyline__celestial {
+    transform-box: view-box;
+    transform-origin: center;
+    transition: transform 1200ms var(--ease-out);
+}
+
+html[data-time-state='dawn'] .skyline__celestial {
+    transform: translate(-430px, -8px);
+}
+
+html[data-time-state='midday'] .skyline__celestial {
+    transform: translate(-360px, -124px);
+}
+
+@media (min-width: 72.001rem) {
+    html[data-time-state='midday'] .skyline__celestial {
+        transform: translate(-360px, -92px);
+    }
+}
+
+html[data-time-state='night'] .skyline__celestial {
+    transform: translate(105px, -76px);
+}
+
+.skyline__celestial .celestial-disc__halo {
+    opacity: 0.15;
+}
+
+.skyline__celestial .celestial-disc__core {
+    opacity: 1;
+}
+
+html[data-time-state='night'] .skyline__celestial .celestial-disc__halo {
+    opacity: 0.075;
+}
+
+html[data-time-state='night'] .skyline__celestial .celestial-disc__core {
+    opacity: 1;
+}
+
+.skyline__horizon-haze {
+    opacity: 0.58;
+    transition: fill var(--motion-state) ease;
+    fill: var(--sky-horizon);
+}
+
+.skyline__horizon-brush {
+    opacity: 0.22;
+    transition: stroke var(--motion-state) ease;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 7;
+}
+
+.skyline__fog-band {
+    transform-box: view-box;
+    transform-origin: 50% 58%;
+    fill: var(--paper-light);
+}
+
+.skyline__fog-band--back {
+    opacity: 0.1;
+}
+
+.skyline__fog-band--middle {
+    opacity: 0.14;
+}
+
+.skyline__fog-band--front {
+    opacity: 0.1;
+}
+
+.skyline__clouds {
+    opacity: 0.36;
+    fill: var(--paper-light);
+}
+
+.skyline__cloud {
+    transform-box: view-box;
+    transform-origin: 0 0;
+    will-change: transform;
+}
+
+.skyline__clouds--near {
+    opacity: 0.24;
+}
+
+.skyline__cloud--one {
+    animation: cloud-eastbound-long 83s linear -31s infinite;
+}
+
+.skyline__cloud--two {
+    animation: cloud-westbound-long 109s linear -78s infinite;
+}
+
+.skyline__cloud--three {
+    animation: cloud-eastbound-wide 71s linear -54s infinite;
+}
+
+.skyline__cloud--four {
+    animation: cloud-westbound-compact 93s linear -12s infinite;
+}
+
+html[data-time-state='night'] .skyline__clouds {
+    opacity: 0.14;
+}
+
+.skyline__birds {
+    opacity: 0.6;
+    transition: opacity var(--motion-state) ease;
+    fill: none;
+    stroke: var(--skyline-near);
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+html[data-time-state='night'] .skyline__birds {
+    opacity: 0;
+}
+
+.skyline__far,
+.skyline__mid,
+.skyline__landmarks,
+.skyline__near {
+    transition:
+        fill var(--motion-state) ease,
+        transform 120ms linear;
+}
+
+.skyline__far {
+    transform: translate(
+        calc(var(--scene-x) * -0.15),
+        calc(var(--scene-y) * -0.12)
+    );
+    fill: var(--skyline-far);
+}
+
+.skyline__far .skyline__layer-base,
+.skyline__far-buildings {
+    fill: var(--skyline-far);
+}
+
+.skyline__far-buildings path:nth-child(3n + 1) {
+    fill: color-mix(in srgb, var(--skyline-far) 84%, var(--sky-horizon));
+}
+
+.skyline__far-buildings path:nth-child(4n) {
+    fill: color-mix(in srgb, var(--skyline-far) 82%, var(--skyline-mid));
+}
+
+.skyline__far-rooftops {
+    opacity: 0.68;
+    fill: none;
+    stroke: var(--skyline-far);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 4;
+}
+
+.skyline__far-windows {
+    opacity: calc(var(--window-alpha) * 0.42);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.skyline__mid {
+    transform: translate(
+        calc(var(--scene-x) * -0.28),
+        calc(var(--scene-y) * -0.22)
+    );
+    fill: var(--skyline-mid);
+}
+
+.skyline__mid .skyline__layer-base,
+.skyline__mid-buildings {
+    fill: var(--skyline-mid);
+}
+
+.skyline__mid-buildings path:nth-child(3n + 2) {
+    fill: color-mix(in srgb, var(--skyline-mid) 84%, var(--skyline-far));
+}
+
+.skyline__mid-buildings path:nth-child(4n + 1) {
+    fill: color-mix(in srgb, var(--skyline-mid) 88%, var(--paper-light));
+}
+
+.skyline__setback-buildings {
+    opacity: 0.48;
+    fill: var(--skyline-near);
+}
+
+.skyline__rooftop-equipment {
+    opacity: 0.74;
+    fill: color-mix(in srgb, var(--skyline-mid) 76%, var(--paper-light));
+    stroke: var(--skyline-mid);
+    stroke-linecap: round;
+    stroke-width: 4;
+}
+
+.skyline__mid-window-bands {
+    opacity: calc(var(--window-alpha) * 0.62);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.skyline__landmarks {
+    transform: translate(
+        calc(var(--scene-x) * -0.42),
+        calc(var(--scene-y) * -0.3)
+    );
+}
+
+.skyline__near {
+    transform: translate(
+        calc(var(--scene-x) * -0.5),
+        calc(var(--scene-y) * -0.36)
+    );
+    fill: var(--skyline-near);
+}
+
+.skyline__near .skyline__layer-base,
+.skyline__near-buildings {
+    fill: var(--skyline-near);
+}
+
+.skyline__near-buildings path:nth-child(3n + 1) {
+    fill: color-mix(in srgb, var(--skyline-near) 88%, var(--skyline-mid));
+}
+
+.skyline__near-buildings path:nth-child(5n + 2) {
+    fill: color-mix(in srgb, var(--skyline-near) 86%, var(--paper-light));
+}
+
+.skyline__brick-course {
+    opacity: 0.22;
+    fill: none;
+    stroke: var(--paper-deep);
+    stroke-dasharray: 13 8;
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+.skyline__near-window-lights {
+    opacity: var(--window-alpha);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.skyline__paint-texture {
+    opacity: 0.22;
+    fill: url('#skyline-paint-fleck');
+}
+
+.skyline-scene[data-motion='paused'] *,
+.skyline-scene[data-motion='reduced'] * {
+    animation-play-state: paused;
+}
+
+@keyframes cloud-eastbound-long {
+    from {
+        transform: translate3d(calc(var(--scene-x) - 480px), 0, 0);
+    }
+
+    to {
+        transform: translate3d(calc(var(--scene-x) + 1840px), 0, 0);
+    }
+}
+
+@keyframes cloud-westbound-long {
+    from {
+        transform: translate3d(calc(var(--scene-x) + 1840px), 0, 0);
+    }
+
+    to {
+        transform: translate3d(calc(var(--scene-x) - 480px), 0, 0);
+    }
+}
+
+@keyframes cloud-eastbound-wide {
+    from {
+        transform: translate3d(calc(var(--scene-x) - 520px), 0, 0);
+    }
+
+    to {
+        transform: translate3d(calc(var(--scene-x) + 1840px), 0, 0);
+    }
+}
+
+@keyframes cloud-westbound-compact {
+    from {
+        transform: translate3d(calc(var(--scene-x) + 1840px), 0, 0);
+    }
+
+    to {
+        transform: translate3d(calc(var(--scene-x) - 440px), 0, 0);
+    }
+}
+
+@keyframes water-flow {
+    to {
+        transform: translateX(48px);
+    }
+}
+
+@media (max-width: 64rem) {
+    .skyline-scene__art {
+        left: -9%;
+        width: 118%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 48rem) {
+    .skyline-scene {
+        --streetcar-route-delay: -16s;
+        --streetcar-route-duration: 32s;
+
+        height: 55%;
+    }
+
+    .skyline-scene__art {
+        left: -40%;
+        width: 154%;
+    }
+
+    .skyline__celestial {
+        transform: translate(-60px, 0);
+    }
+
+    html[data-time-state='dawn'] .skyline__celestial {
+        transform: translate(-500px, 66px);
+    }
+
+    html[data-time-state='midday'] .skyline__celestial {
+        transform: translate(-90px, -124px);
+    }
+
+    html[data-time-state='night'] .skyline__celestial {
+        transform: translate(-50px, -76px);
+    }
+
+    .skyline__clouds,
+    .skyline__birds,
+    .skyline__far-rooftops,
+    .skyline__far-buildings path:nth-child(2n),
+    .skyline__far-windows,
+    .skyline__paint-texture {
+        display: none;
+    }
+}
+
+@media (max-width: 25rem) {
+    .skyline-scene__art {
+        left: -46%;
+        width: 164%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skyline-scene {
+        --scene-x: 0px;
+        --scene-y: 0px;
+    }
+
+    .skyline-scene *,
+    .skyline__celestial {
+        animation: none !important;
+        transition: none !important;
+    }
+}

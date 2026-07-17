@@ -1,0 +1,172 @@
+---
+import CNTower from '../../TorontoSkyline/CNTower/CNTower.astro';
+import NewCityHall from '../../TorontoSkyline/NewCityHall/NewCityHall.astro';
+import RogersCentre from '../../TorontoSkyline/RogersCentre/RogersCentre.astro';
+import './DistantTorontoSkyline.scss';
+
+interface Props {
+    class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<g
+    class:list={['distant-toronto-skyline', className]}
+    data-distant-toronto-skyline
+    data-depth="0.2"
+    aria-hidden="true"
+>
+    <path
+        class="distant-toronto-skyline__haze distant-toronto-skyline__haze--rear"
+        d="M-48 227C143 207 306 218 474 205C666 190 827 210 1002 196C1170 182 1325 190 1488 174V292H-48Z"
+    ></path>
+
+    <g class="distant-toronto-skyline__back-massing">
+        <path d="M-24 281V250H26V231H55V281Z"></path>
+        <path d="M44 281V218H92V204H116V281Z"></path>
+        <path d="M104 281V244H157V226H184V281Z"></path>
+        <path d="M171 281V207H210V184H237V281Z"></path>
+        <path d="M225 281V236H275V215H302V281Z"></path>
+        <path d="M289 281V198H330V177H354V281Z"></path>
+        <path d="M342 281V228H395V207H420V281Z"></path>
+        <path d="M410 281V216H452V194H478V281Z"></path>
+        <path d="M467 281V244H515V225H541V281Z"></path>
+        <path d="M531 281V210H571V189H597V281Z"></path>
+        <path d="M586 281V235H632V216H656V281Z"></path>
+        <path d="M645 281V222H687V201H712V281Z"></path>
+        <path d="M702 281V240H749V220H773V281Z"></path>
+        <path d="M760 281V202H802V181H828V281Z"></path>
+        <path d="M816 281V231H863V211H888V281Z"></path>
+        <path d="M876 281V213H919V192H944V281Z"></path>
+        <path d="M934 281V243H983V224H1008V281Z"></path>
+        <path d="M998 281V205H1039V183H1065V281Z"></path>
+        <path d="M1054 281V232H1103V211H1128V281Z"></path>
+        <path d="M1117 281V215H1160V194H1187V281Z"></path>
+        <path d="M1177 281V242H1226V221H1252V281Z"></path>
+        <path d="M1241 281V201H1282V178H1308V281Z"></path>
+        <path d="M1297 281V231H1347V210H1373V281Z"></path>
+        <path d="M1362 281V211H1405V190H1431V281Z"></path>
+        <path d="M1420 281V239H1468V281Z"></path>
+    </g>
+
+    <path
+        class="distant-toronto-skyline__rear-rooftops distant-toronto-skyline__minor-detail"
+        d="M68 204V188M91 204V194M197 184V163M225 184V171M314 177V154M343 177V164M553 189V166M585 189V176M784 181V154M815 181V168M1022 183V159M1053 183V170M1264 178V151M1296 178V164M1390 190V166M1420 190V176M171 207H237M289 198H354M531 210H597M760 202H828M998 205H1065M1241 201H1308M1362 211H1431"
+    ></path>
+
+    <path
+        class="distant-toronto-skyline__back-windows distant-toronto-skyline__minor-detail"
+        d="M61 231H70V237H61ZM80 231H89V237H80ZM186 219H195V225H186ZM207 219H216V225H207ZM304 213H313V219H304ZM326 213H335V219H326ZM425 228H434V234H425ZM446 228H455V234H446ZM546 222H555V228H546ZM567 222H576V228H567ZM778 216H787V222H778ZM800 216H809V222H800ZM1014 218H1023V224H1014ZM1036 218H1045V224H1036ZM1257 215H1266V221H1257ZM1278 215H1287V221H1278ZM1378 224H1387V230H1378ZM1400 224H1409V230H1400Z"
+    ></path>
+
+    <g class="distant-toronto-skyline__landmarks">
+        <g
+            class="distant-toronto-skyline__landmark distant-toronto-skyline__landmark--rogers"
+            data-landmark="footer-rogers-centre"
+            transform="translate(333 100) scale(.32)"
+        >
+            <circle
+                class="harbour-panorama__reflection-anchor"
+                data-footer-reflection-source-anchor="footer-rogers-centre"
+                cx="941"
+                cy="560"
+                r="1"
+            ></circle>
+            <RogersCentre />
+        </g>
+
+        <g
+            class="distant-toronto-skyline__landmark distant-toronto-skyline__landmark--cn"
+            data-landmark="footer-cn-tower"
+            transform="translate(274 88) scale(.36)"
+        >
+            <circle
+                class="harbour-panorama__reflection-anchor"
+                data-footer-reflection-source-anchor="footer-cn-tower"
+                cx="1119"
+                cy="526"
+                r="1"
+            ></circle>
+            <CNTower />
+        </g>
+
+        <g
+            class="distant-toronto-skyline__landmark distant-toronto-skyline__landmark--city-hall"
+            data-landmark="footer-city-hall"
+            transform="translate(600 125) scale(.3)"
+        >
+            <circle
+                class="harbour-panorama__reflection-anchor"
+                data-footer-reflection-source-anchor="footer-city-hall"
+                cx="1366"
+                cy="514"
+                r="1"
+            ></circle>
+            <NewCityHall />
+        </g>
+    </g>
+
+    <g class="distant-toronto-skyline__front-massing">
+        <path d="M7 284V252H47V236H66V284Z"></path>
+        <path d="M72 284V225H112V201H136V284Z"></path>
+        <path d="M127 284V247H177V227H201V284Z"></path>
+        <path d="M190 284V217H229V190H254V284Z"></path>
+        <path d="M247 284V239H292V218H316V284Z"></path>
+        <path d="M374 284V246H421V225H445V284Z"></path>
+        <path d="M432 284V207H474V180H500V284Z"></path>
+        <path d="M489 284V235H536V213H561V284Z"></path>
+        <path d="M551 284V223H592V199H617V284Z"></path>
+        <path d="M720 284V243H767V222H792V284Z"></path>
+        <path d="M780 284V212H821V187H846V284Z"></path>
+        <path d="M836 284V236H884V214H909V284Z"></path>
+        <path d="M900 284V218H942V194H967V284Z"></path>
+        <path d="M1084 284V241H1131V220H1156V284Z"></path>
+        <path d="M1144 284V208H1186V181H1212V284Z"></path>
+        <path d="M1201 284V235H1248V213H1273V284Z"></path>
+        <path d="M1263 284V218H1305V192H1330V284Z"></path>
+        <path d="M1320 284V244H1367V222H1392V284Z"></path>
+        <path d="M1381 284V214H1424V188H1450V284Z"></path>
+    </g>
+
+    <path
+        class="distant-toronto-skyline__setbacks"
+        d="M72 225H136V246H126V268H116V284H72ZM190 217H254V238H244V261H234V284H190ZM432 207H500V229H489V252H479V284H432ZM780 212H846V234H835V257H825V284H780ZM900 218H967V240H956V263H946V284H900ZM1144 208H1212V230H1201V253H1191V284H1144ZM1263 218H1330V240H1319V263H1309V284H1263ZM1381 214H1450V237H1438V260H1428V284H1381Z"
+    ></path>
+
+    <path
+        class="distant-toronto-skyline__front-rooftops"
+        d="M91 201V177M122 201V188M212 190V164M242 190V177M455 180V153M487 180V167M573 199V174M604 199V187M802 187V160M834 187V174M922 194V169M954 194V181M1167 181V154M1200 181V168M1285 192V165M1318 192V179M1404 188V161M1437 188V176M80 201H128M200 190H245M443 180H490M562 199H606M790 187H836M910 194H957M1155 181H1202M1273 192H1320M1392 188H1440"
+    ></path>
+
+    <path
+        class="distant-toronto-skyline__lit-windows"
+        d="M85 231H96V238H85ZM107 231H118V238H107ZM203 222H214V229H203ZM226 222H237V229H226ZM448 215H459V222H448ZM471 215H482V222H471ZM568 229H579V236H568ZM591 229H602V236H591ZM795 222H806V229H795ZM818 222H829V229H818ZM916 228H927V235H916ZM939 228H950V235H939ZM1160 217H1171V224H1160ZM1183 217H1194V224H1183ZM1279 228H1290V235H1279ZM1302 228H1313V235H1302ZM1398 220H1409V227H1398ZM1421 220H1432V227H1421Z"
+    ></path>
+
+    <path
+        class="distant-toronto-skyline__facade-lines distant-toronto-skyline__minor-detail"
+        d="M86 249H122M86 261H122M205 240H239M205 253H239M448 236H484M448 249H484M797 241H831M797 254H831M916 246H952M916 259H952M1161 238H1196M1161 251H1196M1279 247H1315M1279 260H1315M1398 239H1434M1398 252H1434"
+    ></path>
+
+    <path
+        class="distant-toronto-skyline__mainland"
+        d="M-30 279C150 272 302 286 466 278C646 269 803 286 975 277C1136 269 1298 280 1470 271V301H-30Z"
+    ></path>
+    <path
+        class="distant-toronto-skyline__shore-lights"
+        d="M31 283H49V288H31ZM84 281H101V286H84ZM147 283H165V288H147ZM212 280H230V285H212ZM279 282H296V287H279ZM365 281H383V286H365ZM430 279H448V284H430ZM506 281H524V286H506ZM578 279H596V284H578ZM656 282H674V287H656ZM735 279H753V284H735ZM818 281H836V286H818ZM892 279H910V284H892ZM968 282H986V287H968ZM1043 279H1061V284H1043ZM1122 281H1140V286H1122ZM1197 279H1215V284H1197ZM1278 281H1296V286H1278ZM1353 279H1371V284H1353ZM1417 281H1435V286H1417Z"
+    ></path>
+    <circle
+        class="harbour-panorama__reflection-anchor"
+        data-footer-reflection-source-anchor="footer-city-lights"
+        cx="720"
+        cy="284"
+        r="1"
+    ></circle>
+
+    <path
+        class="distant-toronto-skyline__haze distant-toronto-skyline__haze--veil"
+        d="M-40 256C180 243 340 262 530 251C730 239 902 260 1098 247C1272 236 1380 243 1480 236V307H-40Z"
+    ></path>
+</g>

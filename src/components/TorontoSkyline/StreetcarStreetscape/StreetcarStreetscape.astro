@@ -1,0 +1,234 @@
+---
+import Streetcar from '../Streetcar/Streetcar.astro';
+import './StreetcarStreetscape.scss';
+---
+
+<g
+    class="streetcar-streetscape"
+    data-depth="0.86"
+    data-streetcar-streetscape
+    aria-hidden="true"
+>
+    <g class="streetcar-streetscape__backdrop">
+        <g class="streetcar-streetscape__background-city" data-roadside-skyline>
+            <g class="streetcar-streetscape__background-buildings">
+                <path d="M-24 625V528H24V510H96V625Z"></path>
+                <path d="M82 625V550H143V526H214V625Z"></path>
+                <path d="M226 625V506H258V488H350V625Z"></path>
+                <path d="M365 625V539H426V516H516V625Z"></path>
+                <path d="M500 625V520H548V501H630V625Z"></path>
+                <path d="M789 625V542H845V519H926V625Z"></path>
+                <path d="M1102 625V518H1143V499H1233V625Z"></path>
+                <path d="M1216 625V547H1282V520H1365V625Z"></path>
+                <path d="M1451 625V508H1490V487H1608V625Z"></path>
+            </g>
+
+            <path
+                class="streetcar-streetscape__background-roofs"
+                d="M-24 528H24V510H96M82 550H143V526H214M226 506H258V488H350M365 539H426V516H516M500 520H548V501H630M789 542H845V519H926M1102 518H1143V499H1233M1216 547H1282V520H1365M1451 508H1490V487H1608"
+            ></path>
+            <path
+                class="streetcar-streetscape__background-windows"
+                d="M17 548H39V562H17ZM51 548H73V562H51ZM119 569H143V583H119ZM157 569H181V583H157ZM253 523H278V538H253ZM292 523H317V538H292ZM402 556H427V571H402ZM441 556H466V571H441ZM538 540H562V555H538ZM576 540H600V555H576ZM826 560H851V575H826ZM865 560H890V575H865ZM1139 537H1164V552H1139ZM1178 537H1203V552H1178ZM1255 566H1279V581H1255ZM1293 566H1317V581H1293ZM1488 529H1513V544H1488ZM1527 529H1552V544H1527Z"
+            ></path>
+        </g>
+    </g>
+
+    <g class="streetcar-streetscape__road" data-streetcar-road>
+        <defs>
+            <clipPath id="streetcar-road-clip">
+                <rect x="-40" y="578" width="1680" height="60"></rect>
+            </clipPath>
+        </defs>
+        <rect
+            class="streetcar-streetscape__road-surface"
+            x="-40"
+            y="578"
+            width="1680"
+            height="60"
+        ></rect>
+        <path
+            class="streetcar-streetscape__road-edge"
+            d="M-40 580H1640M-40 636H1640"
+        ></path>
+        <path
+            class="streetcar-streetscape__road-markers"
+            clip-path="url(#streetcar-road-clip)"
+            d="M-40 600H1640"
+        ></path>
+    </g>
+
+    <g class="streetcar-streetscape__right-lane" data-streetcar-right-lane>
+        <Streetcar class="streetcar-streetscape__streetcar" />
+    </g>
+
+    <g class="streetcar-streetscape__foreground" data-streetcar-occluders>
+        <g
+            class="streetcar-streetscape__building streetcar-streetscape__building--west-workshop"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-source-anchor="foreground-west-workshop"
+                cx="76"
+                cy="663"
+                r="1"
+            ></circle>
+            <path
+                class="streetcar-streetscape__facade"
+                d="M-38 663V530H4V509H62L76 521H174V663Z"></path>
+            <path
+                class="streetcar-streetscape__roof"
+                d="M-48 533L4 499H66L81 512H187L176 536H-38Z"></path>
+            <path
+                class="streetcar-streetscape__windows"
+                d="M-12 553H23V580H-12ZM36 553H72V580H36ZM86 553H122V580H86ZM136 553H163V580H136Z"
+            ></path>
+            <path
+                class="streetcar-streetscape__masonry"
+                d="M-23 596H167M-23 616H167M-23 636H167M20 535V663M76 535V663M128 535V663"
+            ></path>
+        </g>
+
+        <g
+            class="streetcar-streetscape__building streetcar-streetscape__building--west-row"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-source-anchor="foreground-west-row"
+                cx="380"
+                cy="663"
+                r="1"
+            ></circle>
+            <path
+                class="streetcar-streetscape__facade"
+                d="M301 663V551H321V532H361V517H415V538H459V663Z"></path>
+            <path
+                class="streetcar-streetscape__parapet"
+                d="M294 554H314V525H354V510H423V531H467V554Z"></path>
+            <path
+                class="streetcar-streetscape__windows"
+                d="M321 571H347V594H321ZM361 558H390V585H361ZM405 558H434V585H405ZM321 610H347V635H321ZM361 602H390V628H361ZM405 602H434V628H405Z"
+            ></path>
+            <path
+                class="streetcar-streetscape__masonry"
+                d="M306 601H452M306 641H452M353 538V663M397 538V663"></path>
+        </g>
+
+        <g
+            class="streetcar-streetscape__building streetcar-streetscape__building--corner-store"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-source-anchor="foreground-corner-store"
+                cx="708"
+                cy="663"
+                r="1"
+            ></circle>
+            <path
+                class="streetcar-streetscape__facade"
+                d="M627 663V548H646V524H702V513H757V535H786V663Z"></path>
+            <path
+                class="streetcar-streetscape__parapet"
+                d="M620 551H639V517H695V506H765V528H793V551Z"></path>
+            <path
+                class="streetcar-streetscape__upper-windows"
+                d="M648 546H676V574H648ZM690 536H720V574H690ZM734 542H763V574H734Z"
+            ></path>
+            <path
+                class="streetcar-streetscape__storefront"
+                d="M645 599H690V647H645ZM702 599H768V647H702Z"></path>
+            <path
+                class="streetcar-streetscape__lintel"
+                d="M638 584C672 580 738 584 776 580V595C739 599 675 595 638 599Z"
+            ></path>
+            <path
+                class="streetcar-streetscape__masonry"
+                d="M636 579H778M681 525V588M728 525V588"></path>
+        </g>
+
+        <g
+            class="streetcar-streetscape__building streetcar-streetscape__building--east-loft"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-source-anchor="foreground-east-loft"
+                cx="1036"
+                cy="663"
+                r="1"
+            ></circle>
+            <path
+                class="streetcar-streetscape__facade"
+                d="M951 663V520H985V499H1043V512H1092V540H1122V663Z"></path>
+            <path
+                class="streetcar-streetscape__roof"
+                d="M941 523L979 491H1048L1060 503H1099V532H1132L1123 545H951Z"
+            ></path>
+            <path
+                class="streetcar-streetscape__windows"
+                d="M974 545H1008V574H974ZM1021 532H1056V574H1021ZM1069 550H1102V574H1069ZM974 595H1008V626H974ZM1021 595H1056V626H1021ZM1069 595H1102V626H1069Z"
+            ></path>
+            <path
+                class="streetcar-streetscape__masonry"
+                d="M960 583H1114M960 635H1114M1014 522V663M1063 522V663"></path>
+            <path
+                class="streetcar-streetscape__rooftop-detail"
+                d="M994 491V473H1031V491M1080 532V510H1096V532"></path>
+        </g>
+
+        <g
+            class="streetcar-streetscape__building streetcar-streetscape__building--east-terrace"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-source-anchor="foreground-east-terrace"
+                cx="1395"
+                cy="663"
+                r="1"
+            ></circle>
+            <path
+                class="streetcar-streetscape__facade"
+                d="M1302 663V542H1338V518H1381V503H1431V527H1476V663Z"></path>
+            <path
+                class="streetcar-streetscape__parapet"
+                d="M1295 545H1331V511H1374V496H1439V520H1484V545Z"></path>
+            <path
+                class="streetcar-streetscape__windows"
+                d="M1322 561H1352V588H1322ZM1366 540H1396V573H1366ZM1410 540H1441V573H1410ZM1322 607H1352V635H1322ZM1366 592H1396V623H1366ZM1410 592H1441V623H1410ZM1452 561H1470V588H1452Z"
+            ></path>
+            <path
+                class="streetcar-streetscape__masonry"
+                d="M1310 596H1470M1359 520V663M1403 505V663M1448 530V663"
+            ></path>
+        </g>
+
+        <g
+            class="streetcar-streetscape__building streetcar-streetscape__building--east-workshop"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-source-anchor="foreground-east-workshop"
+                cx="1583"
+                cy="663"
+                r="1"
+            ></circle>
+            <path
+                class="streetcar-streetscape__facade"
+                d="M1533 663V548H1564V532H1618V663Z"></path>
+            <path
+                class="streetcar-streetscape__roof"
+                d="M1525 552L1559 524H1628V555Z"></path>
+            <path
+                class="streetcar-streetscape__windows"
+                d="M1551 571H1582V599H1551ZM1593 560H1618V599H1593Z"></path>
+            <path
+                class="streetcar-streetscape__masonry"
+                d="M1541 613H1620M1587 539V663"></path>
+        </g>
+
+        <path
+            class="streetcar-streetscape__foreground-foundation"
+            d="M-30 638H1630V720H-30Z"
+        ></path>
+    </g>
+
+</g>

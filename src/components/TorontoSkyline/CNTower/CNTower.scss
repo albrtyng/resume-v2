@@ -1,0 +1,169 @@
+.cn-tower {
+    --cn-night-blue: #397fd1;
+    --cn-night-cyan: #75ddff;
+    fill: var(--skyline-near);
+}
+
+.cn-tower__night-aura {
+    opacity: 0;
+    fill: none;
+    stroke: var(--cn-night-blue);
+    stroke-linecap: round;
+    stroke-width: 10;
+}
+
+.cn-tower__antenna,
+.cn-tower__upper-shaft,
+.cn-tower__shaft {
+    transition: fill var(--motion-state) ease;
+    fill: var(--skyline-near);
+}
+
+.cn-tower__antenna-highlight,
+.cn-tower__shaft-highlight {
+    opacity: 0.2;
+    fill: var(--paper-light);
+}
+
+.cn-tower__antenna-bands {
+    opacity: 0.56;
+    fill: color-mix(in srgb, var(--skyline-near) 58%, var(--paper-light));
+}
+
+.cn-tower__shaft-shadow {
+    opacity: 0.28;
+    fill: var(--spruce-deep);
+}
+
+.cn-tower__sky-pod,
+.cn-tower__pod-roof,
+.cn-tower__pod-floor,
+.cn-tower__pod-underside,
+.cn-tower__service-band {
+    fill: color-mix(in srgb, var(--skyline-near) 78%, var(--paper-light));
+}
+
+.cn-tower__sky-pod-window,
+.cn-tower__pod-window-band {
+    fill: color-mix(in srgb, var(--skyline-near) 62%, var(--sky-base));
+}
+
+.cn-tower__sky-pod-rim,
+.cn-tower__upper-shaft-ribs,
+.cn-tower__pod-rims,
+.cn-tower__pod-mullions,
+.cn-tower__shaft-ribs {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.cn-tower__sky-pod-rim,
+.cn-tower__pod-rims {
+    opacity: 0.62;
+    stroke: color-mix(in srgb, var(--skyline-near) 48%, var(--paper-light));
+    stroke-width: 3;
+}
+
+.cn-tower__upper-shaft-ribs,
+.cn-tower__pod-mullions,
+.cn-tower__shaft-ribs {
+    opacity: 0.32;
+    stroke: var(--paper-light);
+    stroke-width: 2;
+}
+
+.cn-tower__pod-paint {
+    opacity: 0.28;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+.cn-tower__shaft-light-strip {
+    opacity: 0;
+    transition:
+        opacity var(--motion-state) ease,
+        stroke var(--motion-state) ease;
+    fill: none;
+    stroke: var(--cn-night-blue);
+    stroke-linecap: round;
+    stroke-width: 4;
+}
+
+.cn-tower__pod-window-glints {
+    opacity: var(--window-alpha);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.cn-tower__beacon {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0.5;
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--red) 76%, transparent));
+    animation: beacon 5s ease-in-out infinite;
+    fill: var(--red);
+}
+
+html[data-time-state='night'] .cn-tower__beacon {
+    filter:
+        drop-shadow(0 0 4px rgba(255, 110, 94, 0.92))
+        drop-shadow(0 0 8px rgba(255, 110, 94, 0.58));
+}
+
+html[data-time-state='night'] .cn-tower__pod-window-band,
+html[data-time-state='night'] .cn-tower__sky-pod-window {
+    fill: color-mix(in srgb, var(--cn-night-cyan) 78%, var(--skyline-near));
+}
+
+html[data-time-state='night'] .cn-tower__antenna,
+html[data-time-state='night'] .cn-tower__upper-shaft,
+html[data-time-state='night'] .cn-tower__shaft {
+    fill: color-mix(in srgb, var(--skyline-near) 58%, var(--cn-night-blue));
+}
+
+html[data-time-state='night'] .cn-tower__antenna-bands,
+html[data-time-state='night'] .cn-tower__pod-window-glints {
+    fill: var(--cn-night-cyan);
+}
+
+html[data-time-state='night'] .cn-tower__night-aura {
+    opacity: 0.42;
+    filter: drop-shadow(0 0 5px rgba(73, 155, 255, 0.78));
+}
+
+html[data-time-state='night'] .cn-tower__shaft-light-strip {
+    opacity: 0.72;
+    filter: drop-shadow(0 0 3px rgba(92, 187, 255, 0.7));
+    stroke: var(--cn-night-blue);
+}
+
+html[data-time-state='night'] .cn-tower__main-pod,
+html[data-time-state='night'] .cn-tower__sky-pod {
+    filter: drop-shadow(0 0 5px rgba(91, 211, 255, 0.58));
+}
+
+@keyframes beacon {
+    0%,
+    100% {
+        transform: scale(0.82);
+        opacity: 0.42;
+    }
+
+    42% {
+        transform: scale(0.94);
+        opacity: 0.62;
+    }
+
+    52% {
+        transform: scale(1.22);
+        opacity: 1;
+    }
+
+    64% {
+        transform: scale(0.9);
+        opacity: 0.5;
+    }
+}

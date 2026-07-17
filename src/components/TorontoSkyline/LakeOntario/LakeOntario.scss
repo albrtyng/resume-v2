@@ -1,0 +1,298 @@
+.lake-ontario {
+    --lake-celestial-reflection: color-mix(
+        in srgb,
+        var(--sky-object) 78%,
+        var(--water-light)
+    );
+    --lake-cn-reflection: #75ddff;
+    --lake-stadium-reflection: #b98dff;
+    --lake-city-hall-reflection: color-mix(in srgb, var(--window) 74%, #ef8d5f);
+    --lake-building-reflection: color-mix(
+        in srgb,
+        var(--window) 82%,
+        var(--sky-horizon)
+    );
+}
+
+.lake-ontario__base {
+    transition: fill var(--motion-state) ease;
+    fill: var(--water);
+}
+
+.lake-ontario__horizon-wash {
+    opacity: 0.34;
+    transition: fill var(--motion-state) ease;
+    fill: color-mix(in srgb, var(--water) 64%, var(--sky-horizon));
+}
+
+.lake-ontario__depth-patches {
+    opacity: 0.24;
+    fill: color-mix(in srgb, var(--water) 82%, var(--skyline-near));
+}
+
+.lake-ontario__depth-patches path:last-child {
+    opacity: 0.72;
+    fill: color-mix(in srgb, var(--water) 72%, var(--skyline-near));
+}
+
+.lake-reflections {
+    pointer-events: none;
+}
+
+.lake-reflections--celestial {
+    transform-box: view-box;
+    transform-origin: center;
+    transition:
+        opacity var(--motion-state) ease,
+        transform 1200ms var(--ease-out);
+}
+
+html[data-time-state='dawn'] .lake-reflections--celestial {
+    transform: translateX(-430px);
+}
+
+html[data-time-state='midday'] .lake-reflections--celestial {
+    transform: translateX(-360px);
+}
+
+html[data-time-state='night'] .lake-reflections--celestial {
+    transform: translateX(105px);
+}
+
+.lake-reflections--landmarks {
+    transform: translate(
+        calc(var(--scene-x) * -0.42),
+        calc(var(--scene-y) * -0.3)
+    );
+    transition: transform 120ms linear;
+}
+
+.lake-reflections--city-hall {
+    transform: translate(
+        calc(var(--scene-x) * -0.28),
+        calc(var(--scene-y) * -0.22)
+    );
+    transition: transform 120ms linear;
+}
+
+.lake-reflections--foreground {
+    transform: translate(
+        calc(var(--scene-x) * -0.58),
+        calc(var(--scene-y) * -0.42)
+    );
+    transition: transform 120ms linear;
+}
+
+.lake-reflections__celestial-soft,
+.lake-reflections__celestial-core,
+.lake-reflections__glow,
+.lake-reflections__highlight {
+    transition:
+        fill var(--motion-state) ease,
+        opacity var(--motion-state) ease;
+}
+
+.lake-reflections__celestial-soft {
+    opacity: 0.2;
+    fill: var(--lake-celestial-reflection);
+}
+
+.lake-reflections__celestial-core {
+    opacity: 0.38;
+    fill: var(--lake-celestial-reflection);
+}
+
+.lake-reflections__landmark {
+    opacity: 0;
+    transition: opacity var(--motion-state) ease;
+}
+
+.lake-reflections__landmark--cn-tower .lake-reflections__glow {
+    opacity: 0.34;
+    fill: var(--lake-cn-reflection);
+}
+
+.lake-reflections__landmark--cn-tower .lake-reflections__highlight {
+    opacity: 0.78;
+    fill: var(--lake-cn-reflection);
+}
+
+.lake-reflections__landmark--stadium .lake-reflections__glow {
+    transform: scaleX(1.25);
+    transform-box: view-box;
+    transform-origin: 941px center;
+    opacity: 0.3;
+    fill: var(--lake-stadium-reflection);
+}
+
+.lake-reflections__landmark--stadium .lake-reflections__highlight {
+    transform: scaleX(1.25);
+    transform-box: view-box;
+    transform-origin: 941px center;
+    opacity: 0.66;
+    fill: var(--lake-stadium-reflection);
+}
+
+.lake-reflections--city-hall {
+    opacity: 0;
+}
+
+.lake-reflections--city-hall .lake-reflections__glow {
+    opacity: 0.24;
+    fill: var(--lake-city-hall-reflection);
+}
+
+.lake-reflections--city-hall .lake-reflections__highlight {
+    opacity: 0.62;
+    fill: var(--lake-city-hall-reflection);
+}
+
+.lake-reflections__foreground-building {
+    opacity: var(--window-alpha);
+    transition: opacity var(--motion-state) ease;
+}
+
+.lake-reflections__building-glow {
+    opacity: 0.42;
+    transition: fill var(--motion-state) ease;
+    fill: var(--lake-building-reflection);
+}
+
+html[data-time-state='night'] .lake-reflections__celestial-soft {
+    opacity: 0.31;
+    filter: drop-shadow(
+        0 0 7px color-mix(in srgb, var(--sky-object) 30%, transparent)
+    );
+}
+
+html[data-time-state='night'] .lake-reflections__celestial-core {
+    opacity: 0.7;
+}
+
+html[data-time-state='night'] .lake-reflections__landmark {
+    opacity: 1;
+}
+
+html[data-time-state='night'] .lake-reflections--city-hall {
+    opacity: 1;
+}
+
+html[data-time-state='night'] .lake-reflections__foreground-building {
+    filter: drop-shadow(
+        0 0 3px color-mix(in srgb, var(--window) 36%, transparent)
+    );
+}
+
+html[data-time-state='night']
+    .lake-reflections__landmark--cn-tower
+    .lake-reflections__highlight {
+    filter: drop-shadow(0 0 4px rgba(117, 221, 255, 0.58));
+}
+
+html[data-time-state='night']
+    .lake-reflections__landmark--stadium
+    .lake-reflections__highlight {
+    filter: drop-shadow(0 0 5px rgba(185, 141, 255, 0.48));
+}
+
+html[data-time-state='night']
+    .lake-reflections--city-hall
+    .lake-reflections__highlight {
+    filter: drop-shadow(
+        0 0 4px color-mix(in srgb, var(--window) 46%, transparent)
+    );
+}
+
+.lake-ontario__surface-lines {
+    fill: none;
+}
+
+.skyline__wave {
+    opacity: 0.35;
+    animation: water-flow 9s ease-in-out infinite alternate;
+    stroke: var(--water-light);
+    stroke-linecap: round;
+    stroke-width: 4;
+}
+
+.skyline__wave--one {
+    opacity: 0.18;
+    animation-duration: 18s;
+    stroke-width: 3;
+}
+
+.skyline__wave--two {
+    opacity: 0.3;
+    animation-duration: 12s;
+    animation-delay: -3s;
+}
+
+.skyline__wave--three {
+    opacity: 0.23;
+    animation-duration: 15s;
+    animation-delay: -6s;
+}
+
+.skyline__wave--four {
+    opacity: 0.16;
+    animation-duration: 20s;
+    animation-delay: -8s;
+    stroke-width: 3;
+}
+
+.lake-ontario__water-brush {
+    opacity: 0.22;
+    stroke: var(--paper-light);
+    stroke-dasharray: 61 22 93 27;
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+html[data-time-state='night'] .lake-ontario__horizon-wash {
+    opacity: 0.26;
+}
+
+html[data-time-state='night'] .lake-ontario__water-brush {
+    opacity: 0.16;
+}
+
+@media (max-width: 48rem) {
+    .lake-reflections--celestial {
+        transform: translateX(-60px);
+    }
+
+    html[data-time-state='dawn'] .lake-reflections--celestial {
+        transform: translateX(-500px);
+    }
+
+    html[data-time-state='midday'] .lake-reflections--celestial {
+        transform: translateX(-90px);
+    }
+
+    html[data-time-state='night'] .lake-reflections--celestial {
+        transform: translateX(-50px);
+    }
+
+    .lake-reflections__celestial-soft,
+    .lake-reflections__landmark .lake-reflections__glow,
+    .lake-reflections--city-hall .lake-reflections__glow {
+        opacity: 0.2;
+    }
+
+    html[data-time-state='night'] .lake-reflections__celestial-core {
+        opacity: 0.76;
+    }
+
+    .lake-reflections__building-glow {
+        opacity: 0.34;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lake-reflections--celestial,
+    .lake-reflections--landmarks,
+    .lake-reflections--city-hall,
+    .lake-reflections--foreground {
+        transition: none;
+    }
+}

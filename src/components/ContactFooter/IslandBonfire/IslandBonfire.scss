@@ -1,0 +1,430 @@
+.island-bonfire {
+    --bonfire-outer: color-mix(in srgb, var(--red) 78%, var(--sun));
+    --bonfire-middle: color-mix(in srgb, var(--sun) 72%, var(--paper-light));
+    --bonfire-inner: color-mix(in srgb, var(--sun) 54%, var(--paper-light));
+    --bonfire-ember: color-mix(in srgb, var(--red) 66%, var(--sun));
+    --bonfire-log: color-mix(in srgb, var(--red-dark) 76%, var(--spruce-deep));
+    --bonfire-log-light: color-mix(
+        in srgb,
+        var(--red-dark) 58%,
+        var(--paper-deep)
+    );
+    --bonfire-char: color-mix(in srgb, var(--spruce-deep) 82%, var(--ink));
+
+    pointer-events: none;
+}
+
+.island-bonfire__glow-wash {
+    opacity: 0.12;
+    fill: var(--bonfire-outer);
+}
+
+.island-bonfire__glow {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.island-bonfire__glow-core {
+    opacity: 0.16;
+    fill: var(--bonfire-middle);
+}
+
+.island-bonfire__ground-light {
+    opacity: 0.18;
+    fill: var(--bonfire-ember);
+}
+
+.island-bonfire__smoke-wisp,
+.island-bonfire__smoke-brush {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    fill: none;
+    stroke: color-mix(in srgb, var(--paper-deep) 45%, var(--spruce));
+    stroke-linecap: round;
+}
+
+.island-bonfire__smoke-wisp {
+    opacity: 0.19;
+    stroke-width: 5;
+}
+
+.island-bonfire__smoke-wisp--near {
+    opacity: 0.13;
+    stroke-width: 3.5;
+}
+
+.island-bonfire__smoke-brush {
+    opacity: 0.1;
+    stroke-dasharray: 11 8;
+    stroke-width: 2;
+}
+
+.island-bonfire__ember,
+.island-bonfire__ember-speck {
+    transform-box: fill-box;
+    transform-origin: center;
+    fill: var(--bonfire-middle);
+}
+
+.island-bonfire__ember-speck {
+    opacity: 0.72;
+}
+
+.island-bonfire__ash-bed {
+    fill: color-mix(in srgb, var(--spruce-deep) 84%, var(--paper-deep));
+}
+
+.island-bonfire__coal {
+    fill: var(--bonfire-char);
+}
+
+.island-bonfire__coal--middle {
+    fill: color-mix(in srgb, var(--bonfire-char) 68%, var(--red-dark));
+}
+
+.island-bonfire__coal-seams {
+    opacity: 0.62;
+    fill: none;
+    stroke: var(--bonfire-ember);
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+.island-bonfire__ember-line {
+    opacity: 0.68;
+    fill: none;
+    stroke: var(--bonfire-outer);
+    stroke-dasharray: 8 6 16 9;
+    stroke-linecap: round;
+    stroke-width: 3.5;
+}
+
+.island-bonfire__ember-dot {
+    fill: var(--bonfire-middle);
+}
+
+.island-bonfire__flame {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+    stroke-linejoin: round;
+}
+
+.island-bonfire__flame--outer {
+    fill: var(--bonfire-outer);
+}
+
+.island-bonfire__flame--left,
+.island-bonfire__flame--right,
+.island-bonfire__flame--middle {
+    fill: var(--bonfire-middle);
+}
+
+.island-bonfire__flame--left {
+    opacity: 0.78;
+}
+
+.island-bonfire__flame--right {
+    opacity: 0.68;
+}
+
+.island-bonfire__flame--inner,
+.island-bonfire__flame-highlight {
+    fill: var(--bonfire-inner);
+}
+
+.island-bonfire__flame-brush {
+    opacity: 0.28;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 2.5;
+}
+
+.island-bonfire__flame-highlight {
+    opacity: 0.92;
+}
+
+.island-bonfire__log-body {
+    fill: var(--bonfire-log);
+}
+
+.island-bonfire__log-shadow {
+    opacity: 0.72;
+    fill: var(--bonfire-char);
+}
+
+.island-bonfire__log-end {
+    fill: var(--bonfire-log-light);
+}
+
+.island-bonfire__log-ring,
+.island-bonfire__bark,
+.island-bonfire__char {
+    fill: none;
+    stroke-linecap: round;
+}
+
+.island-bonfire__log-ring {
+    opacity: 0.74;
+    stroke: var(--bonfire-char);
+    stroke-width: 2;
+}
+
+.island-bonfire__bark {
+    opacity: 0.42;
+    stroke: var(--bonfire-log-light);
+    stroke-width: 2.5;
+}
+
+.island-bonfire__char {
+    opacity: 0.86;
+    stroke: var(--bonfire-char);
+    stroke-width: 4;
+}
+
+.island-bonfire__beach-brush {
+    opacity: 0.18;
+    fill: none;
+    stroke: var(--paper-deep);
+    stroke-dasharray: 28 13 45 19;
+    stroke-linecap: round;
+    stroke-width: 2.5;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__glow {
+    animation: island-bonfire-glow 3.73s ease-in-out -1.82s infinite alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__flame--outer {
+    animation: island-bonfire-flame-outer 2.17s ease-in-out -1.09s infinite
+        alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__flame--left {
+    animation: island-bonfire-flame-left 1.71s ease-in-out -0.47s infinite
+        alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__flame--right {
+    animation: island-bonfire-flame-right 2.43s ease-in-out -1.38s infinite
+        alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__flame--middle {
+    animation: island-bonfire-flame-middle 1.37s ease-in-out -0.83s infinite
+        alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__flame--inner {
+    animation: island-bonfire-flame-inner 1.83s ease-in-out -1.23s infinite
+        alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__smoke-wisp--far {
+    animation: island-bonfire-smoke-far 9.7s ease-in-out -4.1s infinite;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__smoke-wisp--near {
+    animation: island-bonfire-smoke-near 11.3s ease-in-out -7.4s infinite;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__ember--one {
+    animation: island-bonfire-ember-one 8.7s ease-out -5.6s infinite;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .island-bonfire__ember--two {
+    animation: island-bonfire-ember-two 11.9s ease-out -1.8s infinite;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'][data-contact-active]
+    .island-bonfire__glow,
+.contact-footer[data-contact-motion='full'][data-contact-active]
+    .island-bonfire__flame,
+.contact-footer[data-contact-motion='full'][data-contact-active]
+    .island-bonfire__smoke-wisp,
+.contact-footer[data-contact-motion='full'][data-contact-active]
+    .island-bonfire__ember {
+    animation-play-state: running;
+    will-change: transform, opacity;
+}
+
+@keyframes island-bonfire-glow {
+    from {
+        transform: scale(0.97, 0.95);
+        opacity: 0.86;
+    }
+
+    to {
+        transform: scale(1.02, 1.04);
+        opacity: 1;
+    }
+}
+
+@keyframes island-bonfire-flame-outer {
+    0% {
+        transform: translate(-1px, 2px) rotate(-1deg) scale(0.98, 0.96);
+    }
+
+    43% {
+        transform: translate(2px, -2px) rotate(1.5deg) scale(0.96, 1.04);
+    }
+
+    100% {
+        transform: translate(5px, 1px) rotate(3deg) scale(1.01, 0.99);
+    }
+}
+
+@keyframes island-bonfire-flame-left {
+    from {
+        transform: translate(1px, 2px) rotate(1deg) scale(0.96, 0.97);
+    }
+
+    to {
+        transform: translate(-3px, -2px) rotate(-3deg) scale(1.03, 1.06);
+    }
+}
+
+@keyframes island-bonfire-flame-right {
+    0% {
+        transform: translate(-1px, 1px) rotate(-1deg) scale(1.02, 0.96);
+    }
+
+    57% {
+        transform: translate(4px, -1px) rotate(4deg) scale(0.94, 1.03);
+    }
+
+    100% {
+        transform: translate(2px, 2px) rotate(2deg) scale(1, 0.98);
+    }
+}
+
+@keyframes island-bonfire-flame-middle {
+    from {
+        transform: translate(2px, 1px) rotate(2deg) scale(0.95, 0.96);
+    }
+
+    to {
+        transform: translate(-2px, -3px) rotate(-2deg) scale(1.03, 1.08);
+    }
+}
+
+@keyframes island-bonfire-flame-inner {
+    0% {
+        transform: translate(-1px, 1px) scale(1, 0.98);
+    }
+
+    48% {
+        transform: translate(2px, -2px) scale(0.94, 1.07);
+    }
+
+    100% {
+        transform: translate(1px, 1px) scale(1.04, 0.99);
+    }
+}
+
+@keyframes island-bonfire-smoke-far {
+    0%,
+    74% {
+        transform: translate(0, 3px) rotate(0deg) scale(0.96);
+        opacity: 0.08;
+    }
+
+    88% {
+        transform: translate(8px, -5px) rotate(4deg) scale(1.03);
+        opacity: 0.19;
+    }
+
+    100% {
+        transform: translate(17px, -12px) rotate(7deg) scale(1.08);
+        opacity: 0;
+    }
+}
+
+@keyframes island-bonfire-smoke-near {
+    0%,
+    69% {
+        transform: translate(0, 2px) rotate(0deg) scale(0.97);
+        opacity: 0.05;
+    }
+
+    84% {
+        transform: translate(-6px, -5px) rotate(-4deg) scale(1.02);
+        opacity: 0.13;
+    }
+
+    100% {
+        transform: translate(-13px, -11px) rotate(-6deg) scale(1.06);
+        opacity: 0;
+    }
+}
+
+@keyframes island-bonfire-ember-one {
+    0%,
+    82% {
+        transform: translate(0, 0) scale(0.7);
+        opacity: 0;
+    }
+
+    86% {
+        opacity: 0.9;
+    }
+
+    100% {
+        transform: translate(10px, -40px) scale(0.25);
+        opacity: 0;
+    }
+}
+
+@keyframes island-bonfire-ember-two {
+    0%,
+    88% {
+        transform: translate(0, 0) scale(0.65);
+        opacity: 0;
+    }
+
+    91% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(-8px, -34px) scale(0.2);
+        opacity: 0;
+    }
+}
+
+@media (max-width: 45rem) {
+    .island-bonfire__smoke {
+        opacity: 0.12;
+    }
+
+    .island-bonfire__ember {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .island-bonfire,
+    .island-bonfire * {
+        animation: none !important;
+        transition: none !important;
+        will-change: auto !important;
+    }
+
+    .island-bonfire__smoke {
+        opacity: 0.12;
+    }
+
+    .island-bonfire__ember {
+        display: none;
+    }
+}

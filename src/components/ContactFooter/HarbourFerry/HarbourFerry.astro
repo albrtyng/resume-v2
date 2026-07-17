@@ -1,0 +1,272 @@
+---
+import './HarbourFerry.scss';
+
+interface Props {
+    class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<g
+    class:list={['harbour-ferry', className]}
+    data-harbour-ferry
+    data-landmark="harbour-ferry"
+    aria-hidden="true"
+>
+    <circle
+        class="harbour-panorama__reflection-anchor"
+        data-footer-reflection-source-anchor="footer-ferry"
+        cx="220"
+        cy="372"
+        r="1"
+    ></circle>
+    <g class="harbour-ferry__wake">
+        <path d="M4 359C44 349 85 351 126 360C167 369 211 369 253 360"></path>
+        <path d="M68 372C125 363 178 367 230 375C282 383 338 378 388 366"
+        ></path>
+        <path d="M284 352C330 344 378 347 426 357"></path>
+    </g>
+
+    <g class="harbour-ferry__hull-stack">
+        <path
+            class="harbour-ferry__hull"
+            d="M16 311C18 333 30 351 52 362C86 373 337 374 389 361C409 356 421 343 425 324L407 311Z"
+        ></path>
+        <path
+            class="harbour-ferry__hull-shadow"
+            d="M31 340C94 351 337 352 412 337C405 350 395 358 381 362C318 373 91 372 52 362C42 357 35 349 31 340Z"
+        ></path>
+        <path
+            class="harbour-ferry__rub-rail"
+            d="M18 310C111 317 332 318 424 310L422 322C329 330 112 329 20 322Z"
+        ></path>
+        <path
+            class="harbour-ferry__lower-deck"
+            d="M25 248C22 269 22 291 26 312C113 319 329 320 415 311C419 289 418 267 413 247C316 241 119 242 25 248Z"
+        ></path>
+        <path
+            class="harbour-ferry__lower-deck-shadow"
+            d="M26 299C117 306 326 307 415 299L415 313C324 321 114 320 26 313Z"
+        ></path>
+        <path
+            class="harbour-ferry__bow-gate"
+            d="M389 252L416 255L414 309L390 312Z"></path>
+        <path class="harbour-ferry__stern-gate" d="M24 257L48 253V312L26 310Z"
+        ></path>
+
+        <g class="harbour-ferry__lower-windows">
+            <path
+                d="M53 261H69V283H53ZM76 260H92V284H76ZM99 260H115V284H99ZM122 260H138V285H122ZM145 260H161V285H145ZM168 260H184V285H168ZM191 260H207V285H191ZM214 260H230V285H214ZM237 260H253V285H237ZM260 260H276V285H260ZM283 260H299V285H283ZM306 260H322V284H306ZM329 260H345V284H329ZM352 260H368V283H352Z"
+            ></path>
+        </g>
+        <g class="harbour-ferry__window-mullions">
+            <path
+                d="M72 257V288M95 257V288M118 257V289M141 257V289M164 257V289M187 257V289M210 257V289M233 257V289M256 257V289M279 257V289M302 257V289M325 257V288M348 257V288M371 257V287"
+            ></path>
+        </g>
+        <path
+            class="harbour-ferry__service-doors"
+            d="M86 255H111V310H86ZM331 255H358V311H331Z"></path>
+        <path
+            class="harbour-ferry__service-door-seams"
+            d="M98 258V307M344 258V308"></path>
+        <path
+            class="harbour-ferry__portholes"
+            d="M61 299H69V306H61ZM123 302H131V309H123ZM303 302H311V309H303ZM369 299H377V306H369Z"
+        ></path>
+    </g>
+
+    <g class="harbour-ferry__promenade">
+        <path
+            class="harbour-ferry__promenade-shadow"
+            d="M34 204C124 198 323 199 409 205V250C314 244 124 244 31 251Z"
+        ></path>
+        <path
+            class="harbour-ferry__promenade-opening"
+            d="M43 207C129 202 315 202 399 207V239C313 235 128 235 41 240Z"
+        ></path>
+        <path
+            class="harbour-ferry__promenade-rail"
+            d="M40 221C128 216 315 216 403 222M39 237C128 232 315 232 404 237M48 207V244M68 205V243M88 204V242M108 203V242M128 202V241M148 202V241M168 201V241M188 201V241M208 201V241M228 201V241M248 201V241M268 201V241M288 201V241M308 202V241M328 202V242M348 203V242M368 204V243M388 205V244"
+        ></path>
+        <path
+            class="harbour-ferry__promenade-mesh"
+            d="M47 223L69 239M68 220L90 239M89 220L111 238M110 219L132 238M131 218L153 238M152 218L174 237M173 217L195 237M194 217L216 237M215 217L237 237M236 217L258 237M257 217L279 237M278 217L300 238M299 218L321 238M320 218L342 239M341 219L363 239M362 220L384 240"
+        ></path>
+        <path
+            class="harbour-ferry__promenade-roof"
+            d="M27 195C116 188 323 189 416 197L409 208C316 201 124 200 34 207Z"
+        ></path>
+        <path
+            class="harbour-ferry__passengers harbour-ferry__fine-detail"
+            d="M117 225C117 219 121 216 125 216C130 216 133 220 133 225V239H117ZM276 225C276 219 280 216 284 216C289 216 292 220 292 225V239H276ZM316 226C316 220 320 217 324 217C329 217 332 221 332 226V240H316Z"
+        ></path>
+        <path
+            class="harbour-ferry__benches harbour-ferry__fine-detail"
+            d="M153 228H187V233H153ZM235 228H264V233H235Z"></path>
+    </g>
+
+    <g class="harbour-ferry__upper-deck">
+        <g class="harbour-ferry__wheelhouse harbour-ferry__wheelhouse--stern">
+            <path
+                class="harbour-ferry__wheelhouse-body"
+                d="M54 147L67 137H124L136 151V195H54Z"></path>
+            <path
+                class="harbour-ferry__wheelhouse-roof"
+                d="M45 143C68 136 119 135 143 144L138 151H50Z"></path>
+            <path
+                class="harbour-ferry__wheelhouse-window"
+                d="M66 151H82V173H66ZM88 148H105V173H88ZM111 150H126V174H111Z"
+            ></path>
+            <path
+                class="harbour-ferry__wheelhouse-door"
+                d="M104 175H126V195H104Z"></path>
+        </g>
+
+        <g class="harbour-ferry__wheelhouse harbour-ferry__wheelhouse--bow">
+            <path
+                class="harbour-ferry__wheelhouse-body"
+                d="M298 145L311 130H375L390 145V197H298Z"></path>
+            <path
+                class="harbour-ferry__wheelhouse-roof"
+                d="M288 137C316 127 372 126 399 139L393 147H293Z"></path>
+            <path
+                class="harbour-ferry__wheelhouse-window"
+                d="M310 142H329V168H310ZM336 138H355V168H336ZM362 140H379V169H362Z"
+            ></path>
+            <path
+                class="harbour-ferry__wheelhouse-door"
+                d="M303 172H327V197H303Z"></path>
+        </g>
+
+        <path
+            class="harbour-ferry__upper-rail"
+            d="M137 177C178 172 258 172 298 177M140 190C179 185 259 185 296 190M148 168V193M166 166V191M184 165V190M202 164V190M220 164V190M238 165V190M256 166V191M274 168V193M292 171V194"
+        ></path>
+        <path
+            class="harbour-ferry__upper-deck-floor"
+            d="M126 190C177 183 260 183 309 191V202C255 196 179 196 126 202Z"
+        ></path>
+    </g>
+
+    <g class="harbour-ferry__funnel">
+        <path class="harbour-ferry__funnel-body" d="M194 104H241L246 171H190Z"
+        ></path>
+        <path class="harbour-ferry__funnel-band" d="M190 99H243L244 126H192Z"
+        ></path>
+        <path class="harbour-ferry__funnel-cap" d="M187 94H246L242 103H191Z"
+        ></path>
+        <path
+            class="harbour-ferry__stack harbour-ferry__stack--stern"
+            d="M203 94V73C203 65 208 60 214 59V94Z"></path>
+        <path
+            class="harbour-ferry__stack harbour-ferry__stack--bow"
+            d="M223 94V72C223 64 228 59 234 58V94Z"></path>
+        <path
+            class="harbour-ferry__funnel-highlight"
+            d="M199 130C210 127 227 127 238 130M200 143C211 140 228 140 239 143"
+        ></path>
+    </g>
+
+    <g class="harbour-ferry__lifeboats">
+        <g class="harbour-ferry__lifeboat harbour-ferry__lifeboat--stern">
+            <path
+                d="M116 165C119 155 130 150 143 151L164 153L171 162L165 173H124Z"
+            ></path>
+            <path
+                class="harbour-ferry__lifeboat-ribs"
+                d="M131 153V171M148 152V172M162 155V170"></path>
+        </g>
+        <g class="harbour-ferry__lifeboat harbour-ferry__lifeboat--bow">
+            <path
+                d="M257 162C261 153 271 149 284 150L305 152L312 161L306 172H265Z"
+            ></path>
+            <path
+                class="harbour-ferry__lifeboat-ribs"
+                d="M273 151V170M290 151V171M304 154V169"></path>
+        </g>
+        <path
+            class="harbour-ferry__davits"
+            d="M108 177V151C108 143 113 138 120 138M175 176V151C175 143 170 139 164 139M249 176V150C249 142 255 137 262 137M317 177V150C317 142 312 138 305 138"
+        ></path>
+    </g>
+
+    <g class="harbour-ferry__deck-details">
+        <g class="harbour-ferry__mast harbour-ferry__mast--stern">
+            <path class="harbour-ferry__mast-pole" d="M91 145L95 35L99 145Z"
+            ></path>
+            <path class="harbour-ferry__mast-crossbar" d="M75 99H114M82 121H108"
+            ></path>
+            <path
+                class="harbour-ferry__rigging"
+                d="M96 46L49 143M96 46L150 142M96 81L73 142M96 81L124 141"
+            ></path>
+            <path
+                class="harbour-ferry__flag harbour-ferry__flag--stern"
+                d="M97 42C84 36 72 39 60 35V53C72 57 84 53 97 59Z"></path>
+            <path
+                class="harbour-ferry__flag-inset"
+                d="M80 41C75 41 70 40 65 39V49C70 51 75 50 80 50Z"></path>
+        </g>
+
+        <g class="harbour-ferry__mast harbour-ferry__mast--bow">
+            <path class="harbour-ferry__mast-pole" d="M337 137L341 22L345 137Z"
+            ></path>
+            <path
+                class="harbour-ferry__mast-crossbar"
+                d="M319 82H363M325 108H357"></path>
+            <path
+                class="harbour-ferry__rigging"
+                d="M342 35L293 137M342 35L398 139M342 72L316 137M342 72L374 137"
+            ></path>
+            <path
+                class="harbour-ferry__flag harbour-ferry__flag--bow"
+                d="M343 29C329 22 316 25 302 20V41C316 46 330 40 343 48Z"
+            ></path>
+            <path
+                class="harbour-ferry__flag-inset"
+                d="M326 28C321 28 315 27 310 25V36C315 38 321 37 326 37Z"
+            ></path>
+        </g>
+
+        <g class="harbour-ferry__radar harbour-ferry__radar--stern">
+            <path d="M71 124H91L88 135H74Z"></path>
+            <path class="harbour-ferry__radar-stem" d="M81 124V113"></path>
+            <path
+                class="harbour-ferry__radar-bar"
+                d="M67 111C76 108 86 108 95 111"></path>
+        </g>
+        <g class="harbour-ferry__radar harbour-ferry__radar--bow">
+            <path d="M349 110H371L368 123H352Z"></path>
+            <path class="harbour-ferry__radar-stem" d="M360 110V95"></path>
+            <path
+                class="harbour-ferry__radar-bar"
+                d="M345 92C355 89 366 89 376 92"></path>
+        </g>
+
+        <path
+            class="harbour-ferry__life-ring"
+            d="M41 196A10 10 0 1 0 61 196A10 10 0 1 0 41 196ZM374 188A10 10 0 1 0 394 188A10 10 0 1 0 374 188Z"
+        ></path>
+        <path
+            class="harbour-ferry__signal-lamps harbour-ferry__fine-detail"
+            d="M67 137H74V144H67ZM116 129H123V136H116ZM289 132H296V139H289ZM390 153H397V160H390Z"
+        ></path>
+    </g>
+
+    <g class="harbour-ferry__paint-texture">
+        <path
+            class="harbour-ferry__paint-wash"
+            d="M42 252C128 247 322 247 399 251M48 293C143 298 321 297 395 291M48 207C139 201 314 202 396 208"
+        ></path>
+        <path
+            class="harbour-ferry__hull-scuffs"
+            d="M55 337C98 343 143 343 185 340M218 347C260 349 305 347 349 342M369 337L402 332"
+        ></path>
+        <path
+            class="harbour-ferry__salt-specks harbour-ferry__fine-detail"
+            d="M77 326H82V329H77ZM137 335H142V338H137ZM190 329H194V332H190ZM270 338H275V341H270ZM323 329H328V332H323ZM381 325H386V328H381Z"
+        ></path>
+    </g>
+</g>

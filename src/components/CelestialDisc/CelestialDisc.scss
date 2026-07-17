@@ -1,0 +1,20 @@
+.celestial-disc__halo,
+.celestial-disc__core {
+    transition:
+        opacity var(--motion-state) ease,
+        fill var(--motion-state) ease;
+    fill: var(--sky-object);
+}
+
+.celestial-disc__craters {
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity var(--motion-state) ease,
+        fill var(--motion-state) ease;
+    fill: var(--sky-base);
+}
+
+html[data-time-state='night'] .celestial-disc__craters {
+    opacity: 0.22;
+}

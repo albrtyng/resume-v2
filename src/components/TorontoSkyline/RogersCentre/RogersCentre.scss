@@ -1,0 +1,154 @@
+.rogers-centre {
+    --dome-night-violet: #9b73eb;
+    --dome-night-lilac: #c5a5ff;
+    fill: var(--skyline-mid);
+}
+
+.rogers-centre__night-aura {
+    opacity: 0;
+    fill: none;
+    stroke: var(--dome-night-violet);
+    stroke-linecap: round;
+    stroke-width: 13;
+}
+
+.rogers-centre__rear-mass,
+.rogers-centre__stadium-wall {
+    transition: fill var(--motion-state) ease;
+    fill: color-mix(in srgb, var(--skyline-mid) 80%, var(--skyline-near));
+}
+
+.rogers-centre__dome-shell {
+    transition: fill var(--motion-state) ease;
+    fill: color-mix(in srgb, var(--skyline-mid) 55%, var(--paper-light));
+}
+
+.rogers-centre__dome-panel {
+    opacity: 0.5;
+    fill: color-mix(in srgb, var(--skyline-mid) 42%, var(--paper-light));
+}
+
+.rogers-centre__dome-panel--two,
+.rogers-centre__dome-panel--four {
+    opacity: 0.28;
+    fill: var(--skyline-mid);
+}
+
+.rogers-centre__dome-seams {
+    opacity: 0.44;
+    fill: none;
+    stroke: var(--skyline-mid);
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
+.rogers-centre__dome-ribs,
+.rogers-centre__dome-highlight,
+.rogers-centre__roof-rings,
+.rogers-centre__facade-seams,
+.rogers-centre__paint-brush {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.rogers-centre__dome-ribs {
+    opacity: 0.34;
+    stroke: var(--skyline-mid);
+    stroke-width: 2.2;
+}
+
+.rogers-centre__dome-highlight {
+    opacity: 0.28;
+    stroke: var(--paper-light);
+    stroke-width: 4;
+}
+
+.rogers-centre__roof-rings {
+    opacity: 0.58;
+    stroke: color-mix(in srgb, var(--skyline-mid) 54%, var(--paper-light));
+    stroke-width: 2.5;
+}
+
+.rogers-centre__roof-cap,
+.rogers-centre__concourse {
+    fill: color-mix(in srgb, var(--skyline-mid) 62%, var(--paper-light));
+}
+
+.rogers-centre__concourse-lights {
+    opacity: var(--window-alpha);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
+.rogers-centre__facade-bays {
+    opacity: calc(0.28 + var(--window-alpha) * 0.5);
+    transition: opacity var(--motion-state) ease;
+    fill: color-mix(in srgb, var(--skyline-mid) 70%, var(--paper-light));
+}
+
+.rogers-centre__facade-seams {
+    opacity: 0.34;
+    stroke: var(--skyline-near);
+    stroke-width: 2;
+}
+
+.rogers-centre__entry-canopies {
+    opacity: 0.72;
+    fill: color-mix(in srgb, var(--skyline-mid) 62%, var(--paper-light));
+}
+
+.rogers-centre__paint-brush {
+    opacity: 0.22;
+    stroke: var(--paper-light);
+    stroke-width: 2.5;
+}
+
+.rogers-centre__ground-shadow {
+    opacity: 0.48;
+    fill: var(--spruce-deep);
+}
+
+html[data-time-state='midday'] .rogers-centre__dome-shell {
+    fill: color-mix(in srgb, var(--paper-light) 68%, var(--skyline-mid));
+}
+
+html[data-time-state='night'] .rogers-centre__dome-shell {
+    fill: color-mix(in srgb, var(--dome-night-violet) 68%, var(--skyline-mid));
+}
+
+html[data-time-state='night'] .rogers-centre__dome-seams {
+    opacity: 0.86;
+    stroke: var(--dome-night-lilac);
+}
+
+html[data-time-state='night'] .rogers-centre__dome-panel {
+    opacity: 0.7;
+    fill: color-mix(in srgb, var(--dome-night-violet) 78%, var(--paper-light));
+}
+
+html[data-time-state='night'] .rogers-centre__dome-panel--two,
+html[data-time-state='night'] .rogers-centre__dome-panel--four {
+    opacity: 0.48;
+    fill: color-mix(in srgb, var(--dome-night-violet) 76%, var(--skyline-mid));
+}
+
+html[data-time-state='night'] .rogers-centre__dome-ribs,
+html[data-time-state='night'] .rogers-centre__roof-rings,
+html[data-time-state='night'] .rogers-centre__dome-highlight {
+    opacity: 0.82;
+    stroke: var(--dome-night-lilac);
+}
+
+html[data-time-state='night'] .rogers-centre__night-aura {
+    opacity: 0.42;
+    filter: drop-shadow(0 0 7px rgba(163, 113, 255, 0.72));
+}
+
+html[data-time-state='night'] .rogers-centre__dome {
+    filter: drop-shadow(0 0 6px rgba(173, 125, 255, 0.62));
+}
+
+html[data-time-state='night'] .rogers-centre__facade-bays {
+    fill: color-mix(in srgb, var(--window) 72%, var(--dome-night-violet));
+}
