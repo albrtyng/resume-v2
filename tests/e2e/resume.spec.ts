@@ -18,6 +18,13 @@ const seawallColors = {
     night: 'rgb(35, 58, 58)',
 } as const;
 
+const themeColors = {
+    dawn: '#a7bdc8',
+    midday: '#7fc4d6',
+    dusk: '#668aa6',
+    night: '#152941',
+} as const;
+
 const skylineBoundaryScenarios = [
     { hour: 4, state: 'night' },
     { hour: 5, state: 'dawn' },
@@ -1481,6 +1488,7 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
     const brand = page.getByRole('link', {
         name: /AY Albert Yang, back to top/i,
     });
+    const skipLink = page.getByRole('link', { name: /skip to experience/i });
 
     const expectDrawn = async (control: typeof explore) => {
         const stroke = control.locator('.marker-outline__stroke');
@@ -1546,17 +1554,9 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
         await page.mouse.up();
     }
 
-    await page.locator('body').click({ position: { x: 1, y: 1 } });
-    for (
-        let step = 0;
-        step < 4 &&
-        !(await brand.evaluate(
-            (element) => element === document.activeElement,
-        ));
-        step += 1
-    ) {
-        await page.keyboard.press('Tab');
-    }
+    await skipLink.focus();
+    await expect(skipLink).toBeFocused();
+    await page.keyboard.press('Tab');
     await expect(brand).toBeFocused();
     await expectDrawn(brand);
 
@@ -2049,6 +2049,10 @@ test.describe('skyline time states', () => {
         const root = page.locator('html');
         await expect(root).toHaveAttribute('data-time-state', 'midday');
         await expect(root).toHaveCSS('--sky-base', '#7fc4d6');
+        await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+            'content',
+            themeColors.midday,
+        );
         await expect(page.locator('.hero__time-label:visible')).toHaveText(
             'Midday',
         );
@@ -2120,6 +2124,9 @@ test.describe('skyline time states', () => {
                 'data-time-state',
                 state,
             );
+            await expect(
+                page.locator('meta[name="theme-color"]'),
+            ).toHaveAttribute('content', themeColors[state]);
             await expect(
                 control.locator('.hero__time-label:visible'),
             ).toHaveText(state[0].toUpperCase() + state.slice(1));

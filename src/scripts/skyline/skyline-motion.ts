@@ -2,6 +2,7 @@ import {
     getMillisecondsUntilNextSkylineBoundary,
     getNextSkylineState,
     getSkylineState,
+    SKYLINE_THEME_COLORS,
     type SkylineState,
 } from './time-state';
 
@@ -60,8 +61,12 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
     const scrollSurface = scene.parentElement ?? scene;
     const reducedMotionQuery = window.matchMedia(REDUCED_MOTION_QUERY);
     const rootElement = document.documentElement;
+    const themeColor = document.querySelector<HTMLMetaElement>(
+        'meta[name="theme-color"]',
+    );
     const previousSceneTimeState = scene.dataset.timeState;
     const previousDocumentTimeState = rootElement.dataset.timeState;
+    const previousThemeColor = themeColor?.getAttribute('content') ?? null;
     const previousMotionState = scene.dataset.motion;
     const previousAccessibleTimeLabelText =
         accessibleTimeLabel?.textContent ?? null;
@@ -174,6 +179,7 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
     function applyTimeState(state: SkylineState) {
         sceneElement.dataset.timeState = state;
         rootElement.dataset.timeState = state;
+        themeColor?.setAttribute('content', SKYLINE_THEME_COLORS[state]);
         if (accessibleTimeLabel) {
             accessibleTimeLabel.textContent = TIME_LABELS[state];
         }
@@ -277,6 +283,14 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
             delete rootElement.dataset.timeState;
         } else {
             rootElement.dataset.timeState = previousDocumentTimeState;
+        }
+
+        if (themeColor) {
+            if (previousThemeColor === null) {
+                themeColor.removeAttribute('content');
+            } else {
+                themeColor.setAttribute('content', previousThemeColor);
+            }
         }
 
         if (previousMotionState === undefined) {

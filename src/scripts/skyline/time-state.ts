@@ -24,6 +24,17 @@ export const SKYLINE_STATE_SEQUENCE: readonly SkylineState[] = [
 ];
 
 /**
+ * Browser-chrome colors for each skyline state.
+ * Keep these values aligned with `--sky-base` in `styles/_tokens.scss`.
+ */
+export const SKYLINE_THEME_COLORS = {
+    dawn: '#a7bdc8',
+    midday: '#7fc4d6',
+    dusk: '#668aa6',
+    night: '#152941',
+} as const satisfies Record<SkylineState, string>;
+
+/**
  * Build the tiny blocking bootstrap used in the document head.
  *
  * A first request does not include the browser's timezone, so the server
@@ -32,8 +43,9 @@ export const SKYLINE_STATE_SEQUENCE: readonly SkylineState[] = [
  */
 export function getSkylineStateBootstrapScript(): string {
     const { dawn, midday, dusk, night } = SKYLINE_STATE_BOUNDARIES;
+    const themeColors = JSON.stringify(SKYLINE_THEME_COLORS);
 
-    return `(function(){var hour=new Date().getHours();document.documentElement.dataset.timeState=hour>=${night}||hour<${dawn}?'night':hour<${midday}?'dawn':hour<${dusk}?'midday':'dusk';})();`;
+    return `(function(){var hour=new Date().getHours();var state=hour>=${night}||hour<${dawn}?'night':hour<${midday}?'dawn':hour<${dusk}?'midday':'dusk';document.documentElement.dataset.timeState=state;var themeColor=document.querySelector('meta[name="theme-color"]');if(themeColor)themeColor.content=${themeColors}[state];})();`;
 }
 
 /** Return the next art-directed state in the interactive lighting cycle. */
