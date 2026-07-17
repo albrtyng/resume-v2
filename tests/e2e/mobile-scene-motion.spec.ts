@@ -17,6 +17,73 @@ async function readAnimationTime(
     }, animationName);
 }
 
+const mobileGlassTreatments = {
+    dawn: {
+        backdropFilter: 'blur(5px) saturate(0.98)',
+        backgroundColor: 'rgba(251, 244, 229, 0.28)',
+    },
+    midday: {
+        backdropFilter: 'blur(4px) saturate(1.06)',
+        backgroundColor: 'rgba(251, 244, 229, 0.26)',
+    },
+    dusk: {
+        backdropFilter: 'blur(4.5px) saturate(0.96)',
+        backgroundColor: 'rgba(251, 244, 229, 0.3)',
+    },
+    night: {
+        backdropFilter: 'blur(6px) saturate(0.88)',
+        backgroundColor: 'rgba(31, 55, 72, 0.18)',
+    },
+} as const;
+
+test('refreshes the mobile hero glass when cycling local light', async ({
+    page,
+    isMobile,
+}) => {
+    const viewportWidth = page.viewportSize()?.width ?? 0;
+    test.skip(
+        !isMobile || viewportWidth >= 40 * 16,
+        'The glass panel is visible only on compact touch layouts.',
+    );
+
+    await page.clock.setFixedTime(new Date(2026, 6, 14, 2, 0, 0));
+    await page.goto('/');
+
+    const root = page.locator('html');
+    const control = page.locator('[data-time-control]');
+    const panel = page.locator('[data-hero-copy-panel]');
+
+    await expect(panel).toBeVisible();
+
+    const expectGlassTreatment = async (
+        state: keyof typeof mobileGlassTreatments,
+    ) => {
+        await expect(root).toHaveAttribute('data-time-state', state);
+        await expect
+            .poll(() =>
+                panel.evaluate((element) => {
+                    const style = getComputedStyle(element);
+
+                    return {
+                        backdropFilter:
+                            style.backdropFilter ||
+                            style.getPropertyValue('-webkit-backdrop-filter'),
+                        backgroundColor: style.backgroundColor,
+                    };
+                }),
+            )
+            .toEqual(mobileGlassTreatments[state]);
+        expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    };
+
+    await expectGlassTreatment('night');
+
+    for (const state of ['dawn', 'midday', 'dusk'] as const) {
+        await control.click();
+        await expectGlassTreatment(state);
+    }
+});
+
 test('keeps the compact skyline streetcar and water moving', async ({
     page,
     isMobile,
@@ -54,10 +121,32 @@ test('keeps the compact skyline streetcar and water moving', async ({
                 : [];
         const timing = animation?.effect?.getComputedTiming();
 
+        const animatedElement = element as SVGGraphicsElement;
+        const inlineAnimation = animatedElement.style.animation;
+        const inlineTransform = animatedElement.style.transform;
+        const endpointBounds = keyframes.map((keyframe) => {
+            animatedElement.style.animation = 'none';
+            animatedElement.style.transform = String(
+                keyframe.transform ?? 'none',
+            );
+
+            const bounds = animatedElement.getBoundingClientRect();
+
+            return {
+                left: bounds.left,
+                right: bounds.right,
+            };
+        });
+
+        animatedElement.style.animation = inlineAnimation;
+        animatedElement.style.transform = inlineTransform;
+
         return {
             duration: timing?.duration ?? null,
             easing: timing?.easing ?? null,
             iterations: timing?.iterations ?? null,
+            viewportWidth: window.innerWidth,
+            endpointBounds,
             positions: keyframes.map((keyframe) => {
                 const matrix = new DOMMatrixReadOnly(
                     String(keyframe.transform ?? 'none'),
@@ -71,9 +160,13 @@ test('keeps the compact skyline streetcar and water moving', async ({
     expect(journey.easing).toBe('linear');
     expect(journey.iterations).toBe(Infinity);
     expect(journey.positions).toEqual([
-        { x: 220, y: -70 },
-        { x: 1120, y: -70 },
+        { x: -80, y: -70 },
+        { x: 1600, y: -70 },
     ]);
+    expect(journey.endpointBounds[0]?.right).toBeLessThanOrEqual(0);
+    expect(journey.endpointBounds[1]?.left).toBeGreaterThanOrEqual(
+        journey.viewportWidth,
+    );
 
     const firstStreetcarTime = await readAnimationTime(
         streetcar,
