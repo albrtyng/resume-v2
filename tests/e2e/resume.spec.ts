@@ -2070,7 +2070,33 @@ test.describe('skyline time states', () => {
         await gotoAtLocalHour(page, 12);
 
         const control = page.locator('[data-time-control]');
+        const header = page.locator('[data-site-header]');
+        const hero = page.locator('#hero');
         const scene = page.locator('[data-skyline-scene]');
+        await expect(header).not.toHaveAttribute('data-scrolled', '');
+        const paletteTransitions = await page.evaluate(() => {
+            const getBackgroundTransition = (element: Element) => {
+                const style = getComputedStyle(element);
+                const properties = style.transitionProperty.split(', ');
+                const durations = style.transitionDuration.split(', ');
+                const index = properties.indexOf('background-color');
+
+                return durations[index % durations.length];
+            };
+
+            const header = document.querySelector('[data-site-header]');
+            const hero = document.querySelector('#hero');
+            if (!header || !hero) throw new Error('Missing palette surfaces');
+
+            return {
+                header: getBackgroundTransition(header),
+                hero: getBackgroundTransition(hero),
+            };
+        });
+
+        expect(paletteTransitions.header).toEqual(paletteTransitions.hero);
+        expect(paletteTransitions.hero).toBe('0.9s');
+        await expect(header).toHaveCSS('backdrop-filter', /blur\(20px\)/);
         await expect(control.locator('.hero__time-label:visible')).toHaveText(
             'Midday',
         );
@@ -2081,6 +2107,14 @@ test.describe('skyline time states', () => {
 
         for (const state of ['dusk', 'night', 'dawn', 'midday'] as const) {
             await control.click();
+            await expect(header, state).toHaveCSS(
+                'backdrop-filter',
+                /blur\(20px\)/,
+            );
+            await expect(hero, state).toHaveCSS(
+                'transition-duration',
+                /0\.9s/,
+            );
             await expect(scene).toHaveAttribute('data-time-state', state);
             await expect(page.locator('html')).toHaveAttribute(
                 'data-time-state',
