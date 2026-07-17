@@ -81,8 +81,15 @@ html[data-initial-header-scroll-y] {
 
 html[data-initial-header-surface='paper']
     .site-header:not([data-navigation-ready]),
-html:has(#experience:target) .site-header:not([data-navigation-ready]),
-html:has(#capabilities:target) .site-header:not([data-navigation-ready]) {
+html:has(
+        :is(
+            #experience,
+            #experience-title,
+            #capabilities,
+            #capabilities-title
+        ):target
+    )
+    .site-header:not([data-navigation-ready]) {
     --header-surface-background: var(--header-paper-bg, var(--paper));
     --header-surface-foreground: var(--header-paper-ink, var(--ink));
     --header-surface-tint: 76%;
@@ -90,7 +97,8 @@ html:has(#capabilities:target) .site-header:not([data-navigation-ready]) {
 
 html[data-initial-header-surface='contact']
     .site-header:not([data-navigation-ready]),
-html:has(#contact:target) .site-header:not([data-navigation-ready]) {
+html:has(:is(#contact, #contact-title):target)
+    .site-header:not([data-navigation-ready]) {
     --header-surface-background: var(--header-contact-bg, var(--spruce));
     --header-surface-foreground: var(--header-contact-ink, var(--paper-light));
     --header-surface-tint: 68%;
@@ -102,9 +110,17 @@ html:has(#contact:target) .site-header:not([data-navigation-ready]) {
 
 .site-header[data-scrolled],
 html[data-initial-header-collapsed] .site-header,
-html:has(#experience:target) .site-header:not([data-navigation-ready]),
-html:has(#capabilities:target) .site-header:not([data-navigation-ready]),
-html:has(#contact:target) .site-header:not([data-navigation-ready]) {
+html:has(
+        :is(
+            #experience,
+            #experience-title,
+            #capabilities,
+            #capabilities-title,
+            #contact,
+            #contact-title
+        ):target
+    )
+    .site-header:not([data-navigation-ready]) {
     top: clamp(0.55rem, 1.2vw, 0.8rem);
     right: var(--header-collapse-inset);
     left: var(--header-collapse-inset);

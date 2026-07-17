@@ -45,7 +45,7 @@ export function getSkylineStateBootstrapScript(): string {
     const { dawn, midday, dusk, night } = SKYLINE_STATE_BOUNDARIES;
     const themeColors = JSON.stringify(SKYLINE_THEME_COLORS);
 
-    return `(function(){var hour=new Date().getHours();var state=hour>=${night}||hour<${dawn}?'night':hour<${midday}?'dawn':hour<${dusk}?'midday':'dusk';document.documentElement.dataset.timeState=state;var themeColor=document.querySelector('meta[name="theme-color"]');if(themeColor)themeColor.content=${themeColors}[state];})();`;
+    return `(function(){var root=document.documentElement;var hour=new Date().getHours();var state=hour>=${night}||hour<${dawn}?'night':hour<${midday}?'dawn':hour<${dusk}?'midday':'dusk';root.dataset.timeState=state;var themeColor=document.querySelector('meta[name="theme-color"]');if(themeColor)themeColor.content=${themeColors}[state];})();`;
 }
 
 /** Return the next art-directed state in the interactive lighting cycle. */

@@ -1,11 +1,13 @@
 .contact-footer {
+    --contact-viewport-height: 100dvh;
+
     position: relative;
     transition:
         background-color var(--motion-state) ease,
         color var(--motion-state) ease;
     background: var(--footer-sky, var(--spruce));
     isolation: isolate;
-    height: max(45rem, 100svh);
+    height: max(45rem, var(--contact-viewport-height));
     overflow: clip;
     color: var(--footer-ink, var(--paper));
 }
@@ -16,13 +18,18 @@
     right: 0;
     bottom: 0;
     left: 0;
-    height: 100svh;
+    height: min(100%, var(--contact-viewport-height));
 }
 
 .contact-footer__panorama {
     z-index: 0;
     overflow: hidden;
     pointer-events: none;
+}
+
+html[data-js='true'] .contact-footer__panorama {
+    content-visibility: auto;
+    contain-intrinsic-size: auto var(--contact-viewport-height);
 }
 
 .contact-footer__sky-field {
@@ -80,8 +87,10 @@
 
 .contact-footer__links {
     display: grid;
+    grid-template-columns: repeat(2, max-content);
+    column-gap: 1.25rem;
+    row-gap: 0.3rem;
     justify-items: start;
-    gap: 0.35rem;
     margin-top: clamp(0.9rem, 2.3vh, 1.25rem);
     border-top: 1px solid
         color-mix(in srgb, var(--footer-ink, var(--paper)) 28%, transparent);
@@ -117,6 +126,7 @@
 }
 
 .contact-footer__email {
+    grid-column: 1 / -1;
     max-width: 100%;
     font-size: clamp(1.8rem, 3.2vw, 3rem);
     line-height: 1;
@@ -125,7 +135,7 @@
     overflow-wrap: anywhere;
 }
 
-.contact-footer__linkedin {
+.contact-footer__profile-link {
     font-weight: 500;
     font-size: clamp(0.95rem, 1.35vw, 1.1rem);
 }

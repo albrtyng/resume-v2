@@ -1,10 +1,15 @@
-let cleanupNavigation: (() => void) | undefined;
+import {
+    getPageThemeColor,
+    PAGE_SURFACE_BY_HASH,
+    type PageSurface,
+} from './page-theme';
+import { type SkylineState } from './skyline/time-state';
 
-type HeaderSurface = 'hero' | 'paper' | 'contact';
+let cleanupNavigation: (() => void) | undefined;
 
 interface SurfaceSection {
     element: HTMLElement;
-    surface: HeaderSurface;
+    surface: PageSurface;
 }
 
 function setupNavigationMotion(): () => void {
@@ -15,12 +20,10 @@ function setupNavigationMotion(): () => void {
     if (!header) return () => {};
 
     const root = document.documentElement;
-    const hashSurfaces: Record<string, HeaderSurface> = {
-        '#experience': 'paper',
-        '#capabilities': 'paper',
-        '#contact': 'contact',
-    };
-    const hashSurface = hashSurfaces[window.location.hash];
+    const themeColor = document.querySelector<HTMLMetaElement>(
+        'meta[name="theme-color"]',
+    );
+    const hashSurface = PAGE_SURFACE_BY_HASH[window.location.hash];
 
     if (!root.dataset.initialHeaderSurface && hashSurface) {
         root.dataset.initialHeaderSurface = hashSurface;
@@ -28,12 +31,12 @@ function setupNavigationMotion(): () => void {
     }
 
     const initialSurfaceValue = root.dataset.initialHeaderSurface;
-    const initialSurface: HeaderSurface | undefined = [
+    const initialSurface: PageSurface | undefined = [
         'hero',
         'paper',
         'contact',
     ].includes(initialSurfaceValue ?? '')
-        ? (initialSurfaceValue as HeaderSurface)
+        ? (initialSurfaceValue as PageSurface)
         : undefined;
     const initialCollapsed = root.hasAttribute('data-initial-header-collapsed');
     const initialScrollY = Number.parseFloat(
@@ -65,13 +68,40 @@ function setupNavigationMotion(): () => void {
 
     let frame = 0;
     let hasInitialState = Boolean(initialSurface);
-    let activeSurface: HeaderSurface = 'hero';
+    let hasPaintedInitialState = false;
+    let activeSurface: PageSurface = 'hero';
     let persistedCollapsed: boolean | undefined;
-    let persistedSurface: HeaderSurface | undefined;
+    let persistedSurface: PageSurface | undefined;
 
-    const getSurfaceAtHeader = (): HeaderSurface => {
-        const headerBounds = header.getBoundingClientRect();
-        const probeY = Math.max(headerBounds.top + headerBounds.height / 2, 1);
+    const syncPageSurface = (surface: PageSurface) => {
+        root.dataset.pageSurface = surface;
+        themeColor?.setAttribute(
+            'content',
+            getPageThemeColor(
+                (root.dataset.timeState ?? 'dusk') as SkylineState,
+                surface,
+            ),
+        );
+    };
+
+    const getSurfaceAtHeader = (): PageSurface => {
+        // Let the incoming surface overlap the viewport edge by two pixels so
+        // browser chrome never changes before the page visibly does.
+        const probeY = -2;
+        const hashSurfaceAtEdge = PAGE_SURFACE_BY_HASH[window.location.hash];
+        const hashTarget = hashSurfaceAtEdge
+            ? document.querySelector<HTMLElement>(window.location.hash)
+            : null;
+
+        if (
+            hashSurfaceAtEdge &&
+            hashTarget &&
+            hashTarget.getBoundingClientRect().top >= probeY &&
+            hashTarget.getBoundingClientRect().top <= 0
+        ) {
+            return hashSurfaceAtEdge;
+        }
+
         const contactSection = surfaceSections.find(
             (section) => section.surface === 'contact',
         );
@@ -91,7 +121,7 @@ function setupNavigationMotion(): () => void {
             return 'contact';
         }
 
-        let surface: HeaderSurface = 'hero';
+        let surface: PageSurface = 'hero';
 
         for (const section of surfaceSections) {
             const bounds = section.element.getBoundingClientRect();
@@ -104,7 +134,7 @@ function setupNavigationMotion(): () => void {
     };
 
     const persistNavigationState = (
-        surface: HeaderSurface,
+        surface: PageSurface,
         collapsed: boolean,
     ) => {
         const currentState =
@@ -141,19 +171,18 @@ function setupNavigationMotion(): () => void {
         frame = 0;
         const detectedSurface = getSurfaceAtHeader();
         const detectedCollapsed = window.scrollY > 0;
-        const initialStateMatches =
-            initialSurface === detectedSurface &&
-            initialCollapsed === detectedCollapsed;
+        const holdInitialState = hasInitialState && !hasPaintedInitialState;
 
-        if (hasInitialState && initialStateMatches) {
+        if (holdInitialState) {
+            hasPaintedInitialState = true;
+        } else if (hasInitialState) {
             clearInitialHeaderState();
-        } else if (!hasInitialState) {
-            header.toggleAttribute('data-navigation-ready', true);
         }
 
-        const nextCollapsed = hasInitialState
-            ? initialCollapsed
-            : detectedCollapsed;
+        const nextCollapsed =
+            hasInitialState && initialSurface
+                ? initialCollapsed
+                : detectedCollapsed;
 
         header.toggleAttribute('data-scrolled', nextCollapsed);
 
@@ -165,6 +194,7 @@ function setupNavigationMotion(): () => void {
         if (nextSurface !== activeSurface) {
             activeSurface = nextSurface;
             header.dataset.headerSurface = nextSurface;
+            syncPageSurface(nextSurface);
         }
 
         if (
@@ -173,6 +203,11 @@ function setupNavigationMotion(): () => void {
         ) {
             persistNavigationState(nextSurface, nextCollapsed);
         }
+
+        if (!hasInitialState) {
+            header.toggleAttribute('data-navigation-ready', true);
+        }
+        if (holdInitialState) scheduleUpdate();
     };
 
     const scheduleUpdate = () => {
@@ -181,15 +216,7 @@ function setupNavigationMotion(): () => void {
     };
 
     const persistCurrentNavigationState = () => {
-        const currentSurface =
-            hasInitialState && initialSurface
-                ? initialSurface
-                : getSurfaceAtHeader();
-        const currentCollapsed = hasInitialState
-            ? initialCollapsed
-            : window.scrollY > 0;
-
-        persistNavigationState(currentSurface, currentCollapsed);
+        persistNavigationState(getSurfaceAtHeader(), window.scrollY > 0);
     };
 
     const handleHashChange = () => {
@@ -216,6 +243,7 @@ function setupNavigationMotion(): () => void {
         header.removeAttribute('data-scrolled');
         header.removeAttribute('data-navigation-ready');
         header.dataset.headerSurface = 'hero';
+        syncPageSurface('hero');
     };
 }
 

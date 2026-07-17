@@ -133,3 +133,8 @@ Do not add Jest solely for this project. Add unit tests only when a real unit-te
 Treat requests as outcomes rather than rigid implementation checklists. Inspect the existing page, form a visual hypothesis, implement a coherent version, test it in a real browser, and iterate on the largest quality problems. Do not stop at the first passing build if the result is visually generic, poorly composed, inaccessible, or slow.
 
 Make routine implementation decisions independently. Ask for clarification only when a missing personal fact would materially change the content. Preserve truthful content and working paths, but feel free to change architecture, typography, illustration technique, animation, and information hierarchy when that improves the finished experience.
+
+## Worktrees
+
+- Create all project worktrees under `.worktrees/` within the repository root.
+- Never create project worktrees as sibling directories outside the repository.
