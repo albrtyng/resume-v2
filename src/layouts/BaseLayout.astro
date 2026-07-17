@@ -14,13 +14,55 @@ const {
 
 const canonicalURL = 'https://albertyang.ca/';
 const skylineStateBootstrapScript = getSkylineStateBootstrapScript();
+const initialHeaderSurfaceBootstrapScript = `
+    try {
+        const savedHeader = history.state?.portfolioHeader;
+        const hashSurface = {
+            '#experience': 'paper',
+            '#capabilities': 'paper',
+            '#contact': 'contact',
+        }[window.location.hash];
+        const savedSurface = ['hero', 'paper', 'contact'].includes(
+            savedHeader?.surface,
+        )
+            ? savedHeader.surface
+            : null;
+        const savedScrollY = Number.isFinite(savedHeader?.scrollY)
+            ? Math.max(savedHeader.scrollY, 0)
+            : null;
+        const surface = hashSurface ?? savedSurface;
+        const collapsed =
+            hashSurface
+                ? true
+                : typeof savedHeader?.collapsed === 'boolean'
+                ? savedHeader.collapsed
+                : false;
+
+        if (surface) {
+            document.documentElement.dataset.initialHeaderSurface = surface;
+        }
+
+        if (!hashSurface && savedScrollY) {
+            document.documentElement.dataset.initialHeaderScrollY =
+                String(savedScrollY);
+        }
+
+        document.documentElement.toggleAttribute(
+            'data-initial-header-collapsed',
+            collapsed,
+        );
+    } catch {
+        // The semantic header remains a complete hero-state fallback.
+    }
+`;
 ---
 
 <!doctype html>
 <html lang="en" data-time-state="dusk">
     <head>
         <meta charset="UTF-8" />
-        <script is:inline set:html={skylineStateBootstrapScript}></script>
+        <script is:inline set:html={skylineStateBootstrapScript} />
+        <script is:inline set:html={initialHeaderSurfaceBootstrapScript} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={description} />
         <meta name="theme-color" content="#668aa6" />

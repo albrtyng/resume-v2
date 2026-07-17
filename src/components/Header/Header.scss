@@ -19,6 +19,7 @@
     --header-surface-background: var(--header-hero-bg, var(--sky-base));
     --header-surface-foreground: var(--header-hero-ink, var(--hero-ink));
     --header-surface-tint: 64%;
+    --header-surface-transition-duration: 360ms;
 
     display: grid;
     position: fixed;
@@ -34,10 +35,10 @@
         right 720ms var(--header-spring),
         left 720ms var(--header-spring),
         min-height 720ms var(--header-spring),
-        border-color 360ms ease,
+        border-color var(--header-surface-transition-duration) ease,
         border-radius 720ms var(--header-spring),
-        color 360ms ease,
-        background-color 360ms ease;
+        color var(--header-surface-transition-duration) ease,
+        background-color var(--header-surface-transition-duration) ease;
     box-shadow: none;
     border: 1px solid transparent;
     border-radius: 0;
@@ -64,11 +65,44 @@
     --header-surface-tint: 68%;
 }
 
+.site-header:not([data-navigation-ready]) {
+    transition: none;
+}
+
+html[data-initial-header-surface] .site-header {
+    --header-surface-transition-duration: 0ms;
+}
+
+html[data-initial-header-scroll-y] {
+    scroll-behavior: auto;
+}
+
+html[data-initial-header-surface='paper']
+    .site-header:not([data-navigation-ready]),
+html:has(#experience:target) .site-header:not([data-navigation-ready]),
+html:has(#capabilities:target) .site-header:not([data-navigation-ready]) {
+    --header-surface-background: var(--header-paper-bg, var(--paper));
+    --header-surface-foreground: var(--header-paper-ink, var(--ink));
+    --header-surface-tint: 76%;
+}
+
+html[data-initial-header-surface='contact']
+    .site-header:not([data-navigation-ready]),
+html:has(#contact:target) .site-header:not([data-navigation-ready]) {
+    --header-surface-background: var(--header-contact-bg, var(--spruce));
+    --header-surface-foreground: var(--header-contact-ink, var(--paper-light));
+    --header-surface-tint: 68%;
+}
+
 .site-header :focus-visible {
     outline-color: var(--header-surface-foreground);
 }
 
-.site-header[data-scrolled] {
+.site-header[data-scrolled],
+html[data-initial-header-collapsed] .site-header,
+html:has(#experience:target) .site-header:not([data-navigation-ready]),
+html:has(#capabilities:target) .site-header:not([data-navigation-ready]),
+html:has(#contact:target) .site-header:not([data-navigation-ready]) {
     top: clamp(0.55rem, 1.2vw, 0.8rem);
     right: var(--header-collapse-inset);
     left: var(--header-collapse-inset);

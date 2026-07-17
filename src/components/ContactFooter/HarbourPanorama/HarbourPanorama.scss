@@ -127,6 +127,8 @@
 }
 
 .harbour-panorama__wave--far {
+    animation: harbour-wave-far 17s ease-in-out -7s infinite alternate;
+    animation-play-state: paused;
     opacity: 0.17;
     stroke-width: 2.5;
 }
@@ -137,6 +139,8 @@
 }
 
 .harbour-panorama__wave--near {
+    animation: harbour-wave-near 21s ease-in-out -12s infinite alternate;
+    animation-play-state: paused;
     opacity: 0.29;
     stroke-width: 4.5;
 }
@@ -195,16 +199,6 @@
 .contact-footer[data-contact-motion='full'] .harbour-panorama__ferry-route {
     animation: harbour-ferry-crossing var(--harbour-ferry-duration) linear
         var(--harbour-ferry-delay) infinite;
-    animation-play-state: paused;
-}
-
-.contact-footer[data-contact-motion='full'] .harbour-panorama__wave--far {
-    animation: harbour-wave-far 17s ease-in-out -7s infinite alternate;
-    animation-play-state: paused;
-}
-
-.contact-footer[data-contact-motion='full'] .harbour-panorama__wave--near {
-    animation: harbour-wave-near 21s ease-in-out -12s infinite alternate;
     animation-play-state: paused;
 }
 
@@ -413,11 +407,11 @@ html[data-time-state='night']
         animation-name: harbour-ferry-crossing-compact;
     }
 
-    .contact-footer[data-contact-motion='full'] .harbour-panorama__wave--far {
+    .harbour-panorama__wave--far {
         animation-duration: 23s;
     }
 
-    .contact-footer[data-contact-motion='full'] .harbour-panorama__wave--near {
+    .harbour-panorama__wave--near {
         animation-duration: 28s;
     }
 

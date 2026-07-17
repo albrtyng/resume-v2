@@ -420,6 +420,103 @@ test('switches the header to the contact surface after Say hello scrolls', async
     await expect(contact.locator(contactLinks.email)).toBeVisible();
 });
 
+test('paints the collapsed section header before navigation enhancement on direct hash visits', async ({
+    page,
+}) => {
+    for (const { hash, surface } of [
+        { hash: '#experience', surface: 'paper' },
+        { hash: '#capabilities', surface: 'paper' },
+        { hash: '#contact', surface: 'contact' },
+    ] as const) {
+        await page.goto(`/?initial=${hash.slice(1)}${hash}`);
+
+        const header = page.locator('[data-site-header]');
+        await expect(header).toHaveAttribute('data-header-surface', surface);
+        await expect(header).toHaveAttribute('data-navigation-ready', '');
+        expect(await page.evaluate(() => window.scrollY), hash).toBeGreaterThan(
+            0,
+        );
+
+        const states = await header.evaluate((element, initialSurface) => {
+            const readState = () => {
+                const style = getComputedStyle(element);
+                const bounds = element.getBoundingClientRect();
+
+                return {
+                    background: style.backgroundColor,
+                    borderRadius: style.borderRadius,
+                    bounds: {
+                        left: bounds.left,
+                        right: bounds.right,
+                        top: bounds.top,
+                    },
+                    foreground: style.color,
+                    minHeight: style.minHeight,
+                    surface: style
+                        .getPropertyValue('--header-surface-background')
+                        .trim(),
+                    surfaceForeground: style
+                        .getPropertyValue('--header-surface-foreground')
+                        .trim(),
+                    tint: style
+                        .getPropertyValue('--header-surface-tint')
+                        .trim(),
+                };
+            };
+
+            const enhanced = readState();
+
+            (element as HTMLElement).style.transition = 'none';
+            document.documentElement.dataset.initialHeaderSurface =
+                initialSurface;
+            document.documentElement.toggleAttribute(
+                'data-initial-header-collapsed',
+                true,
+            );
+            element.setAttribute('data-header-surface', 'hero');
+            element.removeAttribute('data-scrolled');
+            element.removeAttribute('data-navigation-ready');
+
+            return {
+                enhanced,
+                firstPaint: readState(),
+            };
+        }, surface);
+
+        expect(states.firstPaint, hash).toEqual(states.enhanced);
+    }
+});
+
+test('persists the header and exact scroll position across reloads', async ({
+    page,
+}) => {
+    await page.goto('/');
+
+    const header = page.locator('[data-site-header]');
+    await scrollSectionUnderHeader(page, '#capabilities');
+    await expect(header).toHaveAttribute('data-header-surface', 'paper');
+    await expect(header).toHaveAttribute('data-scrolled', '');
+
+    const restoredScrollY = await page.evaluate(() => window.scrollY);
+
+    await expect
+        .poll(() => page.evaluate(() => history.state?.portfolioHeader ?? null))
+        .toEqual({
+            collapsed: true,
+            scrollY: restoredScrollY,
+            surface: 'paper',
+        });
+
+    await page.reload();
+
+    await expect(header).toHaveAttribute('data-header-surface', 'paper');
+    await expect(header).toHaveAttribute('data-scrolled', '');
+    expect(await page.evaluate(() => window.scrollY)).toBeCloseTo(
+        restoredScrollY,
+        0,
+    );
+});
+
 test('keeps the useful footer content fully visible in the sky at the true page end', async ({
     page,
 }) => {
@@ -2536,6 +2633,65 @@ test('keeps the ferry stationary between contact-hash first paint and motion sta
             continuity!.fallback.reflection - continuity!.animated.reflection,
         ),
     ).toBeLessThanOrEqual(0.75);
+});
+
+test('keeps animated wave lines stationary between contact-hash first paint and motion startup', async ({
+    page,
+}) => {
+    await page.goto('/#contact');
+
+    const footer = page.locator('[data-contact-footer]');
+    const panorama = footer.locator('[data-contact-panorama]');
+
+    await expect(footer).toHaveAttribute('data-contact-motion', 'full');
+    await expect(footer).toHaveAttribute('data-contact-active', '');
+
+    const continuity = await panorama.evaluate((element) => {
+        const footer = element.closest<HTMLElement>('[data-contact-footer]');
+        const waves = Array.from(
+            element.querySelectorAll<SVGPathElement>(
+                '.harbour-panorama__wave--far, .harbour-panorama__wave--near',
+            ),
+        );
+        if (!footer || waves.length !== 2) return null;
+
+        const readTranslateX = (target: Element) =>
+            new DOMMatrixReadOnly(getComputedStyle(target).transform).m41;
+        const animated = waves.map((wave) => {
+            const animation = wave
+                .getAnimations()
+                .find((candidate) => candidate instanceof CSSAnimation);
+
+            if (animation) {
+                animation.pause();
+                animation.currentTime = 0;
+            }
+
+            return {
+                className: wave.getAttribute('class'),
+                hasAnimation: Boolean(animation),
+                translateX: readTranslateX(wave),
+            };
+        });
+
+        footer.removeAttribute('data-contact-motion');
+
+        return animated.map((wave, index) => ({
+            ...wave,
+            fallbackTranslateX: readTranslateX(waves[index]),
+        }));
+    });
+
+    expect(continuity).not.toBeNull();
+    expect(continuity).toHaveLength(2);
+
+    for (const wave of continuity!) {
+        expect(wave.hasAnimation, wave.className ?? 'wave').toBe(true);
+        expect(
+            Math.abs(wave.fallbackTranslateX - wave.translateX),
+            wave.className ?? 'wave',
+        ).toBeLessThanOrEqual(0.1);
+    }
 });
 
 test.describe('with reduced motion', () => {
