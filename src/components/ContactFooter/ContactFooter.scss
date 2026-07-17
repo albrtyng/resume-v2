@@ -1,11 +1,13 @@
 .contact-footer {
+    --contact-viewport-height: 100dvh;
+
     position: relative;
     transition:
         background-color var(--motion-state) ease,
         color var(--motion-state) ease;
     background: var(--footer-sky, var(--spruce));
     isolation: isolate;
-    height: max(45rem, 100svh);
+    height: max(45rem, var(--contact-viewport-height));
     overflow: clip;
     color: var(--footer-ink, var(--paper));
 }
@@ -16,7 +18,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    height: 100svh;
+    height: min(100%, var(--contact-viewport-height));
 }
 
 .contact-footer__panorama {
@@ -27,7 +29,7 @@
 
 html[data-js='true'] .contact-footer__panorama {
     content-visibility: auto;
-    contain-intrinsic-size: auto 100svh;
+    contain-intrinsic-size: auto var(--contact-viewport-height);
 }
 
 .contact-footer__sky-field {

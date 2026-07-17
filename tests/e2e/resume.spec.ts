@@ -903,6 +903,56 @@ test('keeps the useful footer content fully visible in the sky at the true page 
     );
 });
 
+test('expands the complete contact scene with collapsed mobile browser chrome', async ({
+    page,
+}, testInfo) => {
+    test.skip(
+        testInfo.project.name !== 'chromium',
+        'The dynamic mobile viewport is simulated explicitly in Chromium.',
+    );
+
+    await page.setViewportSize({ height: 568, width: 320 });
+    await gotoAtLocalHour(page, 2);
+
+    const heights = await page
+        .locator('[data-contact-footer]')
+        .evaluate((footer) => {
+            const viewportUnit = getComputedStyle(footer)
+                .getPropertyValue('--contact-viewport-height')
+                .trim();
+            footer.style.setProperty('--contact-viewport-height', '760px');
+            document.documentElement.style.scrollBehavior = 'auto';
+            window.scrollTo(0, document.documentElement.scrollHeight);
+
+            const panorama = footer.querySelector<HTMLElement>(
+                '[data-contact-panorama]',
+            );
+            const skyField = footer.querySelector<HTMLElement>(
+                '.contact-footer__sky-field',
+            );
+            const header = document.querySelector<HTMLElement>(
+                '[data-site-header]',
+            );
+            if (!panorama || !skyField || !header) return null;
+
+            return {
+                footer: footer.getBoundingClientRect().height,
+                footerTop: footer.getBoundingClientRect().top,
+                headerTop: header.getBoundingClientRect().top,
+                panorama: panorama.getBoundingClientRect().height,
+                skyField: skyField.getBoundingClientRect().height,
+                viewportUnit,
+            };
+        });
+
+    expect(heights).not.toBeNull();
+    expect(heights!.viewportUnit).toBe('100dvh');
+    expect(heights!.footer).toBe(760);
+    expect(heights!.panorama).toBe(760);
+    expect(heights!.skyField).toBe(760);
+    expect(heights!.footerTop).toBeLessThanOrEqual(heights!.headerTop);
+});
+
 test('keeps a resting gap below the compact header on short phones', async ({
     page,
 }, testInfo) => {
