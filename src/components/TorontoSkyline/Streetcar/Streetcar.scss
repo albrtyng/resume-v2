@@ -343,11 +343,11 @@ html[data-time-state='night'] .ttc-streetcar__door-glass {
 
 @keyframes ttc-streetcar-journey-compact {
     from {
-        transform: translate(220px, -70px);
+        transform: translate(-80px, -70px);
     }
 
     to {
-        transform: translate(1120px, -70px);
+        transform: translate(1600px, -70px);
     }
 }
 
