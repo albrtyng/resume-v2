@@ -85,9 +85,23 @@ function setupNavigationMotion(): () => void {
     };
 
     const getSurfaceAtHeader = (): PageSurface => {
-        // Browser chrome sits above the page, so it must not switch until the
-        // incoming surface reaches the visual viewport edge.
-        const probeY = 0;
+        // Let the incoming surface overlap the viewport edge by two pixels so
+        // browser chrome never changes before the page visibly does.
+        const probeY = -2;
+        const hashSurfaceAtEdge = PAGE_SURFACE_BY_HASH[window.location.hash];
+        const hashTarget = hashSurfaceAtEdge
+            ? document.querySelector<HTMLElement>(window.location.hash)
+            : null;
+
+        if (
+            hashSurfaceAtEdge &&
+            hashTarget &&
+            hashTarget.getBoundingClientRect().top >= probeY &&
+            hashTarget.getBoundingClientRect().top <= 0
+        ) {
+            return hashSurfaceAtEdge;
+        }
+
         const contactSection = surfaceSections.find(
             (section) => section.surface === 'contact',
         );

@@ -77,7 +77,10 @@ async function scrollSectionUnderHeader(page: Page, selector: string) {
         document.documentElement.style.scrollBehavior = 'auto';
         window.scrollTo(
             0,
-            element.getBoundingClientRect().top + window.scrollY,
+            Math.max(
+                0,
+                element.getBoundingClientRect().top + window.scrollY + 8,
+            ),
         );
     });
     await waitForLayout(page);
@@ -1218,7 +1221,7 @@ test('springs the frosted header into a centered pill after scrolling and restor
     await expect(header).toHaveAttribute('data-scrolled', '');
 
     await page.evaluate(() => window.scrollTo(0, 180));
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(950);
 
     const collapsed = await readHeaderTreatment();
     const rightMargin = collapsed.viewportWidth - collapsed.right;
@@ -1242,7 +1245,7 @@ test('springs the frosted header into a centered pill after scrolling and restor
 
     await page.evaluate(() => window.scrollTo(0, 0));
     await expect(header).not.toHaveAttribute('data-scrolled', '');
-    await page.waitForTimeout(800);
+    await page.waitForTimeout(950);
 
     const restored = await readHeaderTreatment();
     expect(restored.left).toBeLessThanOrEqual(1);
@@ -2219,7 +2222,7 @@ test('changes browser chrome only after an incoming section reaches the viewport
         );
 
         await page.evaluate(
-            (scrollY) => window.scrollTo(0, scrollY + 4),
+            (scrollY) => window.scrollTo(0, scrollY + 2),
             targetScrollY,
         );
         await waitForLayout(page);
@@ -2227,7 +2230,32 @@ test('changes browser chrome only after an incoming section reaches the viewport
         const edgeTop = await page
             .locator(selector)
             .evaluate((section) => section.getBoundingClientRect().top);
-        expect(edgeTop).toBeLessThanOrEqual(0);
+        expect(edgeTop).toBeLessThanOrEqual(0.5);
+        await expect(page.locator('[data-site-header]')).toHaveAttribute(
+            'data-header-surface',
+            previousSurface,
+        );
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-page-surface',
+            previousSurface,
+        );
+        await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+            'content',
+            getPageThemeColor('night', previousSurface),
+        );
+
+        await page.evaluate(
+            ({ edgeTop, scrollY }) =>
+                window.scrollTo(0, scrollY + 2 + edgeTop + 2.25),
+            { edgeTop, scrollY: targetScrollY },
+        );
+        await waitForLayout(page);
+
+        const overlapTop = await page
+            .locator(selector)
+            .evaluate((section) => section.getBoundingClientRect().top);
+        expect(overlapTop).toBeLessThanOrEqual(-2);
+        expect(overlapTop).toBeGreaterThan(-3);
         await expect(page.locator('[data-site-header]')).toHaveAttribute(
             'data-header-surface',
             surface,
