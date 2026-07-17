@@ -396,6 +396,73 @@ test('renders the main resume journey and accessible navigation', async ({
     await expect(footerFerry.locator('.harbour-ferry__mast')).toHaveCount(2);
 });
 
+test('publishes a large social sharing preview', async ({ page }) => {
+    await page.goto('/');
+
+    const socialImageURL =
+        'https://albertyang.ca/images/albert-yang-social-card.png';
+    const socialImageAlt =
+        'Albert Yang, Toronto Software Engineer, alongside an illustrated Toronto skyline at night.';
+
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+        'content',
+        socialImageURL,
+    );
+    await expect(
+        page.locator('meta[property="og:image:width"]'),
+    ).toHaveAttribute('content', '1200');
+    await expect(
+        page.locator('meta[property="og:image:height"]'),
+    ).toHaveAttribute('content', '630');
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+        'content',
+        socialImageAlt,
+    );
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+        'content',
+        'summary_large_image',
+    );
+    await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+        'content',
+        socialImageURL,
+    );
+});
+
+test('publishes truthful profile structured data', async ({ page }) => {
+    await page.goto('/');
+
+    const structuredData = await page
+        .locator('script[type="application/ld+json"]')
+        .textContent();
+    expect(structuredData).not.toBeNull();
+
+    const profilePage = JSON.parse(structuredData ?? 'null');
+    expect(profilePage).toMatchObject({
+        '@context': 'https://schema.org',
+        '@type': 'ProfilePage',
+        '@id': 'https://albertyang.ca/',
+        url: 'https://albertyang.ca/',
+        mainEntity: {
+            '@type': 'Person',
+            '@id': 'https://albertyang.ca/#albert-yang',
+            name: 'Albert Yang',
+            jobTitle: 'Software Engineer II',
+            worksFor: {
+                '@type': 'Organization',
+                name: 'Super.com',
+            },
+            homeLocation: {
+                '@type': 'Place',
+                name: 'Toronto, Ontario, Canada',
+            },
+            sameAs: [
+                'https://www.linkedin.com/in/albrtyng/',
+                'https://github.com/albrtyng',
+            ],
+        },
+    });
+});
+
 test('switches the header to the contact surface after Say hello scrolls', async ({
     page,
 }) => {

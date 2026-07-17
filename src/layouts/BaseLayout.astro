@@ -1,5 +1,6 @@
 ---
 import Header from '../components/Header/Header.astro';
+import { jobs } from '../data/experience';
 import {
     getSkylineStateBootstrapScript,
     SKYLINE_THEME_COLORS,
@@ -16,6 +17,38 @@ const {
 } = Astro.props;
 
 const canonicalURL = 'https://albertyang.ca/';
+const socialImageURL = `${canonicalURL}images/albert-yang-social-card.png`;
+const socialImageAlt =
+    'Albert Yang, Toronto Software Engineer, alongside an illustrated Toronto skyline at night.';
+const currentJob = jobs[0];
+const profilePageStructuredData = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    '@id': canonicalURL,
+    url: canonicalURL,
+    name: title,
+    description,
+    mainEntity: {
+        '@type': 'Person',
+        '@id': `${canonicalURL}#albert-yang`,
+        name: 'Albert Yang',
+        url: canonicalURL,
+        description,
+        jobTitle: currentJob.role,
+        worksFor: {
+            '@type': 'Organization',
+            name: currentJob.company,
+        },
+        homeLocation: {
+            '@type': 'Place',
+            name: 'Toronto, Ontario, Canada',
+        },
+        sameAs: [
+            'https://www.linkedin.com/in/albrtyng/',
+            'https://github.com/albrtyng',
+        ],
+    },
+});
 const skylineStateBootstrapScript = getSkylineStateBootstrapScript();
 const initialHeaderSurfaceBootstrapScript = `
     try {
@@ -78,10 +111,23 @@ const initialHeaderSurfaceBootstrapScript = `
         <meta property="og:description" content={description} />
         <meta property="og:url" content={canonicalURL} />
         <meta property="og:locale" content="en_CA" />
+        <meta property="og:image" content={socialImageURL} />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={socialImageAlt} />
 
-        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={socialImageURL} />
+        <meta name="twitter:image:alt" content={socialImageAlt} />
+
+        <script
+            is:inline
+            type="application/ld+json"
+            set:html={profilePageStructuredData}
+        />
 
         <link
             rel="preload"
