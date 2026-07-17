@@ -37,7 +37,8 @@ function setupNavigationMotion(): () => void {
     let activeSurface: HeaderSurface = 'hero';
 
     const getSurfaceAtHeader = (): HeaderSurface => {
-        const probeY = Math.max(header.getBoundingClientRect().height / 2, 1);
+        const headerBounds = header.getBoundingClientRect();
+        const probeY = Math.max(headerBounds.top + headerBounds.height / 2, 1);
         const contactSection = surfaceSections.find(
             (section) => section.surface === 'contact',
         );
@@ -71,7 +72,7 @@ function setupNavigationMotion(): () => void {
 
     const updateNavigationState = () => {
         frame = 0;
-        header.toggleAttribute('data-scrolled', window.scrollY > 24);
+        header.toggleAttribute('data-scrolled', window.scrollY > 0);
 
         const nextSurface = getSurfaceAtHeader();
 

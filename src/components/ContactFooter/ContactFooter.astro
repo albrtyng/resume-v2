@@ -11,63 +11,6 @@ const year = new Date().getFullYear();
     data-contact-footer
     aria-labelledby="contact-title"
 >
-    <div class="contact-footer__sky-field">
-        <div class="contact-footer__sky-art" aria-hidden="true">
-            <span
-                class="contact-footer__sky-light contact-footer__sky-light--near"
-            ></span>
-            <span
-                class="contact-footer__sky-light contact-footer__sky-light--far"
-            ></span>
-            <span class="contact-footer__cloud contact-footer__cloud--left"
-            ></span>
-            <span class="contact-footer__cloud contact-footer__cloud--right"
-            ></span>
-            <span class="contact-footer__haze contact-footer__haze--high"
-            ></span>
-            <span class="contact-footer__haze contact-footer__haze--low"></span>
-        </div>
-
-        <div class="contact-footer__inner">
-            <header class="contact-footer__header" data-reveal="copy">
-                <p class="contact-footer__eyebrow">
-                    Last light / Toronto Harbour
-                </p>
-                <div class="contact-footer__invitation">
-                    <h2 id="contact-title">Let’s make something useful.</h2>
-                    <p>
-                        Have a product problem worth untangling? I’d like to
-                        hear about it.
-                    </p>
-                </div>
-            </header>
-
-            <div class="contact-footer__links" data-reveal="row">
-                <a
-                    class="contact-footer__email"
-                    href="mailto:albertesyang@gmail.com"
-                >
-                    <span>albertesyang@gmail.com</span>
-                    <span aria-hidden="true">↗</span>
-                </a>
-                <a
-                    class="contact-footer__linkedin"
-                    href="https://www.linkedin.com/in/albrtyng/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <span>LinkedIn</span>
-                    <span aria-hidden="true">↗</span>
-                </a>
-            </div>
-
-            <div class="contact-footer__meta">
-                <p>Toronto, Ontario</p>
-                <p>© {year} Albert Yang</p>
-            </div>
-        </div>
-    </div>
-
     <div
         class="contact-footer__panorama"
         data-contact-panorama
@@ -75,6 +18,49 @@ const year = new Date().getFullYear();
         aria-hidden="true"
     >
         <HarbourPanorama />
+    </div>
+
+    <div class="contact-footer__sky-field">
+        <div class="contact-footer__inner">
+            <div class="contact-footer__copy" data-contact-copy>
+                <header class="contact-footer__header" data-reveal="copy">
+                    <p class="contact-footer__eyebrow">
+                        Last light / Toronto Harbour
+                    </p>
+                    <div class="contact-footer__invitation">
+                        <h2 id="contact-title">Let’s make something useful.</h2>
+                        <p>
+                            Have a product problem worth untangling? I’d like to
+                            hear about it.
+                        </p>
+                    </div>
+                </header>
+
+                <div class="contact-footer__links" data-reveal="row">
+                    <a
+                        class="contact-footer__email"
+                        href="mailto:albertesyang@gmail.com"
+                    >
+                        <span>albertesyang@gmail.com</span>
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                    <a
+                        class="contact-footer__linkedin"
+                        href="https://www.linkedin.com/in/albrtyng/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <span>LinkedIn</span>
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-footer__meta">
+            <p class="contact-footer__location">Toronto, Ontario</p>
+            <p class="contact-footer__copyright">© {year} Albert Yang</p>
+        </div>
     </div>
 </footer>
 

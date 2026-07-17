@@ -1,4 +1,5 @@
 ---
+import CelestialDisc from '../CelestialDisc/CelestialDisc.astro';
 import CNTower from './CNTower/CNTower.astro';
 import LakeOntario from './LakeOntario/LakeOntario.astro';
 import NewCityHall from './NewCityHall/NewCityHall.astro';
@@ -53,8 +54,12 @@ import './TorontoSkyline.scss';
             <circle cx="1380" cy="206" r="1.1"></circle>
         </g>
 
-        <g
+        <CelestialDisc
             class="skyline__celestial"
+            cx={1190}
+            cy={218}
+            coreRadius={45}
+            haloRadius={76}
             data-sky-object
             data-reflection-source="celestial"
             data-reflection-x="1190"
@@ -66,16 +71,7 @@ import './TorontoSkyline.scss';
                 cy="218"
                 r="1"
             ></circle>
-            <circle class="skyline__celestial-halo" cx="1190" cy="218" r="76"
-            ></circle>
-            <circle class="skyline__celestial-core" cx="1190" cy="218" r="45"
-            ></circle>
-            <g class="skyline__moon-marks">
-                <circle cx="1176" cy="205" r="6"></circle>
-                <circle cx="1205" cy="230" r="9"></circle>
-                <circle cx="1212" cy="195" r="4"></circle>
-            </g>
-        </g>
+        </CelestialDisc>
 
         <g class="skyline__atmosphere">
             <path

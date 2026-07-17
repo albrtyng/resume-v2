@@ -55,74 +55,6 @@ async function waitForLayout(page: Page) {
     });
 }
 
-async function getDesktopProfileCloudCoverage(page: Page, padding: number) {
-    return page
-        .locator('[data-profile-shape]')
-        .evaluate((element, minimumPadding) => {
-            const cloud = element.querySelector<SVGSVGElement>(
-                '[data-profile-cloud]',
-            );
-            const ground = element.querySelector<SVGSVGElement>(
-                '[data-profile-ground]',
-            );
-            const body = cloud?.querySelector<SVGGeometryElement>(
-                '.hero__facts-cloud-body',
-            );
-            const matrix = body?.getScreenCTM();
-
-            if (!cloud || !ground || !body || !matrix) return null;
-
-            const inverseMatrix = matrix.inverse();
-            const textLines = Array.from(
-                element.querySelectorAll<HTMLElement>(
-                    '.hero__facts dt, .hero__facts dd',
-                ),
-            ).flatMap((textElement) => {
-                const range = document.createRange();
-                range.selectNodeContents(textElement);
-                const text = textElement.textContent?.trim() ?? '';
-
-                return Array.from(range.getClientRects()).map(
-                    (bounds, lineIndex) => {
-                        const ySamples = [0.35, 0.5, 0.65].map(
-                            (ratio) => bounds.top + bounds.height * ratio,
-                        );
-                        const probes = [
-                            ...ySamples.map((y) => ({
-                                edge: 'left',
-                                x: bounds.left - minimumPadding,
-                                y,
-                            })),
-                            ...ySamples.map((y) => ({
-                                edge: 'right',
-                                x: bounds.right + minimumPadding,
-                                y,
-                            })),
-                        ].map((probe) => ({
-                            ...probe,
-                            covered: body.isPointInFill(
-                                new DOMPoint(probe.x, probe.y).matrixTransform(
-                                    inverseMatrix,
-                                ),
-                            ),
-                        }));
-
-                        return {
-                            label: `${textElement.tagName.toLowerCase()} "${text}", line ${lineIndex + 1}`,
-                            probes,
-                        };
-                    },
-                );
-            });
-
-            return {
-                cloudDisplay: getComputedStyle(cloud).display,
-                groundDisplay: getComputedStyle(ground).display,
-                textLines,
-            };
-        }, padding);
-}
-
 async function scrollSectionUnderHeader(page: Page, selector: string) {
     await page.locator(selector).evaluate((element) => {
         document.documentElement.style.scrollBehavior = 'auto';
@@ -201,6 +133,10 @@ test('renders the main resume journey and accessible navigation', async ({
     const experience = page.locator('#experience');
     const capabilities = page.locator('#capabilities');
     const contact = page.locator('#contact');
+    const siteHeader = page.locator('[data-site-header]');
+
+    await expect(siteHeader.locator('.site-header__place')).toHaveCount(0);
+    await expect(siteHeader).not.toContainText('Toronto · CA');
 
     await expect(hero).toBeVisible();
     await expect(hero).toContainText(/Albert Yang/i);
@@ -244,7 +180,8 @@ test('renders the main resume journey and accessible navigation', async ({
         const road = element.querySelector<SVGRectElement>(
             '.streetcar-streetscape__road-surface',
         );
-        const streetcar = element.querySelector<SVGGElement>('[data-streetcar]');
+        const streetcar =
+            element.querySelector<SVGGElement>('[data-streetcar]');
         const markers = element.querySelector<SVGPathElement>(
             '.streetcar-streetscape__road-markers',
         );
@@ -294,19 +231,18 @@ test('renders the main resume journey and accessible navigation', async ({
                 bottom: markerBounds.bottom,
             },
             roadHeight: roadBounds.height,
-            streetcarOnRightLane:
-                streetcarBounds.bottom > markerBounds.bottom,
+            streetcarOnRightLane: streetcarBounds.bottom > markerBounds.bottom,
             roadsideGap: Math.abs(
                 roadsideSkylineBounds.bottom - roadBounds.top,
             ),
             layerOrder: {
                 roadBeforeStreetcar: Boolean(
                     roadGroup.compareDocumentPosition(streetcar) &
-                        Node.DOCUMENT_POSITION_FOLLOWING,
+                    Node.DOCUMENT_POSITION_FOLLOWING,
                 ),
                 streetcarBeforeForeground: Boolean(
                     streetcar.compareDocumentPosition(foreground) &
-                        Node.DOCUMENT_POSITION_FOLLOWING,
+                    Node.DOCUMENT_POSITION_FOLLOWING,
                 ),
             },
             viewportWidth: document.documentElement.clientWidth,
@@ -365,9 +301,8 @@ test('renders the main resume journey and accessible navigation', async ({
                 ) ?? [],
             );
             const segments = Array.from(
-                mastPath
-                    .getAttribute('d')
-                    ?.matchAll(/M(\d+) (\d+)V(\d+)/g) ?? [],
+                mastPath.getAttribute('d')?.matchAll(/M(\d+) (\d+)V(\d+)/g) ??
+                    [],
             );
 
             return segments
@@ -453,6 +388,300 @@ test('renders the main resume journey and accessible navigation', async ({
     );
     await expect(footerFerry.locator('.harbour-ferry__mast')).toHaveCount(2);
 });
+
+test('switches the header to the contact surface after Say hello scrolls', async ({
+    page,
+}) => {
+    await page.goto('/');
+
+    const header = page.locator('[data-site-header]');
+    const contact = page.locator('#contact');
+    const sayHello = header.getByRole('link', { name: /say hello/i });
+
+    await expect(header).toHaveAttribute('data-header-surface', 'hero');
+    await sayHello.click();
+
+    await expect(page).toHaveURL(/#contact$/);
+    await expect(header).toHaveAttribute('data-header-surface', 'contact');
+
+    const alignment = await contact.evaluate((element) => {
+        const siteHeader =
+            document.querySelector<HTMLElement>('[data-site-header]');
+        if (!siteHeader) return null;
+
+        return {
+            contactTop: element.getBoundingClientRect().top,
+            headerProbe: siteHeader.getBoundingClientRect().height / 2,
+        };
+    });
+
+    expect(alignment).not.toBeNull();
+    expect(alignment!.contactTop).toBeLessThanOrEqual(alignment!.headerProbe);
+    await expect(contact.locator(contactLinks.email)).toBeVisible();
+});
+
+test('keeps the useful footer content fully visible in the sky at the true page end', async ({
+    page,
+}) => {
+    await gotoAtLocalHour(page, 2);
+    await waitForLayout(page);
+
+    await page.evaluate(() => {
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, document.documentElement.scrollHeight);
+    });
+    await waitForLayout(page);
+
+    const layout = await page
+        .locator('[data-contact-footer]')
+        .evaluate((footer) => {
+            const readBounds = (selector: string) => {
+                const element = footer.querySelector<HTMLElement>(selector);
+                if (!element) throw new Error(`Missing ${selector}`);
+
+                const { bottom, left, right, top } =
+                    element.getBoundingClientRect();
+
+                return { bottom, left, right, top };
+            };
+
+            const siteHeader =
+                document.querySelector<HTMLElement>('[data-site-header]');
+            if (!siteHeader) throw new Error('Missing site header');
+
+            return {
+                elements: {
+                    email: readBounds('.contact-footer__email'),
+                    heading: readBounds('#contact-title'),
+                    linkedin: readBounds('.contact-footer__linkedin'),
+                    supportingCopy: readBounds('.contact-footer__invitation p'),
+                },
+                headerBottom: siteHeader.getBoundingClientRect().bottom,
+                maxScrollY:
+                    document.documentElement.scrollHeight - window.innerHeight,
+                meta: {
+                    copyright: readBounds('.contact-footer__meta p:last-child'),
+                    location: readBounds('.contact-footer__meta p:first-child'),
+                },
+                panorama: readBounds('[data-contact-panorama]'),
+                scrollY: window.scrollY,
+                skylineTop: readBounds('.distant-toronto-skyline__mainland')
+                    .top,
+                viewport: {
+                    height: window.innerHeight,
+                    width: window.innerWidth,
+                },
+            };
+        });
+
+    expect(Math.abs(layout.maxScrollY - layout.scrollY)).toBeLessThanOrEqual(1);
+
+    const visibleSkyTop = Math.max(layout.headerBottom, layout.panorama.top);
+    const visibleSkyBottom = layout.skylineTop;
+
+    expect(
+        visibleSkyBottom - visibleSkyTop,
+        'The responsive crop should preserve enough usable sky for the contact content',
+    ).toBeGreaterThan(0);
+
+    for (const [name, bounds] of Object.entries(layout.elements)) {
+        expect(
+            bounds.top,
+            `${name} should clear the fixed header`,
+        ).toBeGreaterThanOrEqual(visibleSkyTop + 28);
+        expect(
+            bounds.bottom,
+            `${name} should remain above the skyline`,
+        ).toBeLessThanOrEqual(visibleSkyBottom - 12);
+        expect(
+            bounds.left,
+            `${name} should remain inside the viewport`,
+        ).toBeGreaterThanOrEqual(12);
+        expect(
+            bounds.right,
+            `${name} should remain inside the viewport`,
+        ).toBeLessThanOrEqual(layout.viewport.width - 12);
+    }
+
+    for (const [name, bounds] of Object.entries(layout.meta)) {
+        expect(
+            bounds.bottom,
+            `${name} should sit near the bottom edge of the page`,
+        ).toBeGreaterThanOrEqual(layout.viewport.height - 32);
+        expect(
+            bounds.bottom,
+            `${name} should clear the bottom edge of the page`,
+        ).toBeLessThanOrEqual(layout.viewport.height - 12);
+    }
+
+    expect(layout.meta.location.left).toBeGreaterThanOrEqual(12);
+    expect(layout.meta.location.left).toBeLessThanOrEqual(
+        layout.viewport.width * 0.08,
+    );
+    expect(layout.meta.copyright.right).toBeGreaterThanOrEqual(
+        layout.viewport.width * 0.92,
+    );
+    expect(layout.meta.copyright.right).toBeLessThanOrEqual(
+        layout.viewport.width - 12,
+    );
+    expect(layout.meta.location.right).toBeLessThan(layout.meta.copyright.left);
+});
+
+test('keeps a resting gap below the compact header on short phones', async ({
+    page,
+}, testInfo) => {
+    test.skip(
+        testInfo.project.name !== 'chromium',
+        'The short-phone footer crop is sampled explicitly in Chromium.',
+    );
+
+    await page.setViewportSize({ height: 568, width: 320 });
+    await gotoAtLocalHour(page, 2);
+    await page.evaluate(() => {
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, document.documentElement.scrollHeight);
+    });
+    await waitForLayout(page);
+
+    const layout = await page
+        .locator('[data-contact-footer]')
+        .evaluate((footer) => {
+            const header =
+                document.querySelector<HTMLElement>('[data-site-header]');
+            const copy = footer.querySelector<HTMLElement>(
+                '[data-contact-copy]',
+            );
+            const skyline = footer.querySelector<SVGGraphicsElement>(
+                '.distant-toronto-skyline__mainland',
+            );
+            if (!header || !copy || !skyline) return null;
+
+            const headerBounds = header.getBoundingClientRect();
+            const copyBounds = copy.getBoundingClientRect();
+            const skylineBounds = skyline.getBoundingClientRect();
+
+            return {
+                copyBottom: copyBounds.bottom,
+                copyTop: copyBounds.top,
+                headerBottom: headerBounds.bottom,
+                headerShadow: getComputedStyle(header).boxShadow,
+                skylineTop: skylineBounds.top,
+            };
+        });
+
+    expect(layout).not.toBeNull();
+    expect(layout!.copyTop - layout!.headerBottom).toBeGreaterThanOrEqual(28);
+    expect(layout!.skylineTop - layout!.copyBottom).toBeGreaterThanOrEqual(12);
+    expect(layout!.headerShadow).toBe('none');
+});
+
+test('uses a panel-free contact stack with AA contrast in every sky state', async ({
+    page,
+}) => {
+    test.skip(
+        (page.viewportSize()?.width ?? 0) < 64 * 16,
+        'Colour tokens are viewport-independent; responsive geometry is covered separately.',
+    );
+
+    for (const { hour, state } of localTimeScenarios) {
+        await gotoAtLocalHour(page, hour);
+        await waitForLayout(page);
+
+        const treatment = await page
+            .locator('[data-contact-footer]')
+            .evaluate((footer) => {
+                const copy = footer.querySelector<HTMLElement>(
+                    '[data-contact-copy]',
+                );
+                const email = footer.querySelector<HTMLElement>(
+                    '.contact-footer__email',
+                );
+                const heading =
+                    footer.querySelector<HTMLElement>('#contact-title');
+                const linkedin = footer.querySelector<HTMLElement>(
+                    '.contact-footer__linkedin',
+                );
+
+                if (!copy || !email || !heading || !linkedin) {
+                    throw new Error('Missing footer contact content');
+                }
+
+                const parseRgb = (value: string) => {
+                    const channels = value.match(/[\d.]+/g)?.slice(0, 3);
+                    if (!channels || channels.length !== 3) {
+                        throw new Error(`Unable to parse colour: ${value}`);
+                    }
+
+                    return channels.map(Number);
+                };
+                const luminance = (value: string) => {
+                    const channels = parseRgb(value).map((channel) => {
+                        const normalized = channel / 255;
+                        return normalized <= 0.04045
+                            ? normalized / 12.92
+                            : ((normalized + 0.055) / 1.055) ** 2.4;
+                    });
+
+                    return (
+                        0.2126 * channels[0]! +
+                        0.7152 * channels[1]! +
+                        0.0722 * channels[2]!
+                    );
+                };
+                const contrast = (foreground: string, background: string) => {
+                    const foregroundLuminance = luminance(foreground);
+                    const backgroundLuminance = luminance(background);
+                    const lighter = Math.max(
+                        foregroundLuminance,
+                        backgroundLuminance,
+                    );
+                    const darker = Math.min(
+                        foregroundLuminance,
+                        backgroundLuminance,
+                    );
+
+                    return (lighter + 0.05) / (darker + 0.05);
+                };
+                const footerBackground =
+                    getComputedStyle(footer).backgroundColor;
+                const copySurface = getComputedStyle(copy, '::before');
+                const emailBounds = email.getBoundingClientRect();
+                const linkedinBounds = linkedin.getBoundingClientRect();
+
+                return {
+                    contrast: contrast(
+                        getComputedStyle(heading).color,
+                        footerBackground,
+                    ),
+                    emailBottom: emailBounds.bottom,
+                    linkedinTop: linkedinBounds.top,
+                    panel: {
+                        backdropFilter: copySurface.backdropFilter,
+                        backgroundColor: copySurface.backgroundColor,
+                        content: copySurface.content,
+                    },
+                };
+            });
+
+        expect(
+            treatment.panel,
+            `${state} should not render a glass panel`,
+        ).toEqual({
+            backdropFilter: 'none',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            content: 'none',
+        });
+        expect(
+            treatment.linkedinTop,
+            `${state} LinkedIn placement`,
+        ).toBeGreaterThanOrEqual(treatment.emailBottom + 4);
+        expect(
+            treatment.contrast,
+            `${state} footer contrast`,
+        ).toBeGreaterThanOrEqual(4.5);
+    }
+});
+
 test('keeps the hero header translucent and the local-light note safely in view', async ({
     page,
 }) => {
@@ -495,6 +724,191 @@ test('keeps the hero header translucent and the local-light note safely in view'
     ).toBeGreaterThanOrEqual(24);
 });
 
+test('springs the frosted header into a centered pill after scrolling and restores it at the top', async ({
+    page,
+}) => {
+    await gotoAtLocalHour(page, 12);
+    await waitForLayout(page);
+
+    const header = page.locator('[data-site-header]');
+    const readHeaderTreatment = () =>
+        header.evaluate((element) => {
+            const bounds = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            const durationSeconds = style.transitionDuration
+                .split(',')
+                .map((duration) => duration.trim())
+                .map((duration) =>
+                    duration.endsWith('ms')
+                        ? Number.parseFloat(duration) / 1000
+                        : Number.parseFloat(duration),
+                );
+
+            return {
+                backdropFilter: style.backdropFilter,
+                backgroundColor: style.backgroundColor,
+                borderColor: style.borderTopColor,
+                borderRadius: Number.parseFloat(style.borderTopLeftRadius),
+                boxShadow: style.boxShadow,
+                height: bounds.height,
+                left: bounds.left,
+                maxTransitionDuration: Math.max(...durationSeconds),
+                right: bounds.right,
+                springTiming: style.transitionTimingFunction,
+                top: bounds.top,
+                viewportWidth: document.documentElement.clientWidth,
+                width: bounds.width,
+            };
+        });
+
+    await expect(header).not.toHaveAttribute('data-scrolled', '');
+    const expanded = await readHeaderTreatment();
+
+    expect(expanded.left).toBeLessThanOrEqual(1);
+    expect(expanded.viewportWidth - expanded.right).toBeLessThanOrEqual(1);
+    expect(expanded.borderRadius).toBeLessThanOrEqual(1);
+    expect(expanded.boxShadow).toBe('none');
+    expect(expanded.top).toBeLessThanOrEqual(1);
+
+    await page.evaluate(() => {
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, 1);
+    });
+    await expect(header).toHaveAttribute('data-scrolled', '');
+
+    await page.evaluate(() => window.scrollTo(0, 180));
+    await page.waitForTimeout(800);
+
+    const collapsed = await readHeaderTreatment();
+    const rightMargin = collapsed.viewportWidth - collapsed.right;
+
+    expect(collapsed.left).toBeGreaterThanOrEqual(8);
+    expect(rightMargin).toBeGreaterThanOrEqual(8);
+    expect(Math.abs(collapsed.left - rightMargin)).toBeLessThanOrEqual(1);
+    expect(collapsed.width).toBeLessThan(
+        expanded.width - Math.min(24, expanded.width * 0.04),
+    );
+    expect(collapsed.borderRadius).toBeGreaterThanOrEqual(
+        collapsed.height / 2 - 1,
+    );
+    expect(collapsed.top).toBeGreaterThanOrEqual(8);
+    expect(collapsed.backdropFilter).toBe(expanded.backdropFilter);
+    expect(collapsed.backgroundColor).toBe(expanded.backgroundColor);
+    expect(collapsed.borderColor).not.toBe(expanded.borderColor);
+    expect(collapsed.boxShadow).toBe('none');
+    expect(collapsed.springTiming).toContain('linear(');
+    expect(collapsed.maxTransitionDuration).toBeGreaterThanOrEqual(0.6);
+
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(header).not.toHaveAttribute('data-scrolled', '');
+    await page.waitForTimeout(800);
+
+    const restored = await readHeaderTreatment();
+    expect(restored.left).toBeLessThanOrEqual(1);
+    expect(restored.viewportWidth - restored.right).toBeLessThanOrEqual(1);
+    expect(restored.width).toBeCloseTo(expanded.width, 0);
+    expect(restored.borderRadius).toBeLessThanOrEqual(1);
+    expect(restored.boxShadow).toBe('none');
+    expect(restored.top).toBeLessThanOrEqual(1);
+});
+
+test('keeps the midday celestial clear of the fixed header across desktop crops', async ({
+    page,
+}, testInfo) => {
+    test.skip(
+        testInfo.project.name !== 'chromium',
+        'Desktop celestial clearance is sampled explicitly in Chromium.',
+    );
+
+    const desktopViewports = [
+        { height: 549, label: 'short desktop', width: 1024 },
+        { height: 720, label: 'standard desktop', width: 1280 },
+        { height: 945, label: 'wide desktop', width: 1728 },
+    ] as const;
+
+    for (const viewport of desktopViewports) {
+        await page.setViewportSize(viewport);
+        await gotoAtLocalHour(page, 12);
+        await waitForLayout(page);
+
+        const clearance = await page.locator('#hero').evaluate((hero) => {
+            const header =
+                document.querySelector<HTMLElement>('[data-site-header]');
+            const halo = hero.querySelector<SVGGraphicsElement>(
+                '.skyline__celestial .celestial-disc__halo',
+            );
+            if (!header || !halo) return null;
+
+            return (
+                halo.getBoundingClientRect().top -
+                header.getBoundingClientRect().bottom
+            );
+        });
+
+        expect(clearance, viewport.label).not.toBeNull();
+        expect(
+            clearance,
+            `${viewport.label}: the celestial halo needs breathing room below the header`,
+        ).toBeGreaterThanOrEqual(20);
+    }
+});
+
+test('vertically centers the hero copy panel in short desktop viewports', async ({
+    page,
+}, testInfo) => {
+    test.skip(
+        testInfo.project.name !== 'chromium',
+        'Short desktop panel geometry is sampled explicitly in Chromium.',
+    );
+
+    const shortDesktopViewports = [
+        { height: 549, label: 'short laptop', width: 1024 },
+        { height: 720, label: 'standard laptop', width: 1280 },
+    ] as const;
+
+    for (const viewport of shortDesktopViewports) {
+        await page.setViewportSize(viewport);
+        await gotoAtLocalHour(page, 12);
+        await waitForLayout(page);
+
+        const geometry = await page.locator('#hero').evaluate((hero) => {
+            const header =
+                document.querySelector<HTMLElement>('[data-site-header]');
+            const panel = hero.querySelector<HTMLElement>(
+                '[data-hero-copy-panel]',
+            );
+            if (!header || !panel) return null;
+
+            const headerBounds = header.getBoundingClientRect();
+            const panelBounds = panel.getBoundingClientRect();
+
+            return {
+                headerBottom: headerBounds.bottom,
+                panel: {
+                    bottom: panelBounds.bottom,
+                    center: panelBounds.top + panelBounds.height / 2,
+                    top: panelBounds.top,
+                },
+                viewportHeight: window.innerHeight,
+            };
+        });
+
+        expect(geometry, viewport.label).not.toBeNull();
+        expect(
+            Math.abs(geometry!.panel.center - geometry!.viewportHeight / 2),
+            `${viewport.label}: panel center should align with the viewport center`,
+        ).toBeLessThanOrEqual(18);
+        expect(
+            geometry!.panel.top - geometry!.headerBottom,
+            `${viewport.label}: panel should clear the fixed header`,
+        ).toBeGreaterThanOrEqual(12);
+        expect(
+            geometry!.viewportHeight - geometry!.panel.bottom,
+            `${viewport.label}: panel should remain fully visible`,
+        ).toBeGreaterThanOrEqual(12);
+    }
+});
+
 test('uses the hero contrast pane only when the skyline can rise behind the copy', async ({
     page,
 }) => {
@@ -503,6 +917,7 @@ test('uses the hero contrast pane only when the skyline can rise behind the copy
 
     const hero = page.locator('#hero');
     const copyPanel = hero.locator('[data-hero-copy-panel]');
+    const copyPanelOutline = hero.locator('[data-hero-copy-outline]');
     const actions = hero.locator('.hero__actions');
     const primaryAction = actions.getByRole('link', {
         name: /explore my work/i,
@@ -520,6 +935,7 @@ test('uses the hero contrast pane only when the skyline can rise behind the copy
         viewport!.height >= 50 * 16;
 
     await expect(copyPanel).toHaveCount(1);
+    await expect(copyPanelOutline).toBeAttached();
 
     if (usesOpenSkyCopy) {
         await expect(copyPanel).toBeHidden();
@@ -534,12 +950,20 @@ test('uses the hero contrast pane only when the skyline can rise behind the copy
         const panel = element.querySelector<HTMLElement>(
             '[data-hero-copy-panel]',
         );
+        const outline = element.querySelector<SVGSVGElement>(
+            '[data-hero-copy-outline]',
+        );
         const actionGroup =
             element.querySelector<HTMLElement>('.hero__actions');
         const primaryLink = element.querySelector<HTMLElement>(
             '.hero__primary-link',
         );
         const textLink = element.querySelector<HTMLElement>('.hero__text-link');
+        const celestial =
+            element.querySelector<SVGGraphicsElement>('[data-sky-object]');
+        const tower = element.querySelector<SVGGraphicsElement>(
+            '[data-landmark="cn-tower"]',
+        );
         const copyElements = [
             element.querySelector<HTMLElement>('.hero__eyebrow'),
             element.querySelector<HTMLElement>('.hero__title'),
@@ -549,25 +973,87 @@ test('uses the hero contrast pane only when the skyline can rise behind the copy
 
         if (
             !panel ||
+            !outline ||
             !actionGroup ||
             !primaryLink ||
             !textLink ||
+            !celestial ||
+            !tower ||
             copyElements.some((candidate) => !candidate)
         ) {
             return null;
         }
 
         const panelBounds = panel.getBoundingClientRect();
+        const outlineBounds = outline.getBoundingClientRect();
         const panelStyle = getComputedStyle(panel);
+        const outlineStyle = getComputedStyle(outline);
+        const outlinePath = outline
+            .querySelector<SVGPathElement>('path')
+            ?.getAttribute('d');
         const actionSurfaceStyle = getComputedStyle(actionGroup, '::before');
         const primaryStyle = getComputedStyle(primaryLink);
         const textStyle = getComputedStyle(textLink);
         const copyBounds = copyElements.map((candidate) =>
             candidate!.getBoundingClientRect(),
         );
+        const celestialBounds = celestial.getBoundingClientRect();
+        const towerBounds = tower.getBoundingClientRect();
         const backdropFilter =
             panelStyle.backdropFilter ||
             panelStyle.getPropertyValue('-webkit-backdrop-filter');
+        const priorPanelStyles = {
+            pointerEvents: panel.style.pointerEvents,
+            zIndex: panel.style.zIndex,
+        };
+        panel.style.pointerEvents = 'auto';
+        panel.style.zIndex = '999';
+
+        const panelContainsPoint = (x: number, y: number) => {
+            const hit = document.elementFromPoint(x, y);
+            return hit === panel || Boolean(hit && panel.contains(hit));
+        };
+        const atPanelRatio = (x: number, y: number) => ({
+            x: panelBounds.left + panelBounds.width * x,
+            y: panelBounds.top + panelBounds.height * y,
+        });
+        const linkCoverage = [primaryLink, textLink].map((link) => {
+            const bounds = link.getBoundingClientRect();
+            return panelContainsPoint(
+                bounds.left + bounds.width / 2,
+                bounds.top + bounds.height / 2,
+            );
+        });
+        const textCoverage = copyElements.slice(0, 3).flatMap((copyElement) => {
+            const range = document.createRange();
+            range.selectNodeContents(copyElement!);
+
+            return Array.from(range.getClientRects()).flatMap((bounds) => [
+                panelContainsPoint(bounds.left + 2, bounds.top + 2),
+                panelContainsPoint(bounds.right - 2, bounds.bottom - 2),
+            ]);
+        });
+        const topRight = atPanelRatio(0.86, 0.16);
+        const bottomLeft = atPanelRatio(0.18, 0.86);
+        const cutout = atPanelRatio(0.86, 0.86);
+        const coverage = {
+            bottomLeft: panelContainsPoint(bottomLeft.x, bottomLeft.y),
+            celestial: panelContainsPoint(
+                celestialBounds.left + celestialBounds.width / 2,
+                celestialBounds.top + celestialBounds.height / 2,
+            ),
+            cutout: panelContainsPoint(cutout.x, cutout.y),
+            links: linkCoverage,
+            text: textCoverage,
+            topRight: panelContainsPoint(topRight.x, topRight.y),
+            towerTip: panelContainsPoint(
+                towerBounds.left + towerBounds.width / 2,
+                towerBounds.top + Math.min(12, towerBounds.height * 0.08),
+            ),
+        };
+
+        panel.style.pointerEvents = priorPanelStyles.pointerEvents;
+        panel.style.zIndex = priorPanelStyles.zIndex;
 
         return {
             supportsBackdropFilter:
@@ -575,7 +1061,18 @@ test('uses the hero contrast pane only when the skyline can rise behind the copy
                 CSS.supports('-webkit-backdrop-filter', 'blur(1px)'),
             backgroundImage: panelStyle.backgroundImage,
             backdropFilter,
+            borderRadius: panelStyle.borderRadius,
             clipPath: panelStyle.clipPath,
+            coverage,
+            outlinePath,
+            outline: {
+                bottom: outlineBounds.bottom,
+                clipsWithPanel: panel.contains(outline),
+                left: outlineBounds.left,
+                overflow: outlineStyle.overflow,
+                right: outlineBounds.right,
+                top: outlineBounds.top,
+            },
             panel: {
                 top: panelBounds.top,
                 right: panelBounds.right,
@@ -613,7 +1110,24 @@ test('uses the hero contrast pane only when the skyline can rise behind the copy
     expect(pane!.panel.right).toBeGreaterThanOrEqual(pane!.copy.right);
     expect(pane!.panel.bottom).toBeGreaterThan(pane!.copy.bottom);
     expect(pane!.panel.left).toBeLessThanOrEqual(pane!.copy.left);
-    expect(pane!.clipPath).toBe('none');
+    expect(pane!.clipPath).toContain('polygon');
+    expect(Number.parseFloat(pane!.borderRadius)).toBeGreaterThan(0);
+    expect(pane!.outlinePath).toBeTruthy();
+    expect(pane!.outlinePath).not.toContain('C');
+    expect(pane!.outlinePath?.match(/Q/g)).toHaveLength(6);
+    expect(pane!.outline.clipsWithPanel).toBe(false);
+    expect(pane!.outline.overflow).toBe('visible');
+    expect(pane!.outline.top).toBeLessThan(pane!.panel.top);
+    expect(pane!.outline.right).toBeGreaterThan(pane!.panel.right);
+    expect(pane!.outline.bottom).toBeGreaterThan(pane!.panel.bottom);
+    expect(pane!.outline.left).toBeLessThan(pane!.panel.left);
+    expect(pane!.coverage.topRight).toBe(true);
+    expect(pane!.coverage.bottomLeft).toBe(true);
+    expect(pane!.coverage.cutout).toBe(false);
+    expect(pane!.coverage.links).toEqual([true, true]);
+    expect(pane!.coverage.text.every(Boolean)).toBe(true);
+    expect(pane!.coverage.celestial).toBe(false);
+    expect(pane!.coverage.towerTip).toBe(false);
 
     if (usesFeatheredContrast) {
         expect(pane!.backgroundImage).toContain('linear-gradient');
@@ -640,292 +1154,160 @@ test('uses the hero contrast pane only when the skyline can rise behind the copy
     await expect(textAction).toBeVisible();
 });
 
-test('adapts the static profile backing to the hero composition', async ({
-    page,
-}) => {
-    await gotoAtLocalHour(page, 12);
-    await waitForLayout(page);
-
-    const hero = page.locator('#hero');
-    const profileShape = hero.locator('[data-profile-shape]');
-    const profileCloud = profileShape.locator('[data-profile-cloud]');
-    const profileGround = profileShape.locator('[data-profile-ground]');
-
-    await expect(profileShape).toHaveCount(1);
-    await expect(profileShape).toContainText('Software Engineer II');
-    await expect(profileCloud).toBeAttached();
-    await expect(profileGround).toBeAttached();
-    await expect(profileCloud).toHaveCSS('animation-name', 'none');
-    await expect(profileGround).toHaveCSS('animation-name', 'none');
-
-    const viewportWidth = page.viewportSize()?.width ?? 0;
-    const usesBottomProfile = viewportWidth <= 72 * 16;
-
-    if (usesBottomProfile) {
-        await expect(profileCloud).toBeHidden();
-        await expect(profileGround).toBeVisible();
-    } else {
-        await expect(profileCloud).toBeVisible();
-        await expect(profileGround).toBeHidden();
-    }
-
-    const profileBackingGeometry = await profileShape.evaluate((element) => {
-        const facts = element.querySelector<HTMLElement>('.hero__facts');
-        const backing = Array.from(
-            element.querySelectorAll<SVGSVGElement>(
-                '[data-profile-cloud], [data-profile-ground]',
-            ),
-        ).find((candidate) => getComputedStyle(candidate).display !== 'none');
-        const body = backing?.querySelector<SVGGeometryElement>(
-            '.hero__facts-cloud-body, .hero__facts-ground-body',
-        );
-        const matrix = body?.getScreenCTM();
-
-        if (!facts || !backing || !body || !matrix) return null;
-
-        const factsBounds = facts.getBoundingClientRect();
-        const backingBounds = body.getBoundingClientRect();
-        const inverseMatrix = matrix.inverse();
-        const rootFontSize = Number.parseFloat(
-            getComputedStyle(document.documentElement).fontSize,
-        );
-        const compactProfile = window.innerWidth <= 72 * rootFontSize;
-        const textClearance = compactProfile ? 2 : 12;
-        const textEdgeChecks = Array.from(
-            facts.querySelectorAll<HTMLElement>('dt, dd'),
-        ).flatMap((textElement) => {
-            const range = document.createRange();
-            range.selectNodeContents(textElement);
-            const textLabel = textElement.textContent?.trim() ?? '';
-
-            return Array.from(range.getClientRects()).flatMap(
-                (bounds, lineIndex) => {
-                    const centerY = bounds.top + bounds.height / 2;
-                    return [
-                        {
-                            edge: 'left',
-                            label: `${textElement.tagName.toLowerCase()} "${textLabel}", line ${lineIndex + 1}`,
-                            x: bounds.left - textClearance,
-                            y: centerY,
-                        },
-                        {
-                            edge: 'right',
-                            label: `${textElement.tagName.toLowerCase()} "${textLabel}", line ${lineIndex + 1}`,
-                            x: bounds.right + textClearance,
-                            y: centerY,
-                        },
-                    ];
-                },
-            );
-        });
-
-        return {
-            backing: {
-                top: backingBounds.top,
-                right: backingBounds.right,
-                bottom: backingBounds.bottom,
-                left: backingBounds.left,
-            },
-            facts: {
-                top: factsBounds.top,
-                right: factsBounds.right,
-                bottom: factsBounds.bottom,
-                left: factsBounds.left,
-            },
-            uncoveredTextEdges: textEdgeChecks
-                .filter(
-                    ({ x, y }) =>
-                        !body.isPointInFill(
-                            new DOMPoint(x, y).matrixTransform(inverseMatrix),
-                        ),
-                )
-                .map(({ edge, label }) => `${label} ${edge}`),
-            viewportWidth: document.documentElement.clientWidth,
-        };
-    });
-
-    expect(profileBackingGeometry).not.toBeNull();
-    expect(profileBackingGeometry!.backing.left).toBeGreaterThanOrEqual(0);
-    expect(profileBackingGeometry!.backing.right).toBeLessThanOrEqual(
-        profileBackingGeometry!.viewportWidth,
-    );
-    expect(profileBackingGeometry!.backing.left).toBeLessThanOrEqual(
-        profileBackingGeometry!.facts.left - 4,
-    );
-    expect(profileBackingGeometry!.backing.right).toBeGreaterThanOrEqual(
-        profileBackingGeometry!.facts.right + 4,
-    );
-    expect(profileBackingGeometry!.backing.top).toBeLessThanOrEqual(
-        profileBackingGeometry!.facts.top - 4,
-    );
-    expect(profileBackingGeometry!.backing.bottom).toBeGreaterThanOrEqual(
-        profileBackingGeometry!.facts.bottom + 4,
-    );
-    expect(profileBackingGeometry!.uncoveredTextEdges).toEqual([]);
-
-    const profilePosition = await profileShape.evaluate((element) => {
-        const style = getComputedStyle(element);
-        const hero = element.closest<HTMLElement>('#hero');
-        if (!hero) return null;
-
-        const bounds = element.getBoundingClientRect();
-        const heroBounds = hero.getBoundingClientRect();
-        const rootFontSize = Number.parseFloat(
-            getComputedStyle(document.documentElement).fontSize,
-        );
-        const compact = window.innerWidth <= 72 * rootFontSize;
-        const phone = window.innerWidth <= 48 * rootFontSize;
-        const narrowPhone = window.innerWidth <= 25 * rootFontSize;
-
-        return {
-            position: style.position,
-            topInset: bounds.top - heroBounds.top,
-            rightInset: heroBounds.right - bounds.right,
-            bottomInset: heroBounds.bottom - bounds.bottom,
-            leftInset: bounds.left - heroBounds.left,
-            expectedTop: Math.min(
-                Math.max(9 * rootFontSize, window.innerHeight * 0.17),
-                12 * rootFontSize,
-            ),
-            expectedBottom:
-                (phone ? 5.75 : 6.5) * rootFontSize +
-                (compact
-                    ? Math.max(0, heroBounds.height - window.innerHeight)
-                    : 0),
-            expectedGutter: narrowPhone
-                ? 1.15 * rootFontSize
-                : Math.min(
-                      Math.max(1.15 * rootFontSize, window.innerWidth * 0.048),
-                      5.75 * rootFontSize,
-                  ),
-            compact,
-            phone,
-        };
-    });
-
-    expect(profilePosition).not.toBeNull();
-    expect(profilePosition!.position).toBe('absolute');
-    expect(profilePosition!.rightInset).toBeCloseTo(
-        profilePosition!.expectedGutter,
-        0,
-    );
-
-    if (profilePosition!.compact) {
-        expect(profilePosition!.bottomInset).toBeCloseTo(
-            profilePosition!.expectedBottom,
-            0,
-        );
-        if (profilePosition!.phone) {
-            expect(profilePosition!.leftInset).toBeCloseTo(
-                profilePosition!.expectedGutter,
-                0,
-            );
-        }
-    } else {
-        expect(profilePosition!.topInset).toBeCloseTo(
-            profilePosition!.expectedTop,
-            0,
-        );
-    }
-});
-
-test('keeps profile text stable when critical fonts arrive late', async ({
-    page,
-}) => {
-    test.skip(
-        Boolean(test.info().project.use.isMobile),
-        'Font loading behavior is viewport-independent and is covered once.',
-    );
-
-    await page.route('**/fonts/GeneralSans-*.woff2', async (route) => {
-        await new Promise((resolve) => setTimeout(resolve, 700));
-        await route.continue();
-    });
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-
-    const profile = page.locator('[data-profile-shape]');
-    const getTextGeometry = () =>
-        profile.locator('dt, dd').evaluateAll((elements) =>
-            elements.map((element) => {
-                const bounds = element.getBoundingClientRect();
-                return {
-                    left: bounds.left,
-                    top: bounds.top,
-                    width: bounds.width,
-                    height: bounds.height,
-                };
-            }),
-        );
-
-    const initialGeometry = await getTextGeometry();
-    await page.evaluate(() => document.fonts.ready);
-    await page.waitForTimeout(100);
-
-    expect(await getTextGeometry()).toEqual(initialGeometry);
-});
-
-test('keeps every desktop profile line comfortably inside the cloud fill', async ({
+test('keeps the full CN Tower beacon inside the mobile panel cutout', async ({
     page,
 }, testInfo) => {
     test.skip(
         testInfo.project.name !== 'chromium',
-        'Desktop cloud breakpoints are sampled explicitly in Chromium.',
+        'The mobile beacon clearance viewports are sampled explicitly in Chromium.',
     );
 
-    const minimumPadding = 12;
-    const desktopViewports = [
-        { label: 'just above the 72rem breakpoint', width: 1153, height: 900 },
-        { label: 'standard desktop', width: 1440, height: 900 },
-        { label: 'wide desktop', width: 1920, height: 1080 },
-    ] as const;
+    await page.emulateMedia({ reducedMotion: 'reduce' });
 
-    for (const viewport of desktopViewports) {
+    for (const viewport of [
+        { height: 568, width: 320 },
+        { height: 667, width: 320 },
+        { height: 844, width: 390 },
+    ]) {
         await page.setViewportSize(viewport);
-        await gotoAtLocalHour(page, 12);
+        await gotoAtLocalHour(page, 2);
         await waitForLayout(page);
 
-        const coverage = await getDesktopProfileCloudCoverage(
-            page,
-            minimumPadding,
-        );
-
-        expect(coverage, viewport.label).not.toBeNull();
-        expect(coverage!.cloudDisplay, viewport.label).not.toBe('none');
-        expect(coverage!.groundDisplay, viewport.label).toBe('none');
-        expect(
-            coverage!.textLines.length,
-            viewport.label,
-        ).toBeGreaterThanOrEqual(4);
-
-        const uncoveredProbes = coverage!.textLines.flatMap((line) =>
-            line.probes
-                .filter(({ covered }) => !covered)
-                .map(
-                    ({ edge }) =>
-                        `${line.label} ${edge} edge lacks ${minimumPadding}px padding`,
-                ),
-        );
-
-        expect(uncoveredProbes, viewport.label).toEqual([]);
-
-        const perspectiveRightEdges = coverage!.textLines
-            .filter(({ label }) => label.includes('working globally'))
-            .flatMap(({ probes }) =>
-                probes.filter(({ edge }) => edge === 'right'),
+        const clearance = await page.locator('#hero').evaluate((hero) => {
+            const panel = hero.querySelector<HTMLElement>(
+                '[data-hero-copy-panel]',
             );
+            const beacon = hero.querySelector<SVGGraphicsElement>(
+                '[data-landmark="cn-tower"] [data-beacon]',
+            );
+            if (!panel || !beacon) return null;
+
+            const panelBounds = panel.getBoundingClientRect();
+            const beaconBounds = beacon.getBoundingClientRect();
+            const center = {
+                x: beaconBounds.left + beaconBounds.width / 2,
+                y: beaconBounds.top + beaconBounds.height / 2,
+            };
+            const probes = [
+                { edge: 'center', x: center.x, y: center.y },
+                { edge: 'top', x: center.x, y: beaconBounds.top + 1 },
+                {
+                    edge: 'right',
+                    x: beaconBounds.right - 1,
+                    y: center.y,
+                },
+                {
+                    edge: 'bottom',
+                    x: center.x,
+                    y: beaconBounds.bottom - 1,
+                },
+                { edge: 'left', x: beaconBounds.left + 1, y: center.y },
+            ];
+            const priorPanelStyles = {
+                pointerEvents: panel.style.pointerEvents,
+                zIndex: panel.style.zIndex,
+            };
+
+            panel.style.pointerEvents = 'auto';
+            panel.style.zIndex = '999';
+
+            const occludedEdges = probes.flatMap(({ edge, x, y }) => {
+                const hit = document.elementFromPoint(x, y);
+                return hit === panel || Boolean(hit && panel.contains(hit))
+                    ? [edge]
+                    : [];
+            });
+
+            panel.style.pointerEvents = priorPanelStyles.pointerEvents;
+            panel.style.zIndex = priorPanelStyles.zIndex;
+
+            return {
+                beacon: {
+                    bottom: beaconBounds.bottom,
+                    left: beaconBounds.left,
+                    right: beaconBounds.right,
+                    top: beaconBounds.top,
+                },
+                occludedEdges,
+                panel: {
+                    bottom: panelBounds.bottom,
+                    left: panelBounds.left,
+                    right: panelBounds.right,
+                    top: panelBounds.top,
+                },
+                viewportWidth: document.documentElement.clientWidth,
+            };
+        });
 
         expect(
-            perspectiveRightEdges.length,
-            `${viewport.label}: Perspective value right-edge probes`,
-        ).toBeGreaterThan(0);
+            clearance,
+            `${viewport.width}×${viewport.height}`,
+        ).not.toBeNull();
         expect(
-            perspectiveRightEdges.every(({ covered }) => covered),
-            `${viewport.label}: "working globally" needs visible cloud padding`,
-        ).toBe(true);
+            clearance!.occludedEdges,
+            `${viewport.width}×${viewport.height}: beacon edges hidden by the copy panel`,
+        ).toEqual([]);
+        expect(clearance!.beacon.left).toBeGreaterThanOrEqual(0);
+        expect(clearance!.beacon.right).toBeLessThanOrEqual(
+            clearance!.viewportWidth,
+        );
     }
 });
 
-test('separates narrow-phone profile and local-light surfaces at short heights', async ({
+test('moves current profile facts into the experience intro without decorative backing', async ({
+    page,
+}) => {
+    await page.goto('/');
+
+    const hero = page.locator('#hero');
+    const experience = page.locator('#experience');
+    const profile = experience.locator('[data-experience-profile]');
+    const summary = experience.locator('.experience__summary');
+
+    await expect(hero.locator('[data-profile-shape]')).toHaveCount(0);
+    await expect(hero.locator('[data-profile-cloud]')).toHaveCount(0);
+    await expect(hero.locator('[data-profile-ground]')).toHaveCount(0);
+    await expect(hero.locator('.hero__facts')).toHaveCount(0);
+
+    await expect(profile).toBeVisible();
+    await expect(profile).toHaveAccessibleName('Current profile');
+    await expect(profile).toContainText('Now');
+    await expect(profile).toContainText('Software Engineer II · Super.com');
+    await expect(profile).toContainText('Perspective');
+    await expect(profile).toContainText(
+        '6+ years · Canada-based, working globally',
+    );
+    await expect(profile.locator('svg')).toHaveCount(0);
+    await expect(summary).toBeVisible();
+
+    const placement = await experience.evaluate((element) => {
+        const profile = element.querySelector<HTMLElement>(
+            '[data-experience-profile]',
+        );
+        const summary = element.querySelector<HTMLElement>(
+            '.experience__summary',
+        );
+        if (!profile || !summary) return null;
+
+        const profileBounds = profile.getBoundingClientRect();
+        const summaryBounds = summary.getBoundingClientRect();
+
+        return {
+            profileBottom: profileBounds.bottom,
+            profileBeforeSummary: Boolean(
+                profile.compareDocumentPosition(summary) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+            ),
+            summaryTop: summaryBounds.top,
+        };
+    });
+
+    expect(placement).not.toBeNull();
+    expect(placement!.profileBeforeSummary).toBe(true);
+    expect(placement!.profileBottom).toBeLessThanOrEqual(placement!.summaryTop);
+});
+
+test('keeps the short-phone local-light control clear after removing hero facts', async ({
     page,
 }, testInfo) => {
     test.skip(
@@ -941,79 +1323,37 @@ test('separates narrow-phone profile and local-light surfaces at short heights',
         await waitForLayout(page);
 
         const geometry = await page.locator('#hero').evaluate((hero) => {
-            const profile = hero.querySelector<HTMLElement>(
-                '[data-profile-shape]',
-            );
-            const facts = profile?.querySelector<HTMLElement>('.hero__facts');
-            const groundBody = profile?.querySelector<SVGGeometryElement>(
-                '.hero__facts-ground-body',
-            );
             const note = hero.querySelector<HTMLElement>('.hero__scene-note');
+            if (!note) return null;
 
-            if (!profile || !facts || !groundBody || !note) return null;
-
-            const factsBounds = facts.getBoundingClientRect();
-            const profileBounds = groundBody.getBoundingClientRect();
             const noteBounds = note.getBoundingClientRect();
             const noteSurfaceStyle = getComputedStyle(note, '::before');
-            const noteSurface = {
-                top: noteBounds.top + Number.parseFloat(noteSurfaceStyle.top),
-                right:
-                    noteBounds.right -
-                    Number.parseFloat(noteSurfaceStyle.right),
-                bottom:
-                    noteBounds.bottom -
-                    Number.parseFloat(noteSurfaceStyle.bottom),
-                left:
-                    noteBounds.left + Number.parseFloat(noteSurfaceStyle.left),
-            };
 
             return {
-                facts: {
-                    top: factsBounds.top,
-                    right: factsBounds.right,
-                    bottom: factsBounds.bottom,
-                    left: factsBounds.left,
+                hasProfileShape: Boolean(
+                    hero.querySelector('[data-profile-shape]'),
+                ),
+                note: {
+                    left:
+                        noteBounds.left +
+                        Number.parseFloat(noteSurfaceStyle.left),
+                    right:
+                        noteBounds.right -
+                        Number.parseFloat(noteSurfaceStyle.right),
                 },
-                profile: {
-                    top: profileBounds.top,
-                    right: profileBounds.right,
-                    bottom: profileBounds.bottom,
-                    left: profileBounds.left,
-                },
-                note: noteSurface,
                 viewportWidth: document.documentElement.clientWidth,
             };
         });
 
-        expect(geometry, `profile geometry at 320×${height}`).not.toBeNull();
-        expect(
-            geometry!.profile.left,
-            `profile left edge at 320×${height}`,
-        ).toBeGreaterThanOrEqual(0);
-        expect(
-            geometry!.profile.right,
-            `profile right edge at 320×${height}`,
-        ).toBeLessThanOrEqual(geometry!.viewportWidth);
-        expect(
-            geometry!.profile.right,
-            `profile content clearance at 320×${height}`,
-        ).toBeGreaterThanOrEqual(geometry!.facts.right + 4);
-        expect(
-            geometry!.note.left,
-            `local-light left edge at 320×${height}`,
-        ).toBeGreaterThanOrEqual(0);
-        expect(
-            geometry!.note.right,
-            `local-light right edge at 320×${height}`,
-        ).toBeLessThanOrEqual(geometry!.viewportWidth);
-        expect(
-            geometry!.note.top - geometry!.profile.bottom,
-            `profile/local-light gap at 320×${height}`,
-        ).toBeGreaterThanOrEqual(4);
+        expect(geometry, `hero geometry at 320×${height}`).not.toBeNull();
+        expect(geometry!.hasProfileShape).toBe(false);
+        expect(geometry!.note.left).toBeGreaterThanOrEqual(0);
+        expect(geometry!.note.right).toBeLessThanOrEqual(
+            geometry!.viewportWidth,
+        );
 
         const sectionWidths = await page
-            .locator('#hero, #contact')
+            .locator('#hero, #experience, #contact')
             .evaluateAll((sections) =>
                 sections.map((section) => ({
                     clientWidth: section.clientWidth,
@@ -1038,6 +1378,8 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
     await page.goto('/');
 
     const explore = page.getByRole('link', { name: /explore my work/i });
+    const work = page.getByRole('link', { name: /^work$/i });
+    const toolkit = page.getByRole('link', { name: /^toolkit$/i });
     const sayHello = page.getByRole('link', { name: /say hello/i });
     const brand = page.getByRole('link', {
         name: /AY Albert Yang, back to top/i,
@@ -1060,6 +1402,11 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
     if (!isMobile) {
         await explore.hover();
         await expectDrawn(explore);
+
+        for (const navigationLink of [work, toolkit]) {
+            await navigationLink.hover();
+            await expectDrawn(navigationLink);
+        }
 
         const exploreStroke = explore.locator('.marker-outline__stroke');
         await page.mouse.move(1, 1);
@@ -1116,16 +1463,15 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
     await expect(brand).toBeFocused();
     await expectDrawn(brand);
 
-    for (
-        let step = 0;
-        step < 8 &&
-        !(await sayHello.evaluate(
-            (element) => element === document.activeElement,
-        ));
-        step += 1
-    ) {
-        await page.keyboard.press('Tab');
-    }
+    await page.keyboard.press('Tab');
+    await expect(work).toBeFocused();
+    await expectDrawn(work);
+
+    await page.keyboard.press('Tab');
+    await expect(toolkit).toBeFocused();
+    await expectDrawn(toolkit);
+
+    await page.keyboard.press('Tab');
     await expect(sayHello).toBeFocused();
     await expectDrawn(sayHello);
 
@@ -1133,12 +1479,17 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
     await expect(explore).toBeFocused();
     await expectDrawn(explore);
 
-    for (const control of [explore, sayHello]) {
-        await expect(control).toHaveCSS(
-            'background-color',
-            'rgba(0, 0, 0, 0)',
-        );
+    for (const control of [explore, work, toolkit, sayHello]) {
+        await expect(control).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
         await expect(control).toHaveCSS('border-top-style', 'none');
+    }
+
+    for (const navigationLink of [work, toolkit]) {
+        expect(
+            await navigationLink.evaluate(
+                (element) => getComputedStyle(element, '::after').content,
+            ),
+        ).toBe('none');
     }
 
     const outlineGeometry = await explore
@@ -1161,9 +1512,7 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
     expect(outlineGeometry.start.x).toBeGreaterThan(95);
     expect(outlineGeometry.start.y).toBeLessThan(10);
     expect(outlineGeometry.end.x).toBeLessThan(outlineGeometry.start.x - 25);
-    expect(outlineGeometry.end.y).toBeGreaterThan(
-        outlineGeometry.start.y + 4,
-    );
+    expect(outlineGeometry.end.y).toBeGreaterThan(outlineGeometry.start.y + 4);
     expect(outlineGeometry.strokeWidth).toBeGreaterThanOrEqual(2);
     await expect(explore.locator('.marker-outline__texture')).toHaveCount(0);
 
@@ -1642,9 +1991,7 @@ test.describe('skyline time states', () => {
             );
             await expect(
                 control.locator('.hero__time-label:visible'),
-            ).toHaveText(
-                state[0].toUpperCase() + state.slice(1),
-            );
+            ).toHaveText(state[0].toUpperCase() + state.slice(1));
         }
 
         await control.click();
@@ -1726,6 +2073,92 @@ test.describe('skyline time states', () => {
             }
         });
     }
+
+    test('uses the same cratered, opaque moon above the stars in both night scenes', async ({
+        page,
+    }) => {
+        await gotoAtLocalHour(page, 2);
+
+        const heroMoon = page.locator('[data-sky-object]');
+        const footerMoon = page.locator('[data-footer-sky-object]');
+
+        for (const moon of [heroMoon, footerMoon]) {
+            await expect(moon).toHaveAttribute(
+                'data-celestial-disc',
+                'cratered',
+            );
+            await expect(moon.locator('[data-celestial-halo]')).toHaveCount(1);
+            await expect(moon.locator('[data-celestial-core]')).toHaveCount(1);
+            await expect(moon.locator('[data-moon-craters]')).toHaveCount(1);
+            await expect(moon.locator('[data-moon-mark]')).toHaveCount(3);
+            await expect(moon.locator('[data-celestial-core]')).toHaveCSS(
+                'opacity',
+                '1',
+            );
+            await expect(moon.locator('[data-moon-craters]')).toHaveCSS(
+                'opacity',
+                '0.22',
+            );
+        }
+
+        const readMoonTreatment = (
+            moon: typeof heroMoon,
+            starsSelector: string,
+        ) =>
+            moon.evaluate((element, selector) => {
+                const halo = element.querySelector('[data-celestial-halo]');
+                const core = element.querySelector('[data-celestial-core]');
+                const craters = element.querySelector('[data-moon-craters]');
+                const stars = element.closest('svg')?.querySelector(selector);
+                if (!halo || !core || !craters || !stars) return null;
+
+                const haloStyle = getComputedStyle(halo);
+                const coreStyle = getComputedStyle(core);
+                const craterStyle = getComputedStyle(craters);
+
+                return {
+                    core: {
+                        fill: coreStyle.fill,
+                        opacity: coreStyle.opacity,
+                    },
+                    craters: {
+                        fill: craterStyle.fill,
+                        opacity: craterStyle.opacity,
+                    },
+                    halo: {
+                        fill: haloStyle.fill,
+                        opacity: haloStyle.opacity,
+                    },
+                    starsPaintBeforeMoon: Boolean(
+                        stars.compareDocumentPosition(element) &
+                            Node.DOCUMENT_POSITION_FOLLOWING,
+                    ),
+                };
+            }, starsSelector);
+
+        const heroTreatment = await readMoonTreatment(
+            heroMoon,
+            '.skyline__stars',
+        );
+        const footerTreatment = await readMoonTreatment(
+            footerMoon,
+            '.harbour-panorama__stars',
+        );
+
+        expect(heroTreatment).not.toBeNull();
+        expect(heroTreatment).toEqual(footerTreatment);
+        expect(heroTreatment?.starsPaintBeforeMoon).toBe(true);
+
+        await gotoAtLocalHour(page, 12);
+        await expect(heroMoon.locator('[data-moon-craters]')).toHaveCSS(
+            'opacity',
+            '0',
+        );
+        await expect(footerMoon.locator('[data-moon-craters]')).toHaveCSS(
+            'opacity',
+            '0',
+        );
+    });
 
     test('gives the footer landmarks distinct night glows', async ({
         page,
@@ -1929,20 +2362,24 @@ test('keeps footer harbour reflections aligned at every responsive crop', async 
     }
 
     await expect(
-        panorama.locator(
-            '[data-footer-reflection-for="footer-cn-tower"]',
-        ),
-    ).toHaveCSS('opacity', '0.9');
+        panorama.locator('[data-footer-reflection-for="footer-cn-tower"]'),
+    ).toHaveCSS('opacity', '0.72');
     await expect(
-        panorama.locator(
-            '[data-footer-reflection-for="footer-rogers-centre"]',
-        ),
-    ).toHaveCSS('opacity', '0.76');
+        panorama.locator('[data-footer-reflection-for="footer-rogers-centre"]'),
+    ).toHaveCSS('opacity', '0.62');
     await expect(
-        panorama.locator(
-            '[data-footer-reflection-for="footer-city-hall"]',
-        ),
-    ).toHaveCSS('opacity', '0.9');
+        panorama.locator('[data-footer-reflection-for="footer-city-hall"]'),
+    ).toHaveCSS('opacity', '0.72');
+    await expect(
+        panorama.locator('.harbour-reflections__celestial-core'),
+    ).toHaveCSS('opacity', '0.58');
+    const bonfireOpacity = await panorama
+        .locator('[data-footer-reflection-for="footer-bonfire"]')
+        .evaluate((element) =>
+            Number.parseFloat(getComputedStyle(element).opacity),
+        );
+    expect(bonfireOpacity).toBeGreaterThanOrEqual(0.58);
+    expect(bonfireOpacity).toBeLessThanOrEqual(0.76);
 });
 
 test('keeps the lit footer ferry reflection synchronized across the harbour', async ({
@@ -1978,12 +2415,12 @@ test('keeps the lit footer ferry reflection synchronized across the harbour', as
             const sourceX = sourceBounds.left + sourceBounds.width / 2;
             const reflectionX =
                 reflectionBounds.left + reflectionBounds.width / 2;
-            const sourceAnimation = source.getAnimations().find(
-                (animation) => animation instanceof CSSAnimation,
-            );
-            const reflectionAnimation = reflection.getAnimations().find(
-                (animation) => animation instanceof CSSAnimation,
-            );
+            const sourceAnimation = source
+                .getAnimations()
+                .find((animation) => animation instanceof CSSAnimation);
+            const reflectionAnimation = reflection
+                .getAnimations()
+                .find((animation) => animation instanceof CSSAnimation);
 
             return {
                 delta: Math.abs(sourceX - reflectionX),
@@ -2013,7 +2450,92 @@ test('keeps the lit footer ferry reflection synchronized across the harbour', as
     );
     await expect(
         panorama.locator('.harbour-reflections__ferry-lights'),
-    ).toHaveCSS('opacity', '0.72');
+    ).toHaveCSS('opacity', '0.58');
+});
+
+test('keeps the ferry stationary between contact-hash first paint and motion startup', async ({
+    page,
+}) => {
+    await page.goto('/#contact');
+
+    const footer = page.locator('[data-contact-footer]');
+    const panorama = footer.locator('[data-contact-panorama]');
+
+    await expect(footer).toHaveAttribute('data-contact-motion', 'full');
+    await expect(footer).toHaveAttribute('data-contact-active', '');
+
+    const continuity = await panorama.evaluate((element) => {
+        const scene = element.querySelector<SVGSVGElement>(
+            '[data-harbour-panorama]',
+        );
+        const source = element.querySelector<SVGGElement>(
+            '[data-harbour-ferry-route]',
+        );
+        const reflection = element.querySelector<SVGGElement>(
+            '[data-footer-ferry-reflection-route]',
+        );
+        const footer = element.closest<HTMLElement>('[data-contact-footer]');
+        if (!scene || !source || !reflection || !footer) return null;
+
+        const readTranslateX = (target: Element) =>
+            new DOMMatrixReadOnly(getComputedStyle(target).transform).m41;
+        const prepareAnimationStart = (target: Element) => {
+            const animation = target
+                .getAnimations()
+                .find((candidate) => candidate instanceof CSSAnimation);
+            if (!animation) return false;
+
+            animation.pause();
+            animation.currentTime = 0;
+            return true;
+        };
+
+        const hasSourceAnimation = prepareAnimationStart(source);
+        const hasReflectionAnimation = prepareAnimationStart(reflection);
+        const animated = {
+            reflection: readTranslateX(reflection),
+            source: readTranslateX(source),
+        };
+
+        footer.removeAttribute('data-contact-motion');
+
+        const fallback = {
+            reflection: readTranslateX(reflection),
+            source: readTranslateX(source),
+        };
+
+        return {
+            animated,
+            expectedFallbackX: Number.parseFloat(
+                getComputedStyle(scene).getPropertyValue(
+                    '--harbour-ferry-start-x',
+                ),
+            ),
+            fallback,
+            hasReflectionAnimation,
+            hasSourceAnimation,
+        };
+    });
+
+    expect(continuity).not.toBeNull();
+    expect(continuity!.hasSourceAnimation).toBe(true);
+    expect(continuity!.hasReflectionAnimation).toBe(true);
+    expect(continuity!.fallback.source).toBeCloseTo(
+        continuity!.expectedFallbackX,
+        1,
+    );
+    expect(continuity!.fallback.reflection).toBeCloseTo(
+        continuity!.expectedFallbackX,
+        1,
+    );
+    expect(
+        Math.abs(continuity!.fallback.source - continuity!.animated.source),
+    ).toBeLessThanOrEqual(0.75);
+    expect(
+        Math.abs(
+            continuity!.fallback.reflection - continuity!.animated.reflection,
+        ),
+    ).toBeLessThanOrEqual(0.75);
 });
 
 test.describe('with reduced motion', () => {
@@ -2043,9 +2565,11 @@ test.describe('with reduced motion', () => {
         const beacon = scene.locator('[data-beacon]');
         await expect(beacon).toBeVisible();
         await expect(beacon).toHaveCSS('animation-name', 'none');
-        expect(await beacon.evaluate((element) => getComputedStyle(element).filter)).not.toBe(
-            'none',
-        );
+        expect(
+            await beacon.evaluate(
+                (element) => getComputedStyle(element).filter,
+            ),
+        ).not.toBe('none');
 
         const streetcar = scene.locator('[data-streetcar]');
         await expect(streetcar).toHaveCSS('animation-name', 'none');
@@ -2136,9 +2660,7 @@ test.describe('with reduced motion', () => {
             panorama.locator('[data-footer-ferry-reflection-route]'),
         ).toHaveCSS('animation-name', 'none');
         await expect(
-            panorama.locator(
-                '[data-footer-reflection-for="footer-bonfire"]',
-            ),
+            panorama.locator('[data-footer-reflection-for="footer-bonfire"]'),
         ).toHaveCSS('animation-name', 'none');
         await expect(bonfire.locator('[data-bonfire-flame="outer"]')).toHaveCSS(
             'animation-name',

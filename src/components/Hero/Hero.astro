@@ -11,6 +11,19 @@ import './Hero.scss';
                 class="hero__copy-panel"
                 data-hero-copy-panel
                 aria-hidden="true"></span>
+            <svg
+                class="hero__copy-panel-outline"
+                data-hero-copy-outline
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+                focusable="false"
+            >
+                <path
+                    vector-effect="non-scaling-stroke"
+                    d="M3 0H97Q100 0 100 3V77Q100 80 97 80H73Q70 80 70 83V97Q70 100 67 100H3Q0 100 0 97V3Q0 0 3 0Z"
+                ></path>
+            </svg>
             <p class="hero__eyebrow eyebrow">Toronto · Software Engineer</p>
             <h1 id="hero-title" class="hero__title">
                 Albert <em>Yang</em>
@@ -33,50 +46,6 @@ import './Hero.scss';
                 </a>
             </div>
         </div>
-    </div>
-
-    <div class="hero__facts-shell" data-profile-shape>
-        <svg
-            class="hero__facts-cloud"
-            data-profile-cloud
-            viewBox="0 0 500 190"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-            focusable="false"
-        >
-            <path
-                class="hero__facts-cloud-body"
-                d="M48 177C21 172 9 149 20 126C1 105 12 72 42 63C41 34 74 13 105 25C129 1 171 2 193 29C222 8 267 15 285 46C319 29 362 44 369 78C405 76 436 97 438 126C466 137 470 163 448 177Z"
-            ></path>
-        </svg>
-
-        <svg
-            class="hero__facts-ground"
-            data-profile-ground
-            viewBox="0 0 500 160"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-            focusable="false"
-        >
-            <path
-                class="hero__facts-ground-body"
-                d="M12 8L482 3L500 121L456 154L10 146L0 34Z"></path>
-            <path
-                class="hero__facts-ground-brush"
-                d="M26 134C131 126 215 139 311 130C377 124 429 130 468 122"
-            ></path>
-        </svg>
-
-        <dl class="hero__facts" aria-label="Current profile">
-            <div>
-                <dt>Now</dt>
-                <dd>Software Engineer II · Super.com</dd>
-            </div>
-            <div>
-                <dt>Perspective</dt>
-                <dd>6+ years · Canada-based, working globally</dd>
-            </div>
-        </dl>
     </div>
 
     <TorontoSkyline />

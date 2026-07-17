@@ -83,7 +83,7 @@
 }
 
 .harbour-reflections__ferry-route {
-    transform: translateX(820px);
+    transform: translateX(var(--harbour-ferry-start-x));
     transform-box: view-box;
     transform-origin: left top;
     opacity: var(--window-alpha);
@@ -106,9 +106,9 @@
 }
 
 .harbour-reflections__bonfire {
-    opacity: 0.52;
     transform-box: view-box;
     transform-origin: 1121px 406px;
+    opacity: 0.52;
 }
 
 .harbour-reflections__bonfire-glow {
@@ -118,28 +118,24 @@
 
 .harbour-reflections__bonfire-core {
     opacity: 0.82;
-    fill: color-mix(
-        in srgb,
-        var(--harbour-reflection-fire) 68%,
-        var(--sun)
-    );
+    fill: color-mix(in srgb, var(--harbour-reflection-fire) 68%, var(--sun));
 }
 
 html[data-time-state='night'] .harbour-reflections__celestial-soft {
-    opacity: 0.32;
+    opacity: 0.26;
 }
 
 html[data-time-state='night'] .harbour-reflections__celestial-core {
-    opacity: 0.72;
+    opacity: 0.58;
 }
 
 html[data-time-state='night'] .harbour-reflections__landmark {
-    opacity: 0.76;
+    opacity: 0.62;
 }
 
 html[data-time-state='night'] .harbour-reflections__landmark--cn,
 html[data-time-state='night'] .harbour-reflections__landmark--city-hall {
-    opacity: 0.9;
+    opacity: 0.72;
 }
 
 html[data-time-state='night'] .harbour-reflections__landmark--cn,
@@ -147,15 +143,18 @@ html[data-time-state='night'] .harbour-reflections__landmark--stadium,
 html[data-time-state='night'] .harbour-reflections__landmark--city-hall,
 html[data-time-state='night'] .harbour-reflections__ferry-lights,
 html[data-time-state='night'] .harbour-reflections__bonfire-core {
-    filter: drop-shadow(0 0 4px currentColor);
+    filter: drop-shadow(0 0 3px currentColor);
+}
+
+html[data-time-state='night'] .harbour-reflections__ferry-lights {
+    opacity: 0.58;
 }
 
 html[data-time-state='night'] .harbour-reflections__bonfire {
-    opacity: 0.9;
+    opacity: 0.72;
 }
 
-.contact-footer[data-contact-motion='full']
-    .harbour-reflections__ferry-route {
+.contact-footer[data-contact-motion='full'] .harbour-reflections__ferry-route {
     animation: harbour-ferry-crossing var(--harbour-ferry-duration) linear
         var(--harbour-ferry-delay) infinite;
     animation-play-state: paused;
@@ -178,12 +177,18 @@ html[data-time-state='night'] .harbour-reflections__bonfire {
 @keyframes harbour-bonfire-reflection {
     from {
         transform: scale(0.985, 0.97);
-        opacity: 0.78;
+        opacity: 0.6;
     }
 
     to {
         transform: scale(1.015, 1.03);
-        opacity: 0.94;
+        opacity: 0.74;
+    }
+}
+
+@media (max-width: 64rem) {
+    .harbour-reflections__celestial {
+        transform: translateX(-150px);
     }
 }
 

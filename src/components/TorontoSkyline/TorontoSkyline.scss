@@ -63,27 +63,30 @@ html[data-time-state='midday'] .skyline__celestial {
     transform: translate(-360px, -124px);
 }
 
+@media (min-width: 72.001rem) {
+    html[data-time-state='midday'] .skyline__celestial {
+        transform: translate(-360px, -92px);
+    }
+}
+
 html[data-time-state='night'] .skyline__celestial {
     transform: translate(105px, -76px);
 }
 
-.skyline__celestial-halo {
+.skyline__celestial .celestial-disc__halo {
     opacity: 0.15;
-    fill: var(--sky-object);
 }
 
-.skyline__celestial-core {
-    fill: var(--sky-object);
+.skyline__celestial .celestial-disc__core {
+    opacity: 1;
 }
 
-.skyline__moon-marks {
-    opacity: 0;
-    transition: opacity var(--motion-state) ease;
-    fill: var(--sky-base);
+html[data-time-state='night'] .skyline__celestial .celestial-disc__halo {
+    opacity: 0.075;
 }
 
-html[data-time-state='night'] .skyline__moon-marks {
-    opacity: 0.22;
+html[data-time-state='night'] .skyline__celestial .celestial-disc__core {
+    opacity: 1;
 }
 
 .skyline__horizon-haze {

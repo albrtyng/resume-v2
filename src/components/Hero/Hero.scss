@@ -30,11 +30,12 @@
 
 .hero__copy-surface {
     --copy-panel-padding: clamp(0.7rem, 1.2vw, 1.15rem);
+    --copy-panel-radius: clamp(0.85rem, 1.2vw, 1.35rem);
 
     position: relative;
     isolation: isolate;
     width: min(
-        38rem,
+        34rem,
         calc(100vw - min(25rem, 30vw) - var(--gutter) - var(--gutter) - 3rem)
     );
     min-width: 0;
@@ -53,13 +54,63 @@
 }
 
 .hero__copy-panel {
+    clip-path: polygon(
+        3% 0%,
+        97% 0%,
+        98.7% 0.3%,
+        99.7% 1.3%,
+        100% 3%,
+        100% 77%,
+        99.7% 78.7%,
+        98.7% 79.7%,
+        97% 80%,
+        73% 80%,
+        71.3% 80.3%,
+        70.3% 81.3%,
+        70% 83%,
+        70% 97%,
+        69.7% 98.7%,
+        68.7% 99.7%,
+        67% 100%,
+        3% 100%,
+        1.3% 99.7%,
+        0.3% 98.7%,
+        0% 97%,
+        0% 3%,
+        0.3% 1.3%,
+        1.3% 0.3%
+    );
+    filter: drop-shadow(
+        0 1.25rem 3rem color-mix(in srgb, var(--skyline-near) 14%, transparent)
+    );
     inset: calc(-1 * var(--copy-panel-padding));
-    box-shadow:
-        inset 0 1px 0 color-mix(in srgb, var(--paper-light) 24%, transparent),
-        0 1.25rem 3rem color-mix(in srgb, var(--skyline-near) 14%, transparent);
-    border: 1px solid var(--hero-surface-border);
-    border-radius: clamp(0.85rem, 1.2vw, 1.35rem);
+    border-radius: var(--copy-panel-radius);
     background-color: var(--hero-copy-surface-strong);
+}
+
+.hero__copy-panel-outline {
+    display: block;
+    position: absolute;
+    top: calc(-1 * var(--copy-panel-padding) - 0.5px);
+    left: calc(-1 * var(--copy-panel-padding) - 0.5px);
+    z-index: -1;
+    transition: opacity var(--motion-state) ease;
+    width: calc(
+        100% + var(--copy-panel-padding) + var(--copy-panel-padding) + 1px
+    );
+    max-width: none;
+    height: calc(
+        100% + var(--copy-panel-padding) + var(--copy-panel-padding) + 1px
+    );
+    overflow: visible;
+    pointer-events: none;
+}
+
+.hero__copy-panel-outline path {
+    transition: stroke var(--motion-state) ease;
+    fill: none;
+    stroke: var(--hero-surface-border);
+    stroke-width: 1;
 }
 
 .hero__eyebrow,
@@ -91,8 +142,8 @@
     max-width: 100%;
     font-size: var(--text-lead);
     line-height: 1.38;
-    overflow-wrap: anywhere;
     text-wrap: pretty;
+    overflow-wrap: anywhere;
 }
 
 .hero__actions {
@@ -142,69 +193,8 @@
     transform: translate(0.18rem, -0.18rem);
 }
 
-.hero__facts-shell {
-    position: absolute;
-    top: clamp(9rem, 17vh, 12rem);
-    right: var(--gutter);
-    z-index: 6;
-    isolation: isolate;
-    width: min(25rem, 30vw);
-    color: var(--hero-facts-ink, var(--hero-surface-ink));
-}
-
 .hero__scene-note::before {
     border: 1px solid var(--hero-surface-border);
-}
-
-.hero__facts-cloud,
-.hero__facts-ground {
-    position: absolute;
-    z-index: -1;
-    animation: none;
-    max-width: none;
-    overflow: visible;
-    pointer-events: none;
-}
-
-.hero__facts-cloud {
-    inset: -3.25rem -5rem -2.55rem -2.6rem;
-    width: calc(100% + 7.6rem);
-    height: calc(100% + 5.8rem);
-}
-
-.hero__facts-cloud-body,
-.hero__facts-ground-body {
-    transition:
-        fill var(--motion-state) ease,
-        stroke var(--motion-state) ease;
-    fill: var(--hero-facts-surface);
-}
-
-.hero__facts-ground-body {
-    stroke: var(--hero-surface-border);
-    stroke-width: 1.5;
-}
-
-.hero__facts-ground-brush {
-    opacity: 0.2;
-    fill: none;
-    stroke: var(--hero-facts-ink, var(--hero-surface-ink));
-    stroke-linecap: round;
-    stroke-width: 2;
-}
-
-.hero__facts-ground {
-    display: none;
-    inset: -0.9rem -1.05rem -1rem;
-    width: calc(100% + 2.1rem);
-    height: calc(100% + 1.9rem);
-}
-
-.hero__facts {
-    display: grid;
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
 }
 
 .hero__scene-note::before {
@@ -213,50 +203,11 @@
 
 .hero__scene-note::after {
     position: absolute;
-    inset: -2px;
     z-index: -2;
     clip-path: polygon(3% 15%, 96% 0, 100% 78%, 88% 100%, 0 88%);
+    inset: -2px;
     background: transparent;
     content: '';
-}
-
-.hero__facts div {
-    display: grid;
-    position: relative;
-    grid-template-columns: 5.25rem 1fr;
-    gap: 0.75rem;
-    overflow: hidden;
-    padding-top: 0.65rem;
-}
-
-.hero__facts div::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: color-mix(in srgb, currentColor 42%, transparent);
-    width: 100%;
-    height: 1px;
-    content: '';
-}
-
-.hero__facts div:first-child::before {
-    clip-path: inset(0 16% 0 0);
-}
-
-.hero__facts dt,
-.hero__facts dd,
-.hero__scene-note {
-    margin: 0;
-    font-size: var(--text-small);
-    line-height: 1.4;
-}
-
-.hero__facts dt {
-    font-weight: 500;
-}
-
-.hero__facts dd {
-    opacity: 0.9;
 }
 
 .hero__scene-note {
@@ -266,20 +217,23 @@
     right: var(--gutter);
     align-items: center;
     gap: 0.55rem;
-    z-index: 8;
-    isolation: isolate;
     appearance: none;
+    z-index: 8;
     transition:
         transform var(--motion-fast) ease,
         color var(--motion-state) ease;
     cursor: pointer;
+    margin: 0;
     border: 0;
     background: transparent;
+    isolation: isolate;
     padding: 0.5rem 0.7rem 0.55rem;
     min-height: 2.75rem;
     color: var(--scene-note-ink);
-    font-family: inherit;
     font-weight: 500;
+    font-size: var(--text-small);
+    line-height: 1.4;
+    font-family: inherit;
     letter-spacing: 0.04em;
 }
 
@@ -349,21 +303,6 @@ html[data-time-state='night'] .hero__time-label--night {
     .hero__copy-surface {
         width: min(30rem, calc(100vw - var(--gutter) - var(--gutter)));
     }
-
-    .hero__facts-shell {
-        top: auto;
-        right: var(--gutter);
-        bottom: calc(6.5rem + 100% - 100svh);
-        width: min(28rem, 42vw);
-    }
-
-    .hero__facts-cloud {
-        display: none;
-    }
-
-    .hero__facts-ground {
-        display: block;
-    }
 }
 
 @media (max-width: 48rem) {
@@ -376,7 +315,7 @@ html[data-time-state='night'] .hero__time-label--night {
     }
 
     .hero__copy {
-        padding-top: 7.2rem;
+        padding-top: 6.35rem;
     }
 
     .hero__copy-surface {
@@ -412,19 +351,6 @@ html[data-time-state='night'] .hero__time-label--night {
         min-height: 2.9rem;
     }
 
-    .hero__facts-shell {
-        right: var(--gutter);
-        bottom: calc(5.75rem + 100% - 100svh);
-        left: var(--gutter);
-        gap: 0.55rem;
-        width: auto;
-    }
-
-    .hero__facts div {
-        grid-template-columns: 4.5rem 1fr;
-        padding-top: 0.45rem;
-    }
-
     .hero__scene-note {
         top: calc(min(100svh, 100%) - 4.25rem);
         right: auto;
@@ -432,8 +358,36 @@ html[data-time-state='night'] .hero__time-label--night {
     }
 }
 
+@media (min-width: 48.001rem) and (max-height: 49.999rem) {
+    .hero__copy {
+        padding-top: 6.5rem;
+    }
+}
+
+@media (min-width: 48.001rem) and (max-height: 36rem) {
+    .hero__copy {
+        padding-top: 6.1rem;
+    }
+
+    .hero__title {
+        font-size: clamp(4.25rem, 10.8vw, 7rem);
+    }
+
+    .hero__statement {
+        margin-bottom: 1.15rem;
+        font-size: 1.25rem;
+        line-height: 1.35;
+    }
+
+    .hero__primary-link {
+        padding-block: 0.7rem;
+        min-height: 2.9rem;
+    }
+}
+
 @media (min-width: 40rem) and (max-width: 72rem) and (min-height: 50rem) {
-    .hero__copy-panel {
+    .hero__copy-panel,
+    .hero__copy-panel-outline {
         display: none;
     }
 }
@@ -444,7 +398,6 @@ html[data-time-state='night'] .hero__time-label--night {
         backdrop-filter: none;
         box-shadow: none;
         border-color: transparent;
-        background-color: transparent;
         background-image: linear-gradient(
             to bottom,
             transparent 0%,
@@ -452,6 +405,11 @@ html[data-time-state='night'] .hero__time-label--night {
             var(--hero-copy-surface-strong) 62%,
             var(--hero-copy-surface-strong) 100%
         );
+        background-color: transparent;
+    }
+
+    .hero__copy-panel-outline {
+        opacity: 0;
     }
 }
 
@@ -471,10 +429,6 @@ html[data-time-state='night'] .hero__time-label--night {
 }
 
 @media (max-width: 48rem) and (max-height: 41rem) {
-    .hero__facts-shell {
-        bottom: 6rem;
-    }
-
     .hero__scene-note {
         top: auto;
         bottom: 2.25rem;
@@ -485,8 +439,8 @@ html[data-time-state='night'] .hero__time-label--night {
     .hero,
     .hero::before,
     .hero__copy-panel,
-    .hero__facts-cloud-body,
-    .hero__facts-ground-body,
+    .hero__copy-panel-outline,
+    .hero__copy-panel-outline path,
     .hero__scene-note::before,
     .hero__primary-link,
     .hero__primary-link span,

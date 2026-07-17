@@ -1,6 +1,8 @@
 .harbour-panorama {
     --harbour-ferry-delay: -20s;
     --harbour-ferry-duration: 54s;
+    /* Keep the pre-script pose at the animation's negative-delay phase. */
+    --harbour-ferry-start-x: 233.333px;
     --harbour-sky: var(--footer-sky, var(--spruce));
     --harbour-haze: color-mix(
         in srgb,
@@ -46,24 +48,16 @@
     fill: var(--harbour-sky);
 }
 
-.harbour-panorama__sky-disc-halo,
-.harbour-panorama__sky-disc {
-    transition:
-        opacity var(--motion-state) ease,
-        fill var(--motion-state) ease;
-    fill: var(--sky-object);
-}
-
 .harbour-panorama__sky-disc-group {
     transform-box: view-box;
     transform-origin: center;
 }
 
-.harbour-panorama__sky-disc-halo {
+.harbour-panorama__sky-disc-group .celestial-disc__halo {
     opacity: 0.055;
 }
 
-.harbour-panorama__sky-disc {
+.harbour-panorama__sky-disc-group .celestial-disc__core {
     opacity: 0.54;
 }
 
@@ -186,7 +180,7 @@
 }
 
 .harbour-panorama__ferry-route {
-    transform: translateX(820px);
+    transform: translateX(var(--harbour-ferry-start-x));
     transform-box: view-box;
     transform-origin: left top;
     will-change: auto;
@@ -313,7 +307,9 @@ html[data-time-state='midday'] .harbour-panorama {
     );
 }
 
-html[data-time-state='midday'] .harbour-panorama__sky-disc {
+html[data-time-state='midday']
+    .harbour-panorama__sky-disc-group
+    .celestial-disc__core {
     opacity: 0.72;
 }
 
@@ -325,12 +321,16 @@ html[data-time-state='night'] .harbour-panorama {
     );
 }
 
-html[data-time-state='night'] .harbour-panorama__sky-disc-halo {
+html[data-time-state='night']
+    .harbour-panorama__sky-disc-group
+    .celestial-disc__halo {
     opacity: 0.075;
 }
 
-html[data-time-state='night'] .harbour-panorama__sky-disc {
-    opacity: 0.62;
+html[data-time-state='night']
+    .harbour-panorama__sky-disc-group
+    .celestial-disc__core {
+    opacity: 1;
 }
 
 @keyframes harbour-ferry-crossing {
@@ -367,10 +367,17 @@ html[data-time-state='night'] .harbour-panorama__sky-disc {
 
 @media (max-width: 64rem) {
     .harbour-panorama {
+        position: absolute;
+        bottom: 0;
         left: 50%;
         transform: translateX(-50%);
         width: 112%;
         max-width: none;
+        height: clamp(31rem, 56svh, 36rem);
+    }
+
+    .harbour-panorama__sky-disc-group {
+        transform: translateX(-150px);
     }
 }
 
@@ -378,9 +385,11 @@ html[data-time-state='night'] .harbour-panorama__sky-disc {
     .harbour-panorama {
         --harbour-ferry-delay: -8s;
         --harbour-ferry-duration: 34s;
+        --harbour-ferry-start-x: 575.882px;
 
         left: calc(50% - 3rem);
         width: 54rem;
+        height: clamp(22.5rem, 55svh, 31rem);
     }
 
     .harbour-panorama__clouds,
@@ -393,10 +402,6 @@ html[data-time-state='night'] .harbour-panorama__sky-disc {
 
     .harbour-panorama__sky-disc-group {
         transform: translateX(-180px);
-    }
-
-    .harbour-panorama__ferry-route {
-        transform: translateX(820px);
     }
 
     .contact-footer[data-contact-motion='full'] .harbour-panorama__ferry-route {

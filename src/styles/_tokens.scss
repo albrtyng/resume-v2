@@ -63,8 +63,6 @@
     --hero-surface-ink: #06201e;
     --hero-copy-surface: rgba(247, 232, 208, 0.3);
     --hero-copy-surface-strong: rgba(251, 244, 229, 0.3);
-    --hero-facts-surface: rgba(251, 244, 229, 0.52);
-    --hero-facts-ink: var(--hero-surface-ink);
     --hero-surface-border: rgba(6, 32, 30, 0.16);
     --hero-note-surface: rgba(14, 43, 41, 0.64);
     --header-hero-bg: var(--sky-base);
@@ -100,7 +98,6 @@ html[data-time-state='dawn'] {
     --hero-surface-ink: #15352f;
     --hero-copy-surface: rgba(251, 244, 229, 0.24);
     --hero-copy-surface-strong: rgba(251, 244, 229, 0.28);
-    --hero-facts-surface: rgba(251, 244, 229, 0.54);
     --hero-surface-border: rgba(21, 53, 47, 0.14);
     --hero-note-surface: rgba(251, 244, 229, 0.7);
     --footer-sky: #315b57;
@@ -128,7 +125,6 @@ html[data-time-state='midday'] {
     --hero-surface-ink: #14372f;
     --hero-copy-surface: rgba(251, 244, 229, 0.22);
     --hero-copy-surface-strong: rgba(251, 244, 229, 0.26);
-    --hero-facts-surface: rgba(251, 244, 229, 0.52);
     --hero-surface-border: rgba(20, 55, 47, 0.14);
     --hero-note-surface: rgba(251, 244, 229, 0.7);
     --footer-sky: #3c6660;
@@ -156,7 +152,6 @@ html[data-time-state='dusk'] {
     --hero-surface-ink: #06201e;
     --hero-copy-surface: rgba(247, 232, 208, 0.3);
     --hero-copy-surface-strong: rgba(251, 244, 229, 0.3);
-    --hero-facts-surface: rgba(251, 244, 229, 0.52);
     --hero-surface-border: rgba(6, 32, 30, 0.16);
     --hero-note-surface: rgba(14, 43, 41, 0.64);
     --footer-sky: #1d4540;
@@ -184,8 +179,6 @@ html[data-time-state='night'] {
     --hero-surface-ink: #f7edd9;
     --hero-copy-surface: rgba(38, 61, 78, 0.16);
     --hero-copy-surface-strong: rgba(31, 55, 72, 0.18);
-    --hero-facts-surface: rgba(225, 228, 216, 0.64);
-    --hero-facts-ink: #0d2a38;
     --hero-surface-border: rgba(247, 237, 217, 0.2);
     --hero-note-surface: rgba(7, 28, 38, 0.72);
     --footer-sky: #122f38;
