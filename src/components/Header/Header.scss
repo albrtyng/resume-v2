@@ -20,6 +20,8 @@
     --header-surface-foreground: var(--header-hero-ink, var(--hero-ink));
     --header-surface-tint: 64%;
     --header-surface-transition-duration: 360ms;
+    // The header tint and hero sky share one palette-transition clock.
+    --header-background-transition-duration: var(--motion-state);
 
     display: grid;
     position: fixed;
@@ -38,7 +40,7 @@
         border-color var(--header-surface-transition-duration) ease,
         border-radius 720ms var(--header-spring),
         color var(--header-surface-transition-duration) ease,
-        background-color var(--header-surface-transition-duration) ease;
+        background-color var(--header-background-transition-duration) ease;
     box-shadow: none;
     border: 1px solid transparent;
     border-radius: 0;

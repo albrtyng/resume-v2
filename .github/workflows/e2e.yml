@@ -1,0 +1,112 @@
+name: Quality and end-to-end tests
+
+on:
+    pull_request:
+    push:
+        branches:
+            - main
+        paths:
+            - '.github/workflows/e2e.yml'
+            - '.eslintrc.json'
+            - 'src/**'
+            - 'public/**'
+            - 'tests/e2e/**'
+            - 'package.json'
+            - 'pnpm-lock.yaml'
+            - 'astro.config.mjs'
+            - 'playwright.config.ts'
+            - 'tsconfig.json'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+concurrency:
+    group: e2e-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    e2e:
+        name: Playwright
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        env:
+            CI: 'true'
+
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+
+            - name: Detect quality-related changes
+              id: changes
+              env:
+                  BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+                  EVENT_NAME: ${{ github.event_name }}
+                  HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+              run: |
+                  if [[ "$EVENT_NAME" == "workflow_dispatch" ]] ||
+                      ! git diff --quiet "$BASE_SHA" "$HEAD_SHA" -- \
+                          .github/workflows/e2e.yml \
+                          .eslintrc.json \
+                          src \
+                          public \
+                          tests/e2e \
+                          package.json \
+                          pnpm-lock.yaml \
+                          astro.config.mjs \
+                          playwright.config.ts \
+                          tsconfig.json
+                  then
+                      echo "run=true" >> "$GITHUB_OUTPUT"
+                  else
+                      echo "run=false" >> "$GITHUB_OUTPUT"
+                  fi
+
+            - name: Set up pnpm
+              if: steps.changes.outputs.run == 'true'
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10.28.2
+
+            - name: Set up Node.js
+              if: steps.changes.outputs.run == 'true'
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  cache: pnpm
+                  cache-dependency-path: pnpm-lock.yaml
+
+            - name: Install dependencies
+              if: steps.changes.outputs.run == 'true'
+              run: pnpm install --frozen-lockfile
+
+            - name: Lint
+              if: steps.changes.outputs.run == 'true'
+              run: pnpm lint
+
+            - name: Typecheck
+              if: steps.changes.outputs.run == 'true'
+              run: pnpm typecheck
+
+            - name: Build
+              if: steps.changes.outputs.run == 'true'
+              run: pnpm build
+
+            - name: Install Chromium
+              if: steps.changes.outputs.run == 'true'
+              run: pnpm exec playwright install --with-deps chromium
+
+            - name: Run end-to-end tests
+              if: steps.changes.outputs.run == 'true'
+              run: pnpm test:e2e
+
+            - name: Upload failure artifacts
+              if: ${{ failure() }}
+              uses: actions/upload-artifact@v5
+              with:
+                  name: playwright-test-results-${{ github.run_attempt }}
+                  path: test-results/
+                  if-no-files-found: ignore
+                  retention-days: 14

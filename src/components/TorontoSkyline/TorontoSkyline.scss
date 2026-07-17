@@ -406,6 +406,12 @@ html[data-time-state='night'] .skyline__birds {
         left: -46%;
         width: 164%;
     }
+
+    // Keep the CN Tower tip inside the copy-panel cutout when short, narrow
+    // phone layouts use taller fallback font metrics.
+    .skyline__illustration {
+        transform: translateY(10px);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

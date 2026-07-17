@@ -18,6 +18,13 @@ const seawallColors = {
     night: 'rgb(35, 58, 58)',
 } as const;
 
+const themeColors = {
+    dawn: '#a7bdc8',
+    midday: '#7fc4d6',
+    dusk: '#668aa6',
+    night: '#152941',
+} as const;
+
 const skylineBoundaryScenarios = [
     { hour: 4, state: 'night' },
     { hour: 5, state: 'dawn' },
@@ -387,6 +394,73 @@ test('renders the main resume journey and accessible navigation', async ({
         2,
     );
     await expect(footerFerry.locator('.harbour-ferry__mast')).toHaveCount(2);
+});
+
+test('publishes a large social sharing preview', async ({ page }) => {
+    await page.goto('/');
+
+    const socialImageURL =
+        'https://albertyang.ca/images/albert-yang-social-card.png';
+    const socialImageAlt =
+        'Albert Yang, Toronto Software Engineer, alongside an illustrated Toronto skyline at night.';
+
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+        'content',
+        socialImageURL,
+    );
+    await expect(
+        page.locator('meta[property="og:image:width"]'),
+    ).toHaveAttribute('content', '1200');
+    await expect(
+        page.locator('meta[property="og:image:height"]'),
+    ).toHaveAttribute('content', '630');
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+        'content',
+        socialImageAlt,
+    );
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
+        'content',
+        'summary_large_image',
+    );
+    await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+        'content',
+        socialImageURL,
+    );
+});
+
+test('publishes truthful profile structured data', async ({ page }) => {
+    await page.goto('/');
+
+    const structuredData = await page
+        .locator('script[type="application/ld+json"]')
+        .textContent();
+    expect(structuredData).not.toBeNull();
+
+    const profilePage = JSON.parse(structuredData ?? 'null');
+    expect(profilePage).toMatchObject({
+        '@context': 'https://schema.org',
+        '@type': 'ProfilePage',
+        '@id': 'https://albertyang.ca/',
+        url: 'https://albertyang.ca/',
+        mainEntity: {
+            '@type': 'Person',
+            '@id': 'https://albertyang.ca/#albert-yang',
+            name: 'Albert Yang',
+            jobTitle: 'Software Engineer II',
+            worksFor: {
+                '@type': 'Organization',
+                name: 'Super.com',
+            },
+            homeLocation: {
+                '@type': 'Place',
+                name: 'Toronto, Ontario, Canada',
+            },
+            sameAs: [
+                'https://www.linkedin.com/in/albrtyng/',
+                'https://github.com/albrtyng',
+            ],
+        },
+    });
 });
 
 test('switches the header to the contact surface after Say hello scrolls', async ({
@@ -1481,6 +1555,7 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
     const brand = page.getByRole('link', {
         name: /AY Albert Yang, back to top/i,
     });
+    const skipLink = page.getByRole('link', { name: /skip to experience/i });
 
     const expectDrawn = async (control: typeof explore) => {
         const stroke = control.locator('.marker-outline__stroke');
@@ -1546,17 +1621,9 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
         await page.mouse.up();
     }
 
-    await page.locator('body').click({ position: { x: 1, y: 1 } });
-    for (
-        let step = 0;
-        step < 4 &&
-        !(await brand.evaluate(
-            (element) => element === document.activeElement,
-        ));
-        step += 1
-    ) {
-        await page.keyboard.press('Tab');
-    }
+    await skipLink.focus();
+    await expect(skipLink).toBeFocused();
+    await page.keyboard.press('Tab');
     await expect(brand).toBeFocused();
     await expectDrawn(brand);
 
@@ -2049,6 +2116,10 @@ test.describe('skyline time states', () => {
         const root = page.locator('html');
         await expect(root).toHaveAttribute('data-time-state', 'midday');
         await expect(root).toHaveCSS('--sky-base', '#7fc4d6');
+        await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+            'content',
+            themeColors.midday,
+        );
         await expect(page.locator('.hero__time-label:visible')).toHaveText(
             'Midday',
         );
@@ -2070,7 +2141,33 @@ test.describe('skyline time states', () => {
         await gotoAtLocalHour(page, 12);
 
         const control = page.locator('[data-time-control]');
+        const header = page.locator('[data-site-header]');
+        const hero = page.locator('#hero');
         const scene = page.locator('[data-skyline-scene]');
+        await expect(header).not.toHaveAttribute('data-scrolled', '');
+        const paletteTransitions = await page.evaluate(() => {
+            const getBackgroundTransition = (element: Element) => {
+                const style = getComputedStyle(element);
+                const properties = style.transitionProperty.split(', ');
+                const durations = style.transitionDuration.split(', ');
+                const index = properties.indexOf('background-color');
+
+                return durations[index % durations.length];
+            };
+
+            const header = document.querySelector('[data-site-header]');
+            const hero = document.querySelector('#hero');
+            if (!header || !hero) throw new Error('Missing palette surfaces');
+
+            return {
+                header: getBackgroundTransition(header),
+                hero: getBackgroundTransition(hero),
+            };
+        });
+
+        expect(paletteTransitions.header).toEqual(paletteTransitions.hero);
+        expect(paletteTransitions.hero).toBe('0.9s');
+        await expect(header).toHaveCSS('backdrop-filter', /blur\(20px\)/);
         await expect(control.locator('.hero__time-label:visible')).toHaveText(
             'Midday',
         );
@@ -2081,11 +2178,22 @@ test.describe('skyline time states', () => {
 
         for (const state of ['dusk', 'night', 'dawn', 'midday'] as const) {
             await control.click();
+            await expect(header, state).toHaveCSS(
+                'backdrop-filter',
+                /blur\(20px\)/,
+            );
+            await expect(hero, state).toHaveCSS(
+                'transition-duration',
+                /0\.9s/,
+            );
             await expect(scene).toHaveAttribute('data-time-state', state);
             await expect(page.locator('html')).toHaveAttribute(
                 'data-time-state',
                 state,
             );
+            await expect(
+                page.locator('meta[name="theme-color"]'),
+            ).toHaveAttribute('content', themeColors[state]);
             await expect(
                 control.locator('.hero__time-label:visible'),
             ).toHaveText(state[0].toUpperCase() + state.slice(1));
