@@ -85,8 +85,9 @@ function setupNavigationMotion(): () => void {
     };
 
     const getSurfaceAtHeader = (): PageSurface => {
-        const headerBounds = header.getBoundingClientRect();
-        const probeY = Math.max(headerBounds.top + headerBounds.height / 2, 1);
+        // Browser chrome sits above the page, so it must not switch until the
+        // incoming surface reaches the visual viewport edge.
+        const probeY = 0;
         const contactSection = surfaceSections.find(
             (section) => section.surface === 'contact',
         );

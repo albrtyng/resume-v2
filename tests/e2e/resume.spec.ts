@@ -381,7 +381,7 @@ test('renders the main resume journey and accessible navigation', async ({
             (element) => getComputedStyle(element).containIntrinsicSize,
         ),
     ).toContain('auto');
-    await expect(contact).toHaveAccessibleName(/let’s make something useful/i);
+    await expect(contact).toHaveAccessibleName(/let’s build together/i);
     await expect(panorama).toHaveAttribute('aria-hidden', 'true');
     await expect(panorama.locator('[data-harbour-panorama]')).toBeAttached();
     await expect(
@@ -2146,6 +2146,100 @@ test('matches the fixed header surface to the section beneath it', async ({
     ] as const) {
         await scrollSectionUnderHeader(page, selector);
         await expect(header).toHaveAttribute('data-header-surface', surface);
+    }
+});
+
+test('changes browser chrome only after an incoming section reaches the viewport edge', async ({
+    page,
+}, testInfo) => {
+    test.skip(
+        testInfo.project.name !== 'chromium',
+        'The mobile contact transition is sampled explicitly in Chromium.',
+    );
+
+    await page.setViewportSize({ height: 568, width: 320 });
+    await gotoAtLocalHour(page, 2);
+
+    for (const { selector, previousSurface, surface } of [
+        {
+            previousSurface: 'hero',
+            selector: '#experience',
+            surface: 'paper',
+        },
+        {
+            previousSurface: 'paper',
+            selector: '#contact',
+            surface: 'contact',
+        },
+    ] as const) {
+        const targetScrollY = await page.locator(selector).evaluate((section) => {
+            document.documentElement.style.scrollBehavior = 'auto';
+            window.scrollTo(0, 1);
+
+            const header = document.querySelector<HTMLElement>(
+                '[data-site-header]',
+            );
+            if (!header) return null;
+
+            const sectionTop = section.getBoundingClientRect().top + window.scrollY;
+            return sectionTop - 2;
+        });
+
+        if (targetScrollY === null) throw new Error('Missing site header');
+        await page.evaluate((scrollY) => window.scrollTo(0, scrollY), targetScrollY);
+        await waitForLayout(page);
+
+        const geometry = await page.locator(selector).evaluate((section) => {
+            const header = document.querySelector<HTMLElement>(
+                '[data-site-header]',
+            );
+            if (!header) return null;
+
+            const headerBounds = header.getBoundingClientRect();
+            return {
+                headerMidpoint: headerBounds.top + headerBounds.height / 2,
+                sectionTop: section.getBoundingClientRect().top,
+            };
+        });
+
+        expect(geometry).not.toBeNull();
+        expect(geometry!.sectionTop).toBeGreaterThan(0);
+        expect(geometry!.sectionTop).toBeLessThan(geometry!.headerMidpoint);
+        await expect(page.locator('[data-site-header]')).toHaveAttribute(
+            'data-header-surface',
+            previousSurface,
+        );
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-page-surface',
+            previousSurface,
+        );
+        await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+            'content',
+            getPageThemeColor('night', previousSurface),
+        );
+
+        await page.evaluate(
+            (scrollY) => window.scrollTo(0, scrollY + 4),
+            targetScrollY,
+        );
+        await waitForLayout(page);
+
+        const edgeTop = await page
+            .locator(selector)
+            .evaluate((section) => section.getBoundingClientRect().top);
+        expect(edgeTop).toBeLessThanOrEqual(0);
+        await expect(page.locator('[data-site-header]')).toHaveAttribute(
+            'data-header-surface',
+            surface,
+        );
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-page-surface',
+            surface,
+        );
+        await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+            'content',
+            getPageThemeColor('night', surface),
+        );
     }
 });
 
