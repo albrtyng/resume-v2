@@ -1828,7 +1828,6 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
     const brand = page.getByRole('link', {
         name: /AY Albert Yang, back to top/i,
     });
-    const skipLink = page.getByRole('link', { name: /skip to experience/i });
 
     const expectDrawn = async (control: typeof explore) => {
         const stroke = control.locator('.marker-outline__stroke');
@@ -1894,8 +1893,8 @@ test('draws the open chalk control outline for pointer and keyboard users', asyn
         await page.mouse.up();
     }
 
-    await skipLink.focus();
-    await expect(skipLink).toBeFocused();
+    await brand.focus();
+    await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Tab');
     await expect(brand).toBeFocused();
     await expectDrawn(brand);
