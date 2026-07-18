@@ -94,23 +94,6 @@ svg {
     outline-offset: 4px;
 }
 
-.skip-link {
-    position: fixed;
-    top: 0.75rem;
-    left: 0.75rem;
-    transform: translateY(-150%);
-    z-index: calc(var(--layer-texture) + 1);
-    background: var(--spruce-deep);
-    padding: 0.7rem 1rem;
-    color: var(--paper-light);
-    font-size: 0.9rem;
-    text-decoration: none;
-
-    &:focus {
-        transform: translateY(0);
-    }
-}
-
 .section-shell {
     margin-inline: auto;
     width: min(100% - (2 * var(--gutter)), var(--content-width));
