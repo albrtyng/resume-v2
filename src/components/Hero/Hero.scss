@@ -1,24 +1,12 @@
 .hero {
     position: relative;
-    transition:
-        color var(--motion-state) ease,
-        background-color var(--motion-state) ease;
+    // Palette and ink swap atomically with the SVG scene so no layer can
+    // drift out of sync or lose contrast mid-transition.
     background: var(--sky-base);
     isolation: isolate;
     min-height: max(50rem, 100svh);
     overflow: hidden;
     color: var(--hero-ink);
-}
-
-.hero::before {
-    position: absolute;
-    opacity: 0.18;
-    z-index: 0;
-    clip-path: polygon(0 58%, 100% 44%, 100% 78%, 0 82%);
-    transition: background-color var(--motion-state) ease;
-    inset: 0;
-    background: var(--sky-horizon);
-    content: '';
 }
 
 .hero__copy {
@@ -46,11 +34,6 @@
 .hero__scene-note::before {
     position: absolute;
     z-index: -1;
-    transition:
-        border-color var(--motion-state) ease,
-        background-color var(--motion-state) ease,
-        -webkit-backdrop-filter var(--motion-state) ease,
-        backdrop-filter var(--motion-state) ease;
     pointer-events: none;
     content: '';
 }
@@ -109,7 +92,6 @@
 }
 
 .hero__copy-panel-outline path {
-    transition: stroke var(--motion-state) ease;
     fill: none;
     stroke: var(--hero-surface-border);
     stroke-width: 1;
@@ -221,9 +203,6 @@
     gap: 0.55rem;
     appearance: none;
     z-index: 8;
-    transition:
-        transform var(--motion-fast) ease,
-        color var(--motion-state) ease;
     cursor: pointer;
     margin: 0;
     border: 0;
@@ -231,6 +210,7 @@
     isolation: isolate;
     padding: 0.5rem 0.7rem 0.55rem;
     min-height: 2.75rem;
+    transition: transform var(--motion-fast) ease;
     color: var(--scene-note-ink);
     font-weight: 500;
     font-size: var(--text-small);
@@ -314,10 +294,6 @@ html[data-time-state='night'] .hero__time-label--night {
 @media (max-width: 48rem) {
     .hero {
         min-height: max(50rem, 100svh);
-    }
-
-    .hero::before {
-        clip-path: polygon(0 52%, 100% 44%, 100% 70%, 0 76%);
     }
 
     .hero__copy {
@@ -442,12 +418,8 @@ html[data-time-state='night'] .hero__time-label--night {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .hero,
-    .hero::before,
-    .hero__copy-panel,
     .hero__copy-panel-outline,
-    .hero__copy-panel-outline path,
-    .hero__scene-note::before,
+    .hero__scene-note,
     .hero__primary-link,
     .hero__primary-link span,
     .hero__text-link span {

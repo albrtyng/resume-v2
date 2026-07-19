@@ -172,7 +172,7 @@ test('renders the main resume journey and accessible navigation', async ({
         await expect(landmarkGroup).toBeInViewport();
     }
     await expect(skyline.locator('[data-landmark="city-hall"]')).toBeAttached();
-    await expect(skyline.locator('[data-landmark="streetcar"]')).toBeAttached();
+    await expect(skyline.locator('[data-landmark="streetcar"]')).toHaveCount(2);
     await expect(skyline.locator('.ttc-streetcar__pantograph')).toHaveCount(0);
     await expect(
         skyline.locator('[data-streetcar-streetscape]'),
@@ -183,8 +183,8 @@ test('renders the main resume journey and accessible navigation', async ({
     await expect(
         streetcarRoad.locator('.streetcar-streetscape__road-surface'),
     ).toHaveCount(1);
-    const roadMarkers = streetcarRoad.locator(
-        '.streetcar-streetscape__road-markers',
+    const roadMarkers = skyline.locator(
+        '[data-streetcar-road-markers] .streetcar-streetscape__road-markers',
     );
     await expect(roadMarkers).toHaveCount(1);
     await expect(roadMarkers).toHaveCSS('stroke', 'rgb(247, 189, 106)');
@@ -200,8 +200,9 @@ test('renders the main resume journey and accessible navigation', async ({
         const road = element.querySelector<SVGRectElement>(
             '.streetcar-streetscape__road-surface',
         );
-        const streetcar =
-            element.querySelector<SVGGElement>('[data-streetcar]');
+        const streetcar = element.querySelector<SVGGElement>(
+            '[data-streetcar-right-lane] [data-streetcar]',
+        );
         const markers = element.querySelector<SVGPathElement>(
             '.streetcar-streetscape__road-markers',
         );
@@ -1126,7 +1127,7 @@ test('uses a panel-free contact stack with AA contrast in every sky state', asyn
     }
 });
 
-test('keeps the hero header translucent and the local-light note safely in view', async ({
+test('keeps the hero header transparent over the skyline and the local-light note safely in view', async ({
     page,
 }) => {
     await gotoAtLocalHour(page, 12);
@@ -1137,17 +1138,24 @@ test('keeps the hero header translucent and the local-light note safely in view'
 
     const headerSurface = await header.evaluate((element) => {
         const style = getComputedStyle(element);
+        const overlay = getComputedStyle(element, '::before');
         return {
             backgroundColor: style.backgroundColor,
             backdropFilter: style.backdropFilter,
+            overlayBackdropFilter: overlay.backdropFilter,
+            overlayBackgroundColor: overlay.backgroundColor,
+            overlayOpacity: overlay.opacity,
             dividerContent: getComputedStyle(element, '::after').content,
             height: element.getBoundingClientRect().height,
             viewportWidth: window.innerWidth,
         };
     });
 
-    expect(headerSurface.backdropFilter).toContain('blur(20px)');
-    expect(headerSurface.backgroundColor).toMatch(/\/(?:\s*)0\./);
+    expect(headerSurface.backdropFilter).toBe('none');
+    expect(headerSurface.overlayBackdropFilter).toContain('blur(20px)');
+    expect(headerSurface.backgroundColor).toBe('rgba(0, 0, 0, 0)');
+    expect(headerSurface.overlayBackgroundColor).toMatch(/\/(?:\s*)0\./);
+    expect(headerSurface.overlayOpacity).toBe('0');
     expect(headerSurface.dividerContent).toBe('none');
     expect(headerSurface.height).toBeLessThanOrEqual(
         headerSurface.viewportWidth <= 48 * 16 ? 68 : 72,
@@ -1179,6 +1187,7 @@ test('springs the frosted header into a centered pill after scrolling and restor
         header.evaluate((element) => {
             const bounds = element.getBoundingClientRect();
             const style = getComputedStyle(element);
+            const overlay = getComputedStyle(element, '::before');
             const durationSeconds = style.transitionDuration
                 .split(',')
                 .map((duration) => duration.trim())
@@ -1197,6 +1206,10 @@ test('springs the frosted header into a centered pill after scrolling and restor
                 height: bounds.height,
                 left: bounds.left,
                 maxTransitionDuration: Math.max(...durationSeconds),
+                overlayBackdropFilter: overlay.backdropFilter,
+                overlayBackgroundColor: overlay.backgroundColor,
+                overlayBorderColor: overlay.borderTopColor,
+                overlayOpacity: overlay.opacity,
                 right: bounds.right,
                 springTiming: style.transitionTimingFunction,
                 top: bounds.top,
@@ -1210,8 +1223,10 @@ test('springs the frosted header into a centered pill after scrolling and restor
 
     expect(expanded.left).toBeLessThanOrEqual(1);
     expect(expanded.viewportWidth - expanded.right).toBeLessThanOrEqual(1);
+    expect(expanded.backgroundColor).toBe('rgba(0, 0, 0, 0)');
     expect(expanded.borderRadius).toBeLessThanOrEqual(1);
     expect(expanded.boxShadow).toBe('none');
+    expect(expanded.overlayOpacity).toBe('0');
     expect(expanded.top).toBeLessThanOrEqual(1);
 
     await page.evaluate(() => {
@@ -1236,9 +1251,13 @@ test('springs the frosted header into a centered pill after scrolling and restor
         collapsed.height / 2 - 1,
     );
     expect(collapsed.top).toBeGreaterThanOrEqual(8);
-    expect(collapsed.backdropFilter).toBe(expanded.backdropFilter);
+    expect(collapsed.backdropFilter).toBe('none');
     expect(collapsed.backgroundColor).toBe(expanded.backgroundColor);
-    expect(collapsed.borderColor).not.toBe(expanded.borderColor);
+    expect(collapsed.overlayBackdropFilter).toContain('blur(20px)');
+    expect(collapsed.overlayBackdropFilter).toBe(expanded.overlayBackdropFilter);
+    expect(collapsed.overlayOpacity).toBe('1');
+    expect(collapsed.overlayBackgroundColor).toMatch(/\/(?:\s*)0\./);
+    expect(collapsed.overlayBorderColor).not.toBe(expanded.overlayBorderColor);
     expect(collapsed.boxShadow).toBe('none');
     expect(collapsed.springTiming).toContain('linear(');
     expect(collapsed.maxTransitionDuration).toBeGreaterThanOrEqual(0.6);
@@ -1253,6 +1272,7 @@ test('springs the frosted header into a centered pill after scrolling and restor
     expect(restored.width).toBeCloseTo(expanded.width, 0);
     expect(restored.borderRadius).toBeLessThanOrEqual(1);
     expect(restored.boxShadow).toBe('none');
+    expect(restored.overlayOpacity).toBe('0');
     expect(restored.top).toBeLessThanOrEqual(1);
 });
 
@@ -2574,34 +2594,56 @@ test.describe('skyline time states', () => {
     }) => {
         await gotoAtLocalHour(page, 12);
 
+        // The Astro dev toolbar docks at the bottom edge of the dev server
+        // and can expand over the scene note, intercepting taps; remove it so
+        // the click target stays unobstructed.
+        await page
+            .locator('astro-dev-toolbar')
+            .evaluateAll((elements) =>
+                elements.forEach((element) => element.remove()),
+            );
+
         const control = page.locator('[data-time-control]');
         const header = page.locator('[data-site-header]');
-        const hero = page.locator('#hero');
         const scene = page.locator('[data-skyline-scene]');
         await expect(header).not.toHaveAttribute('data-scrolled', '');
         const paletteTransitions = await page.evaluate(() => {
-            const getBackgroundTransition = (element: Element) => {
-                const style = getComputedStyle(element);
-                const properties = style.transitionProperty.split(', ');
-                const durations = style.transitionDuration.split(', ');
-                const index = properties.indexOf('background-color');
-
-                return durations[index % durations.length];
-            };
+            const hasBackgroundTransition = (element: Element) =>
+                getComputedStyle(element)
+                    .transitionProperty.split(', ')
+                    .includes('background-color');
 
             const header = document.querySelector('[data-site-header]');
             const hero = document.querySelector('#hero');
             if (!header || !hero) throw new Error('Missing palette surfaces');
 
             return {
-                header: getBackgroundTransition(header),
-                hero: getBackgroundTransition(hero),
+                header: hasBackgroundTransition(header),
+                hero: hasBackgroundTransition(hero),
             };
         });
 
-        expect(paletteTransitions.header).toEqual(paletteTransitions.hero);
-        expect(paletteTransitions.hero).toBe('0.9s');
-        await expect(header).toHaveCSS('backdrop-filter', /blur\(20px\)/);
+        // The palette swaps atomically with the SVG scene; no background
+        // tween may drift behind or ahead of the artwork's own transition.
+        expect(paletteTransitions.header).toBe(false);
+        expect(paletteTransitions.hero).toBe(false);
+
+        // At the top of the page the header paints nothing over the scene:
+        // no frost on the element and the glass overlay fully transparent,
+        // so palette cycling is driven by the hero artwork alone.
+        const readHeaderFrost = () =>
+            header.evaluate((element) => {
+                const overlay = getComputedStyle(element, '::before');
+                return {
+                    backdropFilter: getComputedStyle(element).backdropFilter,
+                    overlayBackdropFilter: overlay.backdropFilter,
+                    overlayOpacity: overlay.opacity,
+                };
+            });
+        const expandedFrost = await readHeaderFrost();
+        expect(expandedFrost.backdropFilter).toBe('none');
+        expect(expandedFrost.overlayBackdropFilter).toContain('blur(20px)');
+        expect(expandedFrost.overlayOpacity).toBe('0');
         await expect(control.locator('.hero__time-label:visible')).toHaveText(
             'Midday',
         );
@@ -2612,11 +2654,26 @@ test.describe('skyline time states', () => {
 
         for (const state of ['dusk', 'night', 'dawn', 'midday'] as const) {
             await control.click();
-            await expect(header, state).toHaveCSS(
-                'backdrop-filter',
-                /blur\(20px\)/,
-            );
-            await expect(hero, state).toHaveCSS('transition-duration', /0\.9s/);
+            const cycledFrost = await readHeaderFrost();
+            expect(cycledFrost, state).toEqual(expandedFrost);
+
+            // Ink swaps atomically with the palette: the header and hero must
+            // never tween through a mid-transition contrast dip.
+            const cycledInk = await page.evaluate(() => {
+                const heroElement = document.querySelector('#hero');
+                const headerElement = document.querySelector(
+                    '[data-site-header]',
+                );
+                if (!heroElement || !headerElement) {
+                    throw new Error('Missing ink surfaces');
+                }
+
+                return {
+                    hero: getComputedStyle(heroElement).color,
+                    header: getComputedStyle(headerElement).color,
+                };
+            });
+            expect(cycledInk.header, state).toBe(cycledInk.hero);
             await expect(scene).toHaveAttribute('data-time-state', state);
             await expect(page.locator('html')).toHaveAttribute(
                 'data-time-state',
@@ -2681,31 +2738,34 @@ test.describe('skyline time states', () => {
             expect(beaconAnimation.duration).toBe(5_000);
             expect(beaconAnimation.iterations).toBe(Infinity);
             expect(beaconAnimation.filter).not.toBe('none');
-            for (const landmark of [
-                ...primaryLandmarks,
-                'city-hall',
-                'streetcar',
-            ] as const) {
+            for (const landmark of [...primaryLandmarks, 'city-hall'] as const) {
                 await expect(
                     scene.locator(`[data-landmark="${landmark}"]`),
                 ).toBeAttached();
             }
+            await expect(
+                scene.locator('[data-landmark="streetcar"]'),
+            ).toHaveCount(2);
 
             if (state === 'night') {
-                await expect(
-                    scene.locator('.ttc-streetcar__night-light-pool'),
-                ).toHaveCSS('opacity', '0.26');
-                await expect(scene.locator('.ttc-streetcar__lights')).toHaveCSS(
-                    'opacity',
-                    '1',
+                const nightLightPools = scene.locator(
+                    '.ttc-streetcar__night-light-pool',
                 );
-                expect(
-                    await scene
-                        .locator('.ttc-streetcar__lights')
-                        .evaluate(
+                await expect(nightLightPools).toHaveCount(2);
+                for (const pool of await nightLightPools.all()) {
+                    await expect(pool).toHaveCSS('opacity', '0.26');
+                }
+
+                const streetcarLights = scene.locator('.ttc-streetcar__lights');
+                await expect(streetcarLights).toHaveCount(2);
+                for (const light of await streetcarLights.all()) {
+                    await expect(light).toHaveCSS('opacity', '1');
+                    expect(
+                        await light.evaluate(
                             (element) => getComputedStyle(element).filter,
                         ),
-                ).not.toBe('none');
+                    ).not.toBe('none');
+                }
             }
         });
     }
@@ -3266,16 +3326,19 @@ test.describe('with reduced motion', () => {
             ),
         ).not.toBe('none');
 
-        const streetcar = scene.locator('[data-streetcar]');
-        await expect(streetcar).toHaveCSS('animation-name', 'none');
-        await expect(streetcar).toBeInViewport();
-        await expect(
-            streetcar.locator('.ttc-streetcar__night-light-pool'),
-        ).toHaveCSS('opacity', '0.26');
-        await expect(streetcar.locator('.ttc-streetcar__lights')).toHaveCSS(
-            'opacity',
-            '1',
-        );
+        const streetcars = scene.locator('[data-streetcar]');
+        await expect(streetcars).toHaveCount(2);
+        for (const streetcar of await streetcars.all()) {
+            await expect(streetcar).toHaveCSS('animation-name', 'none');
+            await expect(streetcar).toBeInViewport();
+            await expect(
+                streetcar.locator('.ttc-streetcar__night-light-pool'),
+            ).toHaveCSS('opacity', '0.26');
+            await expect(streetcar.locator('.ttc-streetcar__lights')).toHaveCSS(
+                'opacity',
+                '1',
+            );
+        }
 
         const runningAnimations = await scene.evaluate((element) =>
             element

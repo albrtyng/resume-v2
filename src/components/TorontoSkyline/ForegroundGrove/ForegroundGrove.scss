@@ -1,0 +1,104 @@
+.skyline__foreground-grove {
+    transform: translate(
+        var(--layer-x, calc(var(--scene-x) * -0.62)),
+        var(--layer-y, calc(var(--scene-y) * -0.46))
+    );
+    transition: transform 120ms linear;
+}
+
+.foreground-grove__trunk {
+    fill: color-mix(in srgb, var(--skyline-near) 78%, var(--spruce-deep));
+}
+
+.foreground-grove__branch {
+    fill: none;
+    stroke: color-mix(in srgb, var(--skyline-near) 78%, var(--spruce-deep));
+    stroke-linecap: round;
+    stroke-width: 5;
+}
+
+.foreground-grove__leaf {
+    fill: var(--skyline-near);
+}
+
+.foreground-grove__leaf-light {
+    opacity: 0.5;
+    transition: opacity var(--motion-state) ease;
+    fill: color-mix(in srgb, var(--skyline-near) 80%, var(--sky-horizon));
+}
+
+.foreground-grove__canopy {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: foreground-grove-sway 12s ease-in-out -3s infinite alternate;
+}
+
+.foreground-grove__tree--west-shrub .foreground-grove__canopy {
+    animation-duration: 9.5s;
+    animation-delay: -6s;
+}
+
+.foreground-grove__tree--west-mid-1 .foreground-grove__canopy {
+    animation-duration: 11s;
+    animation-delay: -4.5s;
+}
+
+.foreground-grove__tree--west-mid-2 .foreground-grove__canopy {
+    animation-duration: 10s;
+    animation-delay: -7.5s;
+}
+
+.foreground-grove__tree--center-shrub .foreground-grove__canopy {
+    animation-duration: 8.5s;
+    animation-delay: -2s;
+}
+
+.foreground-grove__tree--east-mid-1 .foreground-grove__canopy {
+    animation-duration: 10s;
+    animation-delay: -5s;
+}
+
+.foreground-grove__tree--east-mid-2 .foreground-grove__canopy {
+    animation-duration: 11.5s;
+    animation-delay: -9s;
+}
+
+.foreground-grove__tree--east-tall .foreground-grove__canopy {
+    animation-duration: 14s;
+    animation-delay: -8s;
+}
+
+.foreground-grove__tree--east-mid .foreground-grove__canopy {
+    animation-duration: 10.5s;
+    animation-delay: -1.5s;
+}
+
+html[data-time-state='night'] .foreground-grove__leaf-light {
+    opacity: 0.32;
+}
+
+@keyframes foreground-grove-sway {
+    from {
+        transform: rotate(-0.6deg);
+    }
+
+    to {
+        transform: rotate(0.6deg);
+    }
+}
+
+@media (max-width: 48rem) {
+    .skyline__foreground-grove {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skyline__foreground-grove {
+        transform: none;
+    }
+
+    .foreground-grove__canopy {
+        animation: none;
+    }
+}
