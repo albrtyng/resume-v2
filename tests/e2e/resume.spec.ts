@@ -2541,14 +2541,85 @@ test.describe('skyline time states', () => {
 
         await scrollSectionUnderHeader(page, '#contact');
         await expect(root).toHaveAttribute('data-page-surface', 'contact');
+
+        // At the document end the footer can park a few pixels short of the
+        // top edge; chrome follows whatever actually covers the edge.
+        const contactEdge = await page.evaluate(() => {
+            const contact = document.querySelector('#contact');
+            if (!contact) throw new Error('Missing contact section');
+            return contact.getBoundingClientRect().top <= -2
+                ? 'contact'
+                : 'paper';
+        });
+        await expect(root).toHaveAttribute(
+            'data-page-edge-surface',
+            contactEdge,
+        );
         await expect(themeColor).toHaveAttribute(
             'content',
-            footerThemeColors.dusk,
+            contactEdge === 'paper'
+                ? paperThemeColor
+                : footerThemeColors.dusk,
         );
 
         await scrollSectionUnderHeader(page, '#hero');
         await expect(root).toHaveAttribute('data-page-surface', 'hero');
         await expect(themeColor).toHaveAttribute('content', themeColors.dusk);
+    });
+
+    test('keeps browser chrome on the edge surface at the document end', async ({
+        page,
+    }) => {
+        await gotoAtLocalHour(page, 12);
+
+        const body = page.locator('body');
+
+        // iOS 26+ samples chrome tints from the page background instead of
+        // theme-color; keep it on the surface palette at both ends.
+        await expect(body).toHaveCSS(
+            'background-color',
+            'rgb(127, 196, 214)',
+        );
+
+        await page.evaluate(() => {
+            document.documentElement.style.scrollBehavior = 'auto';
+            window.scrollTo(0, document.documentElement.scrollHeight);
+        });
+
+        // The header still belongs to the closing surface...
+        await expect(page.locator('[data-site-header]')).toHaveAttribute(
+            'data-header-surface',
+            'contact',
+        );
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-page-surface',
+            'contact',
+        );
+        await expect(body).toHaveCSS('background-color', 'rgb(60, 102, 96)');
+
+        // ...but browser chrome follows whatever actually covers the
+        // viewport's top edge, so a footer parked a few pixels short of the
+        // status bar can never tint it early.
+        const edgeExpectation = await page.evaluate(() => {
+            const contact = document.querySelector('#contact');
+            if (!contact) throw new Error('Missing contact section');
+            return contact.getBoundingClientRect().top <= -2
+                ? 'contact'
+                : 'paper';
+        });
+
+        await expect(page.locator('html')).toHaveAttribute(
+            'data-page-edge-surface',
+            edgeExpectation,
+        );
+        await expect(
+            page.locator('meta[name="theme-color"]'),
+        ).toHaveAttribute(
+            'content',
+            edgeExpectation === 'paper'
+                ? paperThemeColor
+                : footerThemeColors.midday,
+        );
     });
 
     test('sets local lighting before deferred page scripts load', async ({
@@ -2653,7 +2724,12 @@ test.describe('skyline time states', () => {
         );
 
         for (const state of ['dusk', 'night', 'dawn', 'midday'] as const) {
-            await control.click();
+            // Dispatch the tap programmatically: the note docks near the
+            // bottom edge, where Playwright's pre-click recentering can
+            // scroll the page and collapse the header mid-assertion.
+            await control.evaluate((element) =>
+                (element as HTMLButtonElement).click(),
+            );
             const cycledFrost = await readHeaderFrost();
             expect(cycledFrost, state).toEqual(expandedFrost);
 
@@ -2687,7 +2763,9 @@ test.describe('skyline time states', () => {
             ).toHaveText(state[0].toUpperCase() + state.slice(1));
         }
 
-        await control.click();
+        await control.evaluate((element) =>
+            (element as HTMLButtonElement).click(),
+        );
         await expect(scene).toHaveAttribute('data-time-state', 'dusk');
         await page.reload();
         await expect(scene).toHaveAttribute('data-time-state', 'midday');

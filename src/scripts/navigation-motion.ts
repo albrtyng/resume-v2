@@ -70,11 +70,16 @@ function setupNavigationMotion(): () => void {
     let hasInitialState = Boolean(initialSurface);
     let hasPaintedInitialState = false;
     let activeSurface: PageSurface = 'hero';
+    let activeEdgeSurface: PageSurface = 'hero';
     let persistedCollapsed: boolean | undefined;
     let persistedSurface: PageSurface | undefined;
 
     const syncPageSurface = (surface: PageSurface) => {
         root.dataset.pageSurface = surface;
+    };
+
+    const syncBrowserChrome = (surface: PageSurface) => {
+        root.dataset.pageEdgeSurface = surface;
         themeColor?.setAttribute(
             'content',
             getPageThemeColor(
@@ -84,7 +89,7 @@ function setupNavigationMotion(): () => void {
         );
     };
 
-    const getSurfaceAtHeader = (): PageSurface => {
+    const getProbeSurface = (): PageSurface => {
         // Let the incoming surface overlap the viewport edge by two pixels so
         // browser chrome never changes before the page visibly does.
         const probeY = -2;
@@ -97,11 +102,26 @@ function setupNavigationMotion(): () => void {
             hashSurfaceAtEdge &&
             hashTarget &&
             hashTarget.getBoundingClientRect().top >= probeY &&
-            hashTarget.getBoundingClientRect().top <= 0
+            // Fragment navigations can land a sub-pixel short of the edge
+            // when the smooth anchor scroll settles, so allow 1px of slack.
+            hashTarget.getBoundingClientRect().top <= 1
         ) {
             return hashSurfaceAtEdge;
         }
 
+        let surface: PageSurface = 'hero';
+
+        for (const section of surfaceSections) {
+            const bounds = section.element.getBoundingClientRect();
+
+            if (bounds.top <= probeY) surface = section.surface;
+            if (bounds.top <= probeY && bounds.bottom > probeY) break;
+        }
+
+        return surface;
+    };
+
+    const getSurfaceAtHeader = (): PageSurface => {
         const contactSection = surfaceSections.find(
             (section) => section.surface === 'contact',
         );
@@ -121,16 +141,7 @@ function setupNavigationMotion(): () => void {
             return 'contact';
         }
 
-        let surface: PageSurface = 'hero';
-
-        for (const section of surfaceSections) {
-            const bounds = section.element.getBoundingClientRect();
-
-            if (bounds.top <= probeY) surface = section.surface;
-            if (bounds.top <= probeY && bounds.bottom > probeY) break;
-        }
-
-        return surface;
+        return getProbeSurface();
     };
 
     const persistNavigationState = (
@@ -170,6 +181,7 @@ function setupNavigationMotion(): () => void {
     const updateNavigationState = () => {
         frame = 0;
         const detectedSurface = getSurfaceAtHeader();
+        const detectedEdgeSurface = getProbeSurface();
         const detectedCollapsed = window.scrollY > 0;
         const holdInitialState = hasInitialState && !hasPaintedInitialState;
 
@@ -195,6 +207,19 @@ function setupNavigationMotion(): () => void {
             activeSurface = nextSurface;
             header.dataset.headerSurface = nextSurface;
             syncPageSurface(nextSurface);
+        }
+
+        // Browser chrome tracks the content at the viewport's top edge, not
+        // the header's surface: the page-end shortcut above would otherwise
+        // tint the status bar for a footer still a few pixels short of it.
+        const nextEdgeSurface =
+            hasInitialState && initialSurface
+                ? initialSurface
+                : detectedEdgeSurface;
+
+        if (nextEdgeSurface !== activeEdgeSurface) {
+            activeEdgeSurface = nextEdgeSurface;
+            syncBrowserChrome(nextEdgeSurface);
         }
 
         if (
@@ -244,6 +269,7 @@ function setupNavigationMotion(): () => void {
         header.removeAttribute('data-navigation-ready');
         header.dataset.headerSurface = 'hero';
         syncPageSurface('hero');
+        syncBrowserChrome('hero');
     };
 }
 

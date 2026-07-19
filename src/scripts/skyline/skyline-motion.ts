@@ -221,8 +221,10 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
             'content',
             getPageThemeColor(
                 state,
-                (rootElement.dataset.pageSurface as PageSurface | undefined) ??
-                    'hero',
+                ((rootElement.dataset.pageEdgeSurface ??
+                    rootElement.dataset.pageSurface) as
+                    | PageSurface
+                    | undefined) ?? 'hero',
             ),
         );
         if (accessibleTimeLabel) {
