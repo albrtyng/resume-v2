@@ -2,7 +2,7 @@
 import './LakeOntario.scss';
 ---
 
-<g class="lake-ontario" data-water-layer aria-hidden="true">
+<g class="lake-ontario" data-water-layer data-depth="0.94" aria-hidden="true">
     <defs>
         <clipPath id="lake-ontario-surface-clip">
             <path
@@ -135,8 +135,7 @@ import './LakeOntario.scss';
                 data-reflection-water-anchor="foreground-west-workshop"
                 cx="76"
                 cy="655"
-                r="1"
-            ></circle>
+                r="1"></circle>
             <path
                 class="lake-reflections__building-glow"
                 d="M20 653H132L143 658L124 663H31L9 658ZM29 670L124 668L137 673L115 679L43 677L17 673ZM17 689L137 686L151 692L125 699L35 697L3 692ZM26 711L128 708L140 714L118 721L43 718L14 714ZM39 735L115 732L126 737L109 743L51 741L29 737Z"
@@ -151,8 +150,7 @@ import './LakeOntario.scss';
                 data-reflection-water-anchor="foreground-west-row"
                 cx="380"
                 cy="655"
-                r="1"
-            ></circle>
+                r="1"></circle>
             <path
                 class="lake-reflections__building-glow"
                 d="M331 653H429L440 658L422 663H341L321 658ZM340 670L421 668L434 673L414 679L352 677L328 673ZM328 689L433 686L446 692L421 699L345 697L315 692ZM339 711L422 708L434 714L413 720L353 718L327 714ZM350 734L411 732L421 737L405 742L361 740L340 737Z"
@@ -167,8 +165,7 @@ import './LakeOntario.scss';
                 data-reflection-water-anchor="foreground-corner-store"
                 cx="708"
                 cy="655"
-                r="1"
-            ></circle>
+                r="1"></circle>
             <path
                 class="lake-reflections__building-glow"
                 d="M649 653H767L779 658L758 663H661L637 658ZM659 670L758 668L772 673L749 679L674 677L646 673ZM646 689L771 686L786 692L759 699L665 697L632 692ZM658 711L759 708L772 714L749 721L675 718L645 714ZM672 735L746 732L757 737L740 743L683 741L661 737Z"
@@ -183,8 +180,7 @@ import './LakeOntario.scss';
                 data-reflection-water-anchor="foreground-east-loft"
                 cx="1036"
                 cy="655"
-                r="1"
-            ></circle>
+                r="1"></circle>
             <path
                 class="lake-reflections__building-glow"
                 d="M976 653H1096L1109 658L1087 663H988L964 658ZM986 670L1087 668L1101 673L1078 679L1001 677L973 673ZM973 689L1100 686L1115 692L1087 699L992 697L959 692ZM986 711L1087 708L1101 714L1078 721L1002 718L972 714ZM999 735L1074 732L1085 737L1068 743L1011 741L988 737Z"
@@ -199,8 +195,7 @@ import './LakeOntario.scss';
                 data-reflection-water-anchor="foreground-east-terrace"
                 cx="1395"
                 cy="655"
-                r="1"
-            ></circle>
+                r="1"></circle>
             <path
                 class="lake-reflections__building-glow"
                 d="M1333 653H1457L1470 658L1448 663H1345L1320 658ZM1344 670L1447 668L1462 673L1438 679L1359 677L1330 673ZM1330 689L1461 686L1476 692L1448 699L1349 697L1316 692ZM1344 711L1447 708L1461 714L1438 721L1359 718L1330 714ZM1357 735L1434 732L1446 737L1428 743L1369 741L1346 737Z"
@@ -215,14 +210,88 @@ import './LakeOntario.scss';
                 data-reflection-water-anchor="foreground-east-workshop"
                 cx="1583"
                 cy="655"
-                r="1"
-            ></circle>
+                r="1"></circle>
             <path
                 class="lake-reflections__building-glow"
                 d="M1544 653H1622L1632 658L1616 663H1553L1534 658ZM1551 670L1615 668L1626 673L1609 679L1561 677L1541 673ZM1541 689L1625 686L1636 692L1615 699L1555 697L1530 692ZM1551 711L1615 708L1625 714L1608 720L1561 718L1541 714ZM1561 734L1605 732L1613 737L1601 742L1569 740L1553 737Z"
             ></path>
         </g>
 
+        <g
+            class="lake-reflections__foreground-building lake-reflections__foreground-building--midground"
+            data-reflection-for="midground-west-1"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="midground-west-1"
+                cx="225"
+                cy="655"
+                r="1"></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M175 653H275L286 658L267 663H185L165 658ZM184 670L267 668L280 673L260 679L195 677L171 673ZM171 689L280 686L293 692L268 699L185 697L155 692ZM184 711L267 708L279 714L258 720L195 718L169 714ZM195 735L258 732L268 737L252 742L205 740L185 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building lake-reflections__foreground-building--midground"
+            data-reflection-for="midground-west-2"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="midground-west-2"
+                cx="524"
+                cy="655"
+                r="1"></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M475 653H575L586 658L567 663H485L465 658ZM484 670L567 668L580 673L560 679L495 677L471 673ZM471 689L580 686L593 692L568 699L485 697L455 692ZM484 711L567 708L579 714L558 720L495 718L469 714ZM495 735L558 732L568 737L552 742L505 740L485 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building lake-reflections__foreground-building--midground"
+            data-reflection-for="midground-center"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="midground-center"
+                cx="872"
+                cy="655"
+                r="1"></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M820 653H925L936 658L917 663H830L810 658ZM829 670L918 668L931 673L911 679L840 677L816 673ZM816 689L931 686L944 692L919 699L830 697L800 692ZM829 711L918 708L930 714L909 720L840 718L814 714ZM840 735L909 732L919 737L903 742L850 740L830 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building lake-reflections__foreground-building--midground"
+            data-reflection-for="midground-east-1"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="midground-east-1"
+                cx="1185"
+                cy="655"
+                r="1"></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M1135 653H1235L1246 658L1227 663H1145L1125 658ZM1144 670L1227 668L1240 673L1220 679L1155 677L1131 673ZM1131 689L1240 686L1253 692L1228 699L1145 697L1115 692ZM1144 711L1227 708L1239 714L1218 720L1155 718L1129 714ZM1155 735L1218 732L1228 737L1212 742L1165 740L1145 737Z"
+            ></path>
+        </g>
+        <g
+            class="lake-reflections__foreground-building lake-reflections__foreground-building--midground"
+            data-reflection-for="midground-east-2"
+        >
+            <circle
+                class="skyline__reflection-anchor"
+                data-reflection-water-anchor="midground-east-2"
+                cx="1489"
+                cy="655"
+                r="1"></circle>
+            <path
+                class="lake-reflections__building-glow"
+                d="M1435 653H1540L1551 658L1532 663H1445L1425 658ZM1444 670L1533 668L1546 673L1526 679L1455 677L1431 673ZM1431 689L1546 686L1559 692L1534 699L1445 697L1415 692ZM1444 711L1533 708L1545 714L1524 720L1455 718L1429 714ZM1455 735L1524 732L1534 737L1518 742L1465 740L1445 737Z"
+            ></path>
+        </g>
     </g>
 
     <g

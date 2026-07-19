@@ -28,6 +28,10 @@
     pointer-events: none;
 }
 
+.streetcar-streetscape__streetcar--reverse {
+    --streetcar-route-delay: -4s;
+}
+
 .ttc-streetcar__track-shadow {
     opacity: 0.38;
     fill: var(--spruce-deep);
@@ -74,7 +78,6 @@
 }
 
 .ttc-streetcar__body-shell {
-    transition: fill var(--motion-state) ease;
     fill: var(--streetcar-red);
 }
 
@@ -83,14 +86,12 @@
 }
 
 .ttc-streetcar__belt {
-    transition: fill var(--motion-state) ease;
     fill: var(--streetcar-cream);
 }
 
 .ttc-streetcar__cab-window,
 .ttc-streetcar__window-band,
 .ttc-streetcar__door-glass {
-    transition: fill var(--motion-state) ease;
     fill: var(--streetcar-glass);
 }
 

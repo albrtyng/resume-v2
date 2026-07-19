@@ -96,6 +96,7 @@ const initialHeaderSurfaceBootstrapScript = `
                 : false;
 
         root.dataset.pageSurface = surface;
+        root.dataset.pageEdgeSurface = surface;
 
         if (hashSurface || savedSurface) {
             root.dataset.initialHeaderSurface = surface;
@@ -126,7 +127,7 @@ const initialHeaderSurfaceBootstrapScript = `
 ---
 
 <!doctype html>
-<html lang="en" data-time-state="dusk" data-page-surface="hero">
+<html lang="en" data-time-state="dusk" data-page-surface="hero" data-page-edge-surface="hero">
     <head>
         <meta charset="UTF-8" />
         <meta name="theme-color" content={SKYLINE_THEME_COLORS.dusk} />

@@ -35,6 +35,17 @@ body {
     font-family: var(--font-body);
 }
 
+// iOS 26+ samples its top and bottom chrome tints from the page background,
+// ignoring theme-color; keep body on the surface palette so both chrome
+// strategies stay covered.
+html[data-page-surface='hero'] body {
+    background: var(--sky-base);
+}
+
+html[data-page-surface='contact'] body {
+    background: var(--footer-sky);
+}
+
 body::after {
     position: fixed;
     opacity: 0.035;

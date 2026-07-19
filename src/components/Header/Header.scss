@@ -20,8 +20,6 @@
     --header-surface-foreground: var(--header-hero-ink, var(--hero-ink));
     --header-surface-tint: 64%;
     --header-surface-transition-duration: 360ms;
-    // The header tint and hero sky share one palette-transition clock.
-    --header-background-transition-duration: var(--motion-state);
 
     display: grid;
     position: fixed;
@@ -32,22 +30,41 @@
     align-items: center;
     gap: 2rem;
     z-index: var(--layer-header);
+    // Only the collapse geometry tweens; palette and ink swap atomically
+    // with the scene so the header can never drift out of sync.
     transition:
         top 720ms var(--header-spring),
         right 720ms var(--header-spring),
         left 720ms var(--header-spring),
         min-height 720ms var(--header-spring),
-        border-color var(--header-surface-transition-duration) ease,
-        border-radius 720ms var(--header-spring),
-        color var(--header-surface-transition-duration) ease,
-        background-color var(--header-background-transition-duration) ease;
+        border-radius 720ms var(--header-spring);
     box-shadow: none;
     border: 1px solid transparent;
     border-radius: 0;
-    background-color: var(--header-surface-background);
+    background-color: transparent;
     padding: 0.65rem var(--gutter);
     min-height: 4.5rem;
     color: var(--header-surface-foreground);
+}
+
+// The glass tint lives on an overlay so the at-top header stays fully
+// transparent and the hero scene alone drives palette transitions. The
+// overlay only fades in once the header collapses into its scrolled pill.
+.site-header::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    border: 1px solid transparent;
+    border-radius: inherit;
+    background-color: var(--header-surface-background);
+    opacity: 0;
+    pointer-events: none;
+    // The tint swaps atomically with the scene palette; only its visibility
+    // and the pill outline tween.
+    transition:
+        opacity var(--header-surface-transition-duration) ease,
+        border-color var(--header-surface-transition-duration) ease;
 }
 
 .site-header[data-header-surface='hero'] {
@@ -67,7 +84,8 @@
     --header-surface-tint: 68%;
 }
 
-.site-header:not([data-navigation-ready]) {
+.site-header:not([data-navigation-ready]),
+.site-header:not([data-navigation-ready])::before {
     transition: none;
 }
 
@@ -124,19 +142,37 @@ html:has(
     top: clamp(0.55rem, 1.2vw, 0.8rem);
     right: var(--header-collapse-inset);
     left: var(--header-collapse-inset);
+    border-radius: 999px;
+    min-height: 4rem;
+}
+
+.site-header[data-scrolled]::before,
+html[data-initial-header-collapsed] .site-header::before,
+html:has(
+        :is(
+            #experience,
+            #experience-title,
+            #capabilities,
+            #capabilities-title,
+            #contact,
+            #contact-title
+        ):target
+    )
+    .site-header:not([data-navigation-ready])::before {
     border-color: color-mix(
         in srgb,
         var(--header-surface-foreground) 16%,
         transparent
     );
-    border-radius: 999px;
-    min-height: 4rem;
+    opacity: 1;
 }
 
 @supports (
     (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
 ) {
-    .site-header {
+    // Frost belongs to the overlay only: at the top of the page the header
+    // paints nothing over the scene, so palette cycling stays seamless.
+    .site-header::before {
         -webkit-backdrop-filter: blur(20px) saturate(0.92);
         backdrop-filter: blur(20px) saturate(0.92);
         background-color: color-mix(
@@ -233,6 +269,7 @@ html:has(
 
 @media (prefers-reduced-motion: reduce) {
     .site-header,
+    .site-header::before,
     .site-header__contact {
         transition-duration: 0.01ms;
     }

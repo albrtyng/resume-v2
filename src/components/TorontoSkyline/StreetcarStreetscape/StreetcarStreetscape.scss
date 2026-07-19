@@ -20,8 +20,8 @@
         var(--paper-deep)
     );
     transform: translate(
-        calc(var(--scene-x) * -0.58),
-        calc(var(--scene-y) * -0.42)
+        var(--layer-x, calc(var(--scene-x) * -0.58)),
+        var(--layer-y, calc(var(--scene-y) * -0.42))
     );
     transition: transform 120ms linear;
 }
@@ -31,7 +31,6 @@
 }
 
 .streetcar-streetscape__background-buildings {
-    transition: fill var(--motion-state) ease;
     fill: var(--streetscape-backdrop);
 }
 
@@ -62,13 +61,33 @@
     fill: var(--window);
 }
 
+.streetcar-streetscape__midground {
+    isolation: isolate;
+}
+
+.streetcar-streetscape__mid-building {
+    transition: fill var(--motion-state) ease;
+}
+
+.streetcar-streetscape__mid-facade {
+    fill: color-mix(in srgb, var(--streetscape-brick) 72%, var(--skyline-mid));
+}
+
+.streetcar-streetscape__mid-roof {
+    fill: color-mix(in srgb, var(--streetscape-roof) 68%, var(--skyline-mid));
+}
+
+.streetcar-streetscape__mid-windows {
+    opacity: calc(0.12 + var(--window-alpha) * 0.5);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
+}
+
 .streetcar-streetscape__foreground {
     isolation: isolate;
 }
 
-.streetcar-streetscape__building {
-    transition: fill var(--motion-state) ease;
-}
+
 
 .streetcar-streetscape__facade {
     fill: var(--streetscape-brick);
@@ -105,9 +124,7 @@
 
 .streetcar-streetscape__storefront {
     opacity: calc(0.46 + var(--window-alpha) * 0.42);
-    transition:
-        fill var(--motion-state) ease,
-        opacity var(--motion-state) ease;
+    transition: opacity var(--motion-state) ease;
     fill: color-mix(in srgb, var(--skyline-mid) 74%, var(--sky-base));
     stroke: color-mix(in srgb, var(--streetscape-roof) 82%, var(--paper-deep));
     stroke-width: 4;
@@ -116,15 +133,6 @@
 .streetcar-streetscape__lintel {
     opacity: 0.86;
     fill: color-mix(in srgb, var(--red-dark) 54%, var(--streetscape-roof));
-}
-
-.streetcar-streetscape__masonry {
-    opacity: 0.22;
-    fill: none;
-    stroke: var(--paper-deep);
-    stroke-dasharray: 19 8;
-    stroke-linecap: round;
-    stroke-width: 2.6;
 }
 
 .streetcar-streetscape__rooftop-detail {
@@ -137,12 +145,10 @@
 }
 
 .streetcar-streetscape__foreground-foundation {
-    transition: fill var(--motion-state) ease;
     fill: var(--seawall);
 }
 
 .streetcar-streetscape__road-surface {
-    transition: fill var(--motion-state) ease;
     fill: color-mix(in srgb, var(--spruce-deep) 94%, var(--skyline-near));
 }
 
@@ -166,6 +172,16 @@
     transform: translateY(20px);
 }
 
+.streetcar-streetscape__left-lane {
+    transform: translateY(-6px);
+}
+
+.streetcar-streetscape__streetcar-flip {
+    transform: scale(-1, 1);
+    transform-box: view-box;
+    transform-origin: center;
+}
+
 html[data-time-state='night'] .streetcar-streetscape {
     --streetscape-backdrop: color-mix(
         in srgb,
@@ -184,12 +200,9 @@ html[data-time-state='night'] .streetcar-streetscape {
         transform: translateY(-117px);
     }
 
-    .streetcar-streetscape__road {
+    .streetcar-streetscape__road,
+    .streetcar-streetscape__road-markers-group {
         transform: translateY(-70px);
-    }
-
-    .streetcar-streetscape__masonry {
-        display: none;
     }
 
     .streetcar-streetscape__building--west-workshop,

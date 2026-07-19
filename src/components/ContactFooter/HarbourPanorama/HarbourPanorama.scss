@@ -9,6 +9,8 @@
         var(--sky-horizon) 34%,
         var(--paper-light)
     );
+    --harbour-horizon: color-mix(in srgb, var(--sky-horizon) 74%, var(--sun));
+    --harbour-fire-glow: color-mix(in srgb, var(--sun) 58%, var(--red));
     --harbour-water-far: color-mix(in srgb, var(--spruce) 62%, var(--water));
     --harbour-water-near: color-mix(
         in srgb,
@@ -17,18 +19,29 @@
     );
     --harbour-sand-back: color-mix(
         in srgb,
-        var(--spruce-deep) 78%,
+        var(--spruce-deep) 72%,
         var(--paper-deep)
     );
     --harbour-sand-mid: color-mix(
         in srgb,
-        var(--spruce-deep) 88%,
+        var(--spruce-deep) 84%,
         var(--red-dark)
     );
     --harbour-sand-front: color-mix(
         in srgb,
-        var(--spruce-deep) 92%,
-        var(--ink)
+        var(--spruce-deep) 89%,
+        var(--red-dark)
+    );
+    --harbour-wet-sand: color-mix(
+        in srgb,
+        var(--water-light) 48%,
+        var(--harbour-sand-back)
+    );
+    --harbour-plant: color-mix(in srgb, var(--spruce-deep) 70%, var(--red-dark));
+    --harbour-plant-head: color-mix(
+        in srgb,
+        var(--red-dark) 56%,
+        var(--spruce-deep)
     );
 
     display: block;
@@ -44,8 +57,28 @@
 }
 
 .harbour-panorama__sky-wash {
-    transition: fill var(--motion-state) ease;
     fill: var(--harbour-sky);
+}
+
+.harbour-panorama__sky-depth {
+    transition: opacity var(--motion-state) ease;
+    opacity: 0.42;
+    fill: url('#harbour-sky-depth-fade');
+}
+
+.harbour-panorama__sky-depth-stop {
+    stop-color: color-mix(in srgb, var(--spruce-deep) 72%, var(--harbour-sky));
+}
+
+.harbour-panorama__horizon-glow {
+    transition: opacity var(--motion-state) ease;
+    opacity: 0.18;
+    fill: var(--harbour-horizon);
+}
+
+.harbour-panorama__horizon-glow--core {
+    opacity: 0.26;
+    fill: color-mix(in srgb, var(--harbour-horizon) 62%, var(--sun));
 }
 
 .harbour-panorama__sky-disc-group {
@@ -67,6 +100,13 @@
     fill: var(--paper-light);
 }
 
+.harbour-panorama__star-sparkle {
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 1.6;
+}
+
 .harbour-panorama__haze {
     fill: var(--harbour-haze);
 }
@@ -77,6 +117,11 @@
 
 .harbour-panorama__haze--low {
     opacity: 0.075;
+}
+
+.harbour-panorama__haze--warm {
+    opacity: 0.12;
+    fill: var(--harbour-horizon);
 }
 
 .harbour-panorama__clouds {
@@ -93,6 +138,11 @@
     stroke-width: 3.5;
 }
 
+.harbour-panorama__sky-brush--low {
+    opacity: 0.08;
+    stroke-width: 3;
+}
+
 .harbour-panorama__shore-bank {
     fill: color-mix(in srgb, var(--spruce-deep) 90%, var(--paper-deep));
 }
@@ -105,9 +155,7 @@
     stroke-width: 2.5;
 }
 
-.harbour-panorama__water-base {
-    transition: fill var(--motion-state) ease;
-}
+
 
 .harbour-panorama__water-base--far {
     fill: var(--harbour-water-far);
@@ -116,6 +164,12 @@
 .harbour-panorama__water-base--near {
     opacity: 0.74;
     fill: var(--harbour-water-near);
+}
+
+.harbour-panorama__water-warm-band {
+    transition: opacity var(--motion-state) ease;
+    opacity: 0.14;
+    fill: var(--harbour-horizon);
 }
 
 .harbour-panorama__wave {
@@ -161,6 +215,16 @@
     opacity: 0.19;
 }
 
+.harbour-panorama__water-glints {
+    transition: opacity var(--motion-state) ease;
+    opacity: 0.18;
+    fill: none;
+    stroke: var(--harbour-fire-glow);
+    stroke-dasharray: 34 18 58 26;
+    stroke-linecap: round;
+    stroke-width: 3;
+}
+
 .harbour-panorama__fleck {
     opacity: 0.3;
     fill: var(--paper-light);
@@ -174,9 +238,40 @@
     stroke-width: 1.2;
 }
 
+.harbour-panorama__ripple {
+    opacity: 0.5;
+    fill: none;
+    stroke: var(--paper-light);
+    stroke-linecap: round;
+    stroke-width: 1.8;
+}
+
+.harbour-panorama__stipple {
+    opacity: 0.42;
+    fill: var(--paper-deep);
+}
+
+.harbour-panorama__stipple-line {
+    opacity: 0.3;
+    fill: none;
+    stroke: color-mix(in srgb, var(--paper-deep) 62%, var(--red-dark));
+    stroke-linecap: round;
+    stroke-width: 1.4;
+}
+
 .harbour-panorama__water-flecks,
 .harbour-panorama__beach-flecks {
     fill: url('#harbour-paint-fleck');
+}
+
+.harbour-panorama__water-ripples {
+    opacity: 0.07;
+    fill: url('#harbour-ripple-lines');
+}
+
+.harbour-panorama__sand-stipple {
+    opacity: 0.12;
+    fill: url('#harbour-sand-stipple');
 }
 
 .harbour-panorama__water-flecks {
@@ -207,13 +302,24 @@
 .contact-footer[data-contact-motion='full'][data-contact-active]
     .harbour-panorama__wave--far,
 .contact-footer[data-contact-motion='full'][data-contact-active]
-    .harbour-panorama__wave--near {
+    .harbour-panorama__wave--near,
+.contact-footer[data-contact-motion='full'][data-contact-active]
+    .harbour-panorama__clouds
+    path,
+.contact-footer[data-contact-motion='full'][data-contact-active]
+    .harbour-panorama__sway {
     animation-play-state: running;
     will-change: transform;
 }
 
 .harbour-panorama__beach-back {
     fill: var(--harbour-sand-back);
+}
+
+.harbour-panorama__wet-sand {
+    transition: opacity var(--motion-state) ease;
+    opacity: 0.5;
+    fill: var(--harbour-wet-sand);
 }
 
 .harbour-panorama__beach-mid {
@@ -237,10 +343,28 @@
 }
 
 .harbour-panorama__sand-brush--front {
-    opacity: 0.15;
+    opacity: 0.2;
     stroke: var(--water-light);
     stroke-dasharray: 38 24 70 29;
     stroke-width: 2.5;
+}
+
+.harbour-panorama__sand-brush--warm {
+    transition: opacity var(--motion-state) ease;
+    opacity: 0.14;
+    stroke: var(--harbour-fire-glow);
+    stroke-dasharray: 44 22 76 30;
+    stroke-width: 2.8;
+}
+
+.harbour-panorama__wet-glints {
+    transition: opacity var(--motion-state) ease;
+    opacity: 0.2;
+    fill: none;
+    stroke: var(--harbour-fire-glow);
+    stroke-dasharray: 26 14 44 20;
+    stroke-linecap: round;
+    stroke-width: 2.4;
 }
 
 .harbour-panorama__stones {
@@ -275,6 +399,12 @@
     stroke-width: 4.5;
 }
 
+.harbour-panorama__reed-arcs {
+    opacity: 0.82;
+    stroke: color-mix(in srgb, var(--spruce-deep) 66%, var(--red-dark));
+    stroke-width: 3.5;
+}
+
 .harbour-panorama__reed-heads {
     fill: color-mix(in srgb, var(--red-dark) 54%, var(--spruce-deep));
 }
@@ -284,12 +414,112 @@
     stroke-width: 5;
 }
 
+.harbour-panorama__plant-tufts {
+    fill: none;
+    stroke: var(--harbour-plant);
+    stroke-width: 4;
+}
+
+.harbour-panorama__plant-heads {
+    fill: var(--harbour-plant-head);
+}
+
+.harbour-panorama__clouds path {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+.contact-footer[data-contact-motion='full'] .harbour-panorama__clouds path {
+    animation: harbour-cloud-drift 54s ease-in-out -21s infinite alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full']
+    .harbour-panorama__clouds
+    path:nth-child(2) {
+    animation-duration: 63s;
+    animation-delay: -34s;
+}
+
+.contact-footer[data-contact-motion='full']
+    .harbour-panorama__clouds
+    path:nth-child(3) {
+    animation-duration: 47s;
+    animation-delay: -12s;
+}
+
+.contact-footer[data-contact-motion='full']
+    .harbour-panorama__clouds
+    path:nth-child(4) {
+    animation-duration: 58s;
+    animation-delay: -43s;
+}
+
+.harbour-panorama__sway {
+    transform-box: fill-box;
+    transform-origin: center bottom;
+}
+
+.contact-footer[data-contact-motion='full'] .harbour-panorama__sway {
+    animation: harbour-reed-sway 9.8s ease-in-out -3.4s infinite alternate;
+    animation-play-state: paused;
+}
+
+.contact-footer[data-contact-motion='full'] .harbour-panorama__sway--east {
+    animation-duration: 8.7s;
+    animation-delay: -5.6s;
+}
+
+.contact-footer[data-contact-motion='full']
+    .harbour-panorama__sway--plants-west {
+    animation-duration: 11.6s;
+    animation-delay: -6.4s;
+}
+
+.contact-footer[data-contact-motion='full']
+    .harbour-panorama__sway--plants-center {
+    animation-duration: 10.4s;
+    animation-delay: -1.8s;
+}
+
+.contact-footer[data-contact-motion='full']
+    .harbour-panorama__sway--plants-east {
+    animation-duration: 12.3s;
+    animation-delay: -7.9s;
+}
+
 html[data-time-state='dawn'] .harbour-panorama {
     --harbour-haze: color-mix(
         in srgb,
         var(--sky-horizon) 38%,
         var(--paper-light)
     );
+    --harbour-horizon: color-mix(in srgb, var(--sky-horizon) 80%, var(--sun));
+}
+
+html[data-time-state='dawn'] .harbour-panorama__sky-depth {
+    opacity: 0.3;
+}
+
+html[data-time-state='dawn'] .harbour-panorama__horizon-glow {
+    opacity: 0.2;
+}
+
+html[data-time-state='dawn'] .harbour-panorama__horizon-glow--core {
+    opacity: 0.24;
+}
+
+html[data-time-state='dawn'] .harbour-panorama__haze--warm {
+    opacity: 0.14;
+}
+
+html[data-time-state='dawn'] .harbour-panorama__water-warm-band {
+    opacity: 0.12;
+}
+
+html[data-time-state='dawn'] .harbour-panorama__water-glints,
+html[data-time-state='dawn'] .harbour-panorama__wet-glints {
+    opacity: 0.1;
 }
 
 html[data-time-state='midday'] .harbour-panorama {
@@ -299,6 +529,35 @@ html[data-time-state='midday'] .harbour-panorama {
         var(--sky-horizon) 42%,
         var(--paper-light)
     );
+}
+
+html[data-time-state='midday'] .harbour-panorama__sky-depth {
+    opacity: 0.18;
+}
+
+html[data-time-state='midday'] .harbour-panorama__horizon-glow {
+    opacity: 0.07;
+}
+
+html[data-time-state='midday'] .harbour-panorama__horizon-glow--core {
+    opacity: 0.08;
+}
+
+html[data-time-state='midday'] .harbour-panorama__haze--warm {
+    opacity: 0.05;
+}
+
+html[data-time-state='midday'] .harbour-panorama__water-warm-band {
+    opacity: 0.06;
+}
+
+html[data-time-state='midday'] .harbour-panorama__water-glints,
+html[data-time-state='midday'] .harbour-panorama__wet-glints {
+    opacity: 0.07;
+}
+
+html[data-time-state='midday'] .harbour-panorama__wet-sand {
+    opacity: 0.55;
 }
 
 html[data-time-state='midday']
@@ -313,6 +572,44 @@ html[data-time-state='night'] .harbour-panorama {
         var(--spruce-deep) 72%,
         var(--water)
     );
+    --harbour-horizon: color-mix(
+        in srgb,
+        var(--window) 52%,
+        var(--sky-horizon)
+    );
+}
+
+html[data-time-state='night'] .harbour-panorama__sky-depth {
+    opacity: 0.55;
+}
+
+html[data-time-state='night'] .harbour-panorama__horizon-glow {
+    opacity: 0.1;
+}
+
+html[data-time-state='night'] .harbour-panorama__horizon-glow--core {
+    opacity: 0.12;
+}
+
+html[data-time-state='night'] .harbour-panorama__haze--warm {
+    opacity: 0.06;
+}
+
+html[data-time-state='night'] .harbour-panorama__water-warm-band {
+    opacity: 0.1;
+}
+
+html[data-time-state='night'] .harbour-panorama__water-glints,
+html[data-time-state='night'] .harbour-panorama__wet-glints {
+    opacity: 0.24;
+}
+
+html[data-time-state='night'] .harbour-panorama__wet-sand {
+    opacity: 0.42;
+}
+
+html[data-time-state='night'] .harbour-panorama__water-ripples {
+    opacity: 0.1;
 }
 
 html[data-time-state='night']
@@ -359,6 +656,26 @@ html[data-time-state='night']
     }
 }
 
+@keyframes harbour-cloud-drift {
+    from {
+        transform: translateX(-14px);
+    }
+
+    to {
+        transform: translateX(20px);
+    }
+}
+
+@keyframes harbour-reed-sway {
+    from {
+        transform: rotate(-0.8deg);
+    }
+
+    to {
+        transform: rotate(1deg);
+    }
+}
+
 @media (max-width: 64rem) {
     .harbour-panorama {
         position: absolute;
@@ -388,8 +705,12 @@ html[data-time-state='night']
 
     .harbour-panorama__clouds,
     .harbour-panorama__sky-brush,
+    .harbour-panorama__star-sparkle,
     .harbour-panorama__water-flecks,
+    .harbour-panorama__water-ripples,
     .harbour-panorama__beach-flecks,
+    .harbour-panorama__sand-stipple,
+    .harbour-panorama__foreground-fine,
     .harbour-panorama__driftwood {
         display: none;
     }

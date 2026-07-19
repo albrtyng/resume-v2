@@ -15,13 +15,11 @@
 }
 
 .lake-ontario__base {
-    transition: fill var(--motion-state) ease;
     fill: var(--water);
 }
 
 .lake-ontario__horizon-wash {
     opacity: 0.34;
-    transition: fill var(--motion-state) ease;
     fill: color-mix(in srgb, var(--water) 64%, var(--sky-horizon));
 }
 
@@ -87,9 +85,7 @@ html[data-time-state='night'] .lake-reflections--celestial {
 .lake-reflections__celestial-core,
 .lake-reflections__glow,
 .lake-reflections__highlight {
-    transition:
-        fill var(--motion-state) ease,
-        opacity var(--motion-state) ease;
+    transition: opacity var(--motion-state) ease;
 }
 
 .lake-reflections__celestial-soft {
@@ -154,8 +150,11 @@ html[data-time-state='night'] .lake-reflections--celestial {
 
 .lake-reflections__building-glow {
     opacity: 0.42;
-    transition: fill var(--motion-state) ease;
     fill: var(--lake-building-reflection);
+}
+
+.lake-reflections__foreground-building--midground .lake-reflections__building-glow {
+    opacity: 0.3;
 }
 
 html[data-time-state='night'] .lake-reflections__celestial-soft {

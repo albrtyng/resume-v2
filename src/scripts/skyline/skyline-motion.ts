@@ -11,6 +11,12 @@ type Cleanup = () => void;
 const sceneCleanups = new WeakMap<HTMLElement, Cleanup>();
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 const BOUNDARY_SETTLE_DELAY_MS = 50;
+const SCENE_PARALLAX_X_PX = 8;
+const SCENE_PARALLAX_Y_PX = 28;
+// Depth-weighted scales keep the deepest layer (data-depth="0.98") aligned
+// with the strongest hand-tuned multipliers the SCSS fallbacks use.
+const LAYER_DEPTH_SCALE_X = 0.64;
+const LAYER_DEPTH_SCALE_Y = 0.47;
 
 const TIME_STATE_NAMES: Record<SkylineState, string> = {
     dawn: 'Dawn',
@@ -38,12 +44,31 @@ function findScene(scope: ParentNode): HTMLElement | null {
     return scope.querySelector<HTMLElement>('[data-skyline-scene]');
 }
 
+type ParallaxLayer = {
+    element: SVGElement;
+    depth: number;
+};
+
+function collectParallaxLayers(scene: HTMLElement): ParallaxLayer[] {
+    const layers: ParallaxLayer[] = [];
+
+    for (const element of scene.querySelectorAll<SVGElement>('[data-depth]')) {
+        const depth = Number.parseFloat(element.dataset.depth ?? '');
+        if (!Number.isFinite(depth)) continue;
+        layers.push({ element, depth: clamp(depth, 0, 1) });
+    }
+
+    return layers;
+}
+
 /**
  * Progressively enhance the first skyline scene in `scope`.
  *
  * The scene receives restrained, scroll-derived `--scene-x` and `--scene-y`
- * values for its depth layers. The returned function removes every observer,
- * timer, listener, and animation frame created by this enhancement.
+ * values for backward-compatible whole-scene motion, and every layer marked
+ * with `data-depth` receives its own `--layer-x` and `--layer-y` translation
+ * scaled by that depth. The returned function removes every observer, timer,
+ * listener, and animation frame created by this enhancement.
  */
 export function initSkylineMotion(scope: ParentNode = document): Cleanup {
     const scene = findScene(scope);
@@ -59,6 +84,7 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
         '[data-time-control]',
     );
     const scrollSurface = scene.parentElement ?? scene;
+    const parallaxLayers = collectParallaxLayers(scene);
     const reducedMotionQuery = window.matchMedia(REDUCED_MOTION_QUERY);
     const rootElement = document.documentElement;
     const themeColor = document.querySelector<HTMLMetaElement>(
@@ -101,6 +127,10 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
     const clearMotionProperties = () => {
         scene.style.removeProperty('--scene-x');
         scene.style.removeProperty('--scene-y');
+        for (const layer of parallaxLayers) {
+            layer.element.style.removeProperty('--layer-x');
+            layer.element.style.removeProperty('--layer-y');
+        }
     };
 
     const paintMotion = () => {
@@ -121,14 +151,22 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
         currentScrollProgress +=
             (targetScrollProgress - currentScrollProgress) * easing;
 
-        scene.style.setProperty(
-            '--scene-x',
-            `${(currentScrollProgress * 8).toFixed(2)}px`,
-        );
-        scene.style.setProperty(
-            '--scene-y',
-            `${(currentScrollProgress * 28).toFixed(2)}px`,
-        );
+        const sceneX = currentScrollProgress * SCENE_PARALLAX_X_PX;
+        const sceneY = currentScrollProgress * SCENE_PARALLAX_Y_PX;
+
+        scene.style.setProperty('--scene-x', `${sceneX.toFixed(2)}px`);
+        scene.style.setProperty('--scene-y', `${sceneY.toFixed(2)}px`);
+
+        for (const layer of parallaxLayers) {
+            layer.element.style.setProperty(
+                '--layer-x',
+                `${(-sceneX * layer.depth * LAYER_DEPTH_SCALE_X).toFixed(2)}px`,
+            );
+            layer.element.style.setProperty(
+                '--layer-y',
+                `${(-sceneY * layer.depth * LAYER_DEPTH_SCALE_Y).toFixed(2)}px`,
+            );
+        }
 
         const isSettled =
             Math.abs(targetScrollProgress - currentScrollProgress) < 0.001;
@@ -183,8 +221,10 @@ export function initSkylineMotion(scope: ParentNode = document): Cleanup {
             'content',
             getPageThemeColor(
                 state,
-                (rootElement.dataset.pageSurface as PageSurface | undefined) ??
-                    'hero',
+                ((rootElement.dataset.pageEdgeSurface ??
+                    rootElement.dataset.pageSurface) as
+                    | PageSurface
+                    | undefined) ?? 'hero',
             ),
         );
         if (accessibleTimeLabel) {

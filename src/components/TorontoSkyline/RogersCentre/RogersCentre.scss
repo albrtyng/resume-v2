@@ -14,12 +14,10 @@
 
 .rogers-centre__rear-mass,
 .rogers-centre__stadium-wall {
-    transition: fill var(--motion-state) ease;
     fill: color-mix(in srgb, var(--skyline-mid) 80%, var(--skyline-near));
 }
 
 .rogers-centre__dome-shell {
-    transition: fill var(--motion-state) ease;
     fill: color-mix(in srgb, var(--skyline-mid) 55%, var(--paper-light));
 }
 

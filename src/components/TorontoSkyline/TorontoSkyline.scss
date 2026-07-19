@@ -30,6 +30,87 @@
     pointer-events: none;
 }
 
+.skyline__sky,
+.skyline__sky-effects {
+    transform: translate(
+        var(--layer-x, calc(var(--scene-x) * -0.03)),
+        var(--layer-y, calc(var(--scene-y) * -0.03))
+    );
+    transition: transform 120ms linear;
+}
+
+.skyline__sky-gradient {
+    fill: url('#skyline-sky-gradient');
+}
+
+.skyline__sky-stop--zenith {
+    stop-color: var(--sky-base);
+}
+
+.skyline__sky-stop--mid {
+    stop-color: color-mix(in srgb, var(--sky-base) 58%, var(--sky-horizon));
+}
+
+.skyline__sky-stop--horizon {
+    stop-color: var(--sky-horizon);
+}
+
+.skyline__horizon-glow {
+    opacity: 0.32;
+    transition: opacity var(--motion-state) ease;
+    fill: color-mix(in srgb, var(--sun) 42%, var(--sky-horizon));
+}
+
+html[data-time-state='dawn'] .skyline__horizon-glow {
+    opacity: 0.26;
+}
+
+html[data-time-state='midday'] .skyline__horizon-glow {
+    opacity: 0.1;
+    fill: color-mix(in srgb, var(--paper-light) 55%, var(--sky-horizon));
+}
+
+html[data-time-state='night'] .skyline__horizon-glow {
+    opacity: 0.08;
+    fill: color-mix(in srgb, var(--water-light) 36%, var(--sky-horizon));
+}
+
+.skyline__sky-band {
+    opacity: 0.14;
+    transition: opacity var(--motion-state) ease;
+    fill: none;
+    stroke: color-mix(in srgb, var(--sun) 34%, var(--paper-light));
+    stroke-linecap: round;
+}
+
+.skyline__sky-band--high {
+    stroke-width: 12;
+}
+
+.skyline__sky-band--middle {
+    stroke-width: 17;
+}
+
+.skyline__sky-band--low {
+    opacity: 0.16;
+    stroke-width: 13;
+}
+
+html[data-time-state='dawn'] .skyline__sky-band {
+    opacity: 0.15;
+    stroke: color-mix(in srgb, var(--sky-horizon) 38%, var(--paper-light));
+}
+
+html[data-time-state='midday'] .skyline__sky-band {
+    opacity: 0.08;
+    stroke: var(--paper-light);
+}
+
+html[data-time-state='night'] .skyline__sky-band {
+    opacity: 0.05;
+    stroke: color-mix(in srgb, var(--water-light) 58%, var(--paper-light));
+}
+
 .skyline__fleck-dot {
     opacity: 0.36;
     fill: var(--paper-light);
@@ -91,13 +172,24 @@ html[data-time-state='night'] .skyline__celestial .celestial-disc__core {
 
 .skyline__horizon-haze {
     opacity: 0.58;
-    transition: fill var(--motion-state) ease;
+    transition: opacity var(--motion-state) ease;
     fill: var(--sky-horizon);
+}
+
+html[data-time-state='dawn'] .skyline__horizon-haze {
+    opacity: 0.66;
+}
+
+html[data-time-state='midday'] .skyline__horizon-haze {
+    opacity: 0.44;
+}
+
+html[data-time-state='night'] .skyline__horizon-haze {
+    opacity: 0.32;
 }
 
 .skyline__horizon-brush {
     opacity: 0.22;
-    transition: stroke var(--motion-state) ease;
     fill: none;
     stroke: var(--paper-light);
     stroke-linecap: round;
@@ -123,7 +215,9 @@ html[data-time-state='night'] .skyline__celestial .celestial-disc__core {
 }
 
 .skyline__clouds {
-    opacity: 0.36;
+    transform: translate(var(--layer-x, 0px), var(--layer-y, 0px));
+    transition: transform 120ms linear;
+    opacity: 0.44;
     fill: var(--paper-light);
 }
 
@@ -134,7 +228,7 @@ html[data-time-state='night'] .skyline__celestial .celestial-disc__core {
 }
 
 .skyline__clouds--near {
-    opacity: 0.24;
+    opacity: 0.32;
 }
 
 .skyline__cloud--one {
@@ -154,12 +248,15 @@ html[data-time-state='night'] .skyline__celestial .celestial-disc__core {
 }
 
 html[data-time-state='night'] .skyline__clouds {
-    opacity: 0.14;
+    opacity: 0.18;
 }
 
 .skyline__birds {
+    transform: translate(var(--layer-x, 0px), var(--layer-y, 0px));
     opacity: 0.6;
-    transition: opacity var(--motion-state) ease;
+    transition:
+        opacity var(--motion-state) ease,
+        transform 120ms linear;
     fill: none;
     stroke: var(--skyline-near);
     stroke-linecap: round;
@@ -174,15 +271,13 @@ html[data-time-state='night'] .skyline__birds {
 .skyline__mid,
 .skyline__landmarks,
 .skyline__near {
-    transition:
-        fill var(--motion-state) ease,
-        transform 120ms linear;
+    transition: transform 120ms linear;
 }
 
 .skyline__far {
     transform: translate(
-        calc(var(--scene-x) * -0.15),
-        calc(var(--scene-y) * -0.12)
+        var(--layer-x, calc(var(--scene-x) * -0.15)),
+        var(--layer-y, calc(var(--scene-y) * -0.12))
     );
     fill: var(--skyline-far);
 }
@@ -217,8 +312,8 @@ html[data-time-state='night'] .skyline__birds {
 
 .skyline__mid {
     transform: translate(
-        calc(var(--scene-x) * -0.28),
-        calc(var(--scene-y) * -0.22)
+        var(--layer-x, calc(var(--scene-x) * -0.28)),
+        var(--layer-y, calc(var(--scene-y) * -0.22))
     );
     fill: var(--skyline-mid);
 }
@@ -257,15 +352,15 @@ html[data-time-state='night'] .skyline__birds {
 
 .skyline__landmarks {
     transform: translate(
-        calc(var(--scene-x) * -0.42),
-        calc(var(--scene-y) * -0.3)
+        var(--layer-x, calc(var(--scene-x) * -0.42)),
+        var(--layer-y, calc(var(--scene-y) * -0.3))
     );
 }
 
 .skyline__near {
     transform: translate(
-        calc(var(--scene-x) * -0.5),
-        calc(var(--scene-y) * -0.36)
+        var(--layer-x, calc(var(--scene-x) * -0.5)),
+        var(--layer-y, calc(var(--scene-y) * -0.36))
     );
     fill: var(--skyline-near);
 }
@@ -283,13 +378,15 @@ html[data-time-state='night'] .skyline__birds {
     fill: color-mix(in srgb, var(--skyline-near) 86%, var(--paper-light));
 }
 
-.skyline__brick-course {
-    opacity: 0.22;
-    fill: none;
-    stroke: var(--paper-deep);
-    stroke-dasharray: 13 8;
-    stroke-linecap: round;
-    stroke-width: 3;
+.skyline__near-rooftop-tanks {
+    opacity: 0.85;
+    fill: color-mix(in srgb, var(--skyline-near) 78%, var(--paper-deep));
+}
+
+.skyline__mid-window-grid {
+    opacity: calc(var(--window-alpha) * 0.5);
+    transition: opacity var(--motion-state) ease;
+    fill: var(--window);
 }
 
 .skyline__near-window-lights {
