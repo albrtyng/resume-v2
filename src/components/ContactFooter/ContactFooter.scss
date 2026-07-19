@@ -7,7 +7,9 @@
         color var(--motion-state) ease;
     background: var(--footer-sky, var(--spruce));
     isolation: isolate;
-    height: max(45rem, var(--contact-viewport-height));
+    // 10px of extra scroll travel lets the footer cover the viewport's top
+    // edge at the document end, so iOS chrome can switch to the footer tint.
+    height: calc(max(45rem, var(--contact-viewport-height)) + 10px);
     overflow: clip;
     color: var(--footer-ink, var(--paper));
 }

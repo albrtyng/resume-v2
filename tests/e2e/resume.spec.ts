@@ -951,7 +951,9 @@ test('expands the complete contact scene with collapsed mobile browser chrome', 
 
     expect(heights).not.toBeNull();
     expect(heights!.viewportUnit).toBe('100dvh');
-    expect(heights!.footer).toBe(760);
+    // The footer carries 10px of extra scroll travel beyond the viewport
+    // unit; the panorama and sky field stay capped at the viewport height.
+    expect(heights!.footer).toBe(770);
     expect(heights!.panorama).toBe(760);
     expect(heights!.skyField).toBe(760);
     expect(heights!.footerTop).toBeLessThanOrEqual(heights!.headerTop);
